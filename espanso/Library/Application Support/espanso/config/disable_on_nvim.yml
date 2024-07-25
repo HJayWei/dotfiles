@@ -1,0 +1,10 @@
+# title: 'jaywei@JaydeMBP:~/Git/urmazi/isafer_develop'
+# exec: '/Applications/Alacritty.app'
+# class: 'org.alacritty'
+# filter_class: 'org.alacritty'
+# filter_class: 'org.alacritty'
+# enable: false
+
+filter_title: 'nvim'
+filter_class: 'org.alacritty'
+enable: false

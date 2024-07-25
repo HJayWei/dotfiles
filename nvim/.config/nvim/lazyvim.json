@@ -1,0 +1,9 @@
+{
+  "extras": [
+    "lazyvim.plugins.extras.coding.mini-surround"
+  ],
+  "news": {
+    "NEWS.md": "6296"
+  },
+  "version": 6
+}

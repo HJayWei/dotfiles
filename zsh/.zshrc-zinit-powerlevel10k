@@ -1,0 +1,48 @@
+
+zinit ice depth=1; zinit light romkatv/powerlevel10k
+
+zinit light zsh-users/zsh-autosuggestions
+zinit light zsh-users/zsh-completions
+zinit light zsh-users/zsh-history-substring-search
+zinit light zdharma-continuum/fast-syntax-highlighting
+
+# package from Oh My Zsh
+zinit snippet OMZ::lib/completion.zsh
+zinit snippet OMZ::lib/history.zsh
+zinit snippet OMZ::lib/key-bindings.zsh
+zinit snippet OMZ::lib/theme-and-appearance.zsh
+zinit snippet OMZ::lib/git.zsh
+zinit snippet OMZ::plugins/git/git.plugin.zsh
+zinit snippet OMZ::lib/clipboard.zsh
+zinit snippet OMZ::lib/termsupport.zsh
+zinit snippet OMZ::lib/key-bindings.zsh
+zinit snippet OMZ::lib/theme-and-appearance.zsh
+
+zinit ice wait lucid
+zinit load zsh-users/zsh-autosuggestions
+
+zinit load djui/alias-tips
+
+# 啟用 Zsh 的內置補全系統
+autoload -Uz compinit
+compinit
+
+# 使用緩存來提高補全性能
+zstyle ':completion::complete:*' use-cache 1
+
+# 設置歷史記錄
+HISTSIZE=10000
+SAVEHIST=10000
+HISTFILE=~/.zsh_history
+
+# 避免重複歷史記錄
+setopt HIST_IGNORE_DUPS
+
+zinit light romkatv/zsh-defer
+
+# key bindings
+# 設定後才能用上下鍵來使用zsh-history-substring-search
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
+
+unsetopt share_history
