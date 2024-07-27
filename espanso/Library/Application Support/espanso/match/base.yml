@@ -19,9 +19,6 @@ matches:
   # Print the current date
   - trigger: ":date"
     replace: "{{mydate}}"
-    filter_exec: "!nvim,!alacritty"
-    filter_title: "!Neovim,!Alacritty"
-    filter_class: "!Neovim,!Alacritty"
     vars:
       - name: mydate
         type: date
@@ -31,9 +28,6 @@ matches:
   # Print the output of a shell command
   - trigger: ":shell"
     replace: "{{output}}"
-    filter_exec: "!nvim,!alacritty"
-    filter_title: "!Neovim,!Alacritty"
-    filter_class: "!Neovim,!Alacritty"
     vars:
       - name: output
         type: shell

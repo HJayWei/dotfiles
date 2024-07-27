@@ -1,0 +1,119 @@
+# Terminal
+# GPU-accelerated terminal emulator
+cask "alacritty"
+
+# Browser
+cask "arc"
+cask "opera"
+cask "firefox"
+cask "opera"
+cask "brave-browser"
+cask "microsoft-edge"
+cask "google-chrome"
+cask "tor-browser"
+
+# Note
+# App to write, plan, collaborate, and get organised
+cask "notion"
+# Calendar for professionals and teams
+cask "notion-calendar"
+# Knowledge base that works on top of a local folder of plain text Markdown files
+cask "obsidian"
+# Local-first and end-to-end encrypted notes app
+cask "anytype"
+# Note-taking tool for visual learning
+cask "heptabase"
+
+# VPN
+# Free and open-source OpenVPN client
+cask "tunnelblick"
+# Client program for the OpenVPN Access Server
+cask "openvpn-connect"
+# Mesh VPN based on WireGuard
+cask "tailscale"
+
+# EMail client
+cask "readdle-spark"
+
+# Graphical client for Git version control
+cask "sourcetree"
+
+# Security
+# Tools to protect your emails and files
+cask "gpg-suite"
+# Password manager that keeps all passwords secure behind one password
+cask "1password"
+
+# Remote
+# Remote desktop application focusing on security
+cask "vnc-viewer"
+# Allows connection to a computer remotely
+cask "anydesk"
+# Video communication and virtual meeting platform
+cask "zoom"
+# Virtual video-calling space
+cask "gather"
+
+# Design
+# Collaborative team software
+cask "figma"
+# Online diagram software
+cask "drawio"
+# Mind mapping and brainstorming tool
+cask "xmind"
+
+# Database
+# Universal database tool and SQL client
+cask "dbeaver-community"
+# Interactive tool for analyzing MongoDB data
+cask "mongodb-compass"
+# MySQL/MariaDB database management
+cask "sequel-ace"
+# Database version management tool
+cask "dbngin"
+# Native GUI tool for relational databases
+cask "tableplus"
+
+# Multimedia player
+cask "vlc"
+
+# Social
+# Open-source, self-hosted Slack-alternative
+cask "mattermost"
+# Voice and text chat software
+cask "discord"
+
+# IDE
+# Multiplayer code editor
+cask "zed"
+# Electronics prototyping platform
+cask "arduino-ide"
+# Open-source code editor
+cask "visual-studio-code"
+
+# Virtual Machine
+# Virtual machines UI using QEMU
+cask "utm"
+# Replacement for Docker Desktop
+cask "orbstack"
+
+# Syncs files between computers and MEGA Cloud drives
+cask "megasync"
+
+# System
+# File archiver
+cask "keka"
+# System monitoring app
+cask "istat-menus"
+# Application uninstaller
+cask "appcleaner"
+# Compare files and folders
+cask "beyond-compare"
+# Server and cloud storage browser
+cask "cyberduck"
+# Cross-platform Text Expander written in Rust
+cask "espanso"
+# Collaboration platform for API development
+cask "postman"
+# Network protocol analyzer
+cask "wireshark"

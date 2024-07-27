@@ -7,7 +7,8 @@ TERM = "xterm-256color"
 
 [font]
 size = 12
-normal.family = "MesloLGS NF"
+# normal.family = "MesloLGS NF"
+normal.family = "CommitMono Nerd Font Mono"
 
 [window]
 blur = true
@@ -21,7 +22,7 @@ bindings = [
   { key = "Left", mods = "Alt", chars = "\u001BB" },
   { key = "Right", mods = "Alt", chars = "\u001BF" },
   { key = "Enter", mods = "Command", action = "ToggleMaximized" },
-  { key = "C", mods = "Alt|Shift", action = "ToggleViMode" },
+  { key = "C", mods = "Command|Shift", action = "ToggleViMode" },
 ]
 
 # [shell]

@@ -40,11 +40,7 @@ brew "tldr"
 brew "wget"
 # Pluggable terminal workspace, with terminal multiplexer as the base feature
 brew "zellij"
+# Flexible and fast Zsh plugin manager
+brew "zinit"
 # Shell extension to navigate your filesystem faster
 brew "zoxide"
-# GPU-accelerated terminal emulator
-cask "alacritty"
-# Cross-platform Text Expander written in Rust
-cask "espanso"
-# Replacement for Docker Desktop
-cask "orbstack"
