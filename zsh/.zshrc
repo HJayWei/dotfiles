@@ -26,11 +26,7 @@ zinit snippet OMZ::lib/theme-and-appearance.zsh
 zinit snippet OMZ::lib/clipboard.zsh
 zinit snippet OMZ::lib/functions.zsh
 zinit snippet OMZ::lib/termsupport.zsh
-
-zinit ice svn
 zinit snippet OMZ::lib/git.zsh
-
-zinit ice svn
 zinit snippet OMZ::plugins/git/git.plugin.zsh
 
 # Lazy Load Plugins
