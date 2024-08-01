@@ -47,3 +47,6 @@ stow espanso
 
 echo "Stow Zellij configuration"
 stow zellij
+
+echo "Install Rust"
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh

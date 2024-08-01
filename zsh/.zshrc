@@ -143,3 +143,25 @@ alias cd="z"
 
 # ---- asdf ---- #
 source /opt/homebrew/opt/asdf/libexec/asdf.sh
+
+# ---- Rust ---- #
+export PATH=$PATH:$HOME/.cargo/bin
+
+# ---- Copy command with OSC 52 ---- #
+copy() {
+    local content
+    if [ -t 0 ]; then
+        if [ $# -eq 0 ]; then
+            echo "Usage: copy <filename> or pipe content to copy"
+            return 1
+        fi
+        content=$(cat "$1")
+    else
+        content=$(cat)
+    fi
+
+    local encoded
+    encoded=$(echo -n "$content" | base64 | tr -d '\n')
+    echo -en "\e]52;c;$encoded\a"
+    echo "Content copied to clipboard!"
+}
