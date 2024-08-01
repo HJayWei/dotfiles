@@ -1,20 +1,47 @@
 #!/bin/zsh
 
-DOTFILES_PATH="$HOME/dotfiles/"
+find_homebrew() {
+  if [ -x /opt/homebrew/bin/brew ]; then
+    echo "/opt/homebrew"
+  elif [ -x /usr/local/bin/brew ]; then
+    echo "/usr/local"
+  elif [ -x $HOME/.homebrew/bin/brew ]; then
+    echo "$HOME/.homebrew"
+  else
+    BREW_PATH=$(which brew 2>/dev/null)
+    if [ -n "$BREW_PATH" ]; then
+      dirname $(dirname $BREW_PATH)
+    else
+      echo ""
+    fi
+  fi
+}
+
+
+
 
 echo "Installing commandline tools..."
 xcode-select --install
 
 echo "Installing Brew..."
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-eval "$(/opt/homebrew/bin/brew shellenv)"
+
+HOMEBREW_PREFIX=$(find_homebrew)
+
+if [ -z "$HOMEBREW_PREFIX" ]; then
+  echo "Homebrew not found. Please install Homebrew first."
+  exit 1
+fi
+
+eval "$($HOMEBREW_PREFIX/bin/brew shellenv)"
 
 echo "Change directory to dotfiles"
+DOTFILES_PATH="$HOME/dotfiles/"
 cd $DOTFILES_PATH
 
 echo "Install bundle from Brewfile"
 brew bundle install --file Brewfile
-source /opt/homebrew/opt/zinit/zinit.zsh
+source $HOMEBREW_PREFIX/opt/zinit/zinit.zsh
 
 echo "Install Commit Mono Nerd Font"
 brew install --cask font-commit-mono-nerd-font

@@ -1,9 +1,34 @@
 
 # ---- HomeBrew ---- #
-eval "$(/opt/homebrew/bin/brew shellenv)"
+find_homebrew() {
+  if [ -x /opt/homebrew/bin/brew ]; then
+    echo "/opt/homebrew"
+  elif [ -x /usr/local/bin/brew ]; then
+    echo "/usr/local"
+  elif [ -x $HOME/.homebrew/bin/brew ]; then
+    echo "$HOME/.homebrew"
+  else
+    BREW_PATH=$(which brew 2>/dev/null)
+    if [ -n "$BREW_PATH" ]; then
+      dirname $(dirname $BREW_PATH)
+    else
+      echo ""
+    fi
+  fi
+}
+
+HOMEBREW_PREFIX=$(find_homebrew)
+
+if [ -z "$HOMEBREW_PREFIX" ]; then
+  echo "Homebrew not found. Please install Homebrew first."
+  exit 1
+fi
+
+eval "$($HOMEBREW_PREFIX/bin/brew shellenv)"
+
 
 # ---- Zinit ---- #
-source /opt/homebrew/opt/zinit/zinit.zsh
+source $HOMEBREW_PREFIX/opt/zinit/zinit.zsh
 
 # Powerlevel10k
 zinit ice depth=1; zinit light romkatv/powerlevel10k
@@ -142,7 +167,7 @@ source <(zoxide init zsh)
 alias cd="z"
 
 # ---- asdf ---- #
-source /opt/homebrew/opt/asdf/libexec/asdf.sh
+source $HOMEBREW_PREFIX/opt/asdf/libexec/asdf.sh
 
 # ---- Rust ---- #
 export PATH=$PATH:$HOME/.cargo/bin
