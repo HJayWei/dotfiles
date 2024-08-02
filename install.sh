@@ -43,8 +43,11 @@ echo "Install bundle from Brewfile"
 brew bundle install --file Brewfile
 source $HOMEBREW_PREFIX/opt/zinit/zinit.zsh
 
-echo "Install Commit Mono Nerd Font"
+echo "Install Nerd Font"
 brew install --cask font-commit-mono-nerd-font
+brew install --cask font-fira-code-nerd-font
+brew install --cask font-meslo-lg-nerd-font
+brew install --cask font-hack-nerd-font
 
 echo "Install bundle from BrewCask"
 brew bundle install --file BrewCask
