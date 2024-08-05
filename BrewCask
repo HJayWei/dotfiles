@@ -86,6 +86,8 @@ cask "discord"
 # IDE
 # Multiplayer code editor
 cask "zed"
+# No Nonsense Neovim Client in Rust
+cask "neovide"
 # Electronics prototyping platform
 cask "arduino-ide"
 # Open-source code editor

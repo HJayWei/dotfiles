@@ -63,6 +63,7 @@ stow git
 
 echo "Stow NeoVim onfiguration"
 stow nvim
+mkdir $HOME/Project
 
 echo "Stow Bat configuration"
 stow bat
