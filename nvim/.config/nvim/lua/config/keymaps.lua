@@ -9,3 +9,9 @@ map({ "v", "n", "s", "o" }, "<C-q>", "<cmd>q<cr><esc>", { desc = "Quit file" })
 
 -- Delete Buffer
 map("n", "<S-q>", LazyVim.ui.bufremove, { desc = "Delete Buffer" })
+
+-- Move the cursor to the first (^ or _)/last (g_) non-whitespace character
+map({ "v", "n" }, "<M-h>", "^", { desc = "Move to first non-whitespace character" })
+map({ "v", "n" }, "<M-l>", "g_", { desc = "Move to last non-whitespace character" })
+map("i", "<M-h>", "<esc>I", { desc = "Move to first non-whitespace character" })
+map("i", "<M-l>", "<esc>A", { desc = "Move to last non-whitespace character" })
