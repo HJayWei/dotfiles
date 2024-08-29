@@ -119,3 +119,5 @@ cask "espanso"
 cask "postman"
 # Network protocol analyzer
 cask "wireshark"
+# Control your tools with a few keystrokes
+cask "raycast"
