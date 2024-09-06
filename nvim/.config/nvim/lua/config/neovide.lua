@@ -4,6 +4,7 @@ if vim.g.neovide then
   vim.keymap.set("v", "<D-v>", '"+P') -- Paste visual mode
   vim.keymap.set("c", "<D-v>", "<C-R>+") -- Paste command mode
   vim.keymap.set("i", "<D-v>", "<C-R>+") -- Paste insert mode
+  vim.keymap.set("t", "<D-v>", '<C-\\><C-N>"+pa') -- Paste terminal mode
 
   vim.g.neovide_input_macos_option_key_is_meta = "both"
   vim.g.neovide_cursor_vfx_mode = "ripple"
