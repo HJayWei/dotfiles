@@ -1,0 +1,30 @@
+{
+  "arrowParens": "always",
+  "bracketSameLine": true,
+  "bracketSpacing": true,
+  "semi": true,
+  "experimentalTernaries": false,
+  "singleQuote": true,
+  "jsxSingleQuote": false,
+  "quoteProps": "as-needed",
+  "trailingComma": "all",
+  "singleAttributePerLine": true,
+  "htmlWhitespaceSensitivity": "css",
+  "vueIndentScriptAndStyle": false,
+  "proseWrap": "preserve",
+  "insertPragma": true,
+  "requirePragma": false,
+  "tabWidth": 4,
+  "useTabs": false,
+  "embeddedLanguageFormatting": "auto",
+  "printWidth": 100,
+  "overrides": [
+    {
+      "files": ".prettierrc",
+      "options": {
+        "tabWidth": 2,
+        "insertPragma": false
+      }
+    }
+  ]
+}
