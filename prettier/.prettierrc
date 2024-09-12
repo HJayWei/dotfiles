@@ -25,6 +25,13 @@
         "tabWidth": 2,
         "insertPragma": false
       }
+    },
+    {
+      "files": "*.yml",
+      "options": {
+        "tabWidth": 2,
+        "insertPragma": false
+      }
     }
   ]
 }
