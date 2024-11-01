@@ -332,8 +332,8 @@
     side-by-side = true
     keep-plus-minus-markers = false
     syntax-theme = Nord
-    file-style = "#434C5E" bold
-    file-decoration-style = "#434C5E" ul
+    file-style = "#95ADDB" bold
+    file-decoration-style = "#95ADDB" ul
     file-added-label = [+]
     file-copied-label = [==]
     file-modified-label = [*]
