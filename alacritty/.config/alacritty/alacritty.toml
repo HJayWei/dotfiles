@@ -1,6 +1,3 @@
-import = [
-  "~/.config/alacritty/themes/wombat.toml"
-]
 
 [env]
 TERM = "xterm-256color"
@@ -24,6 +21,11 @@ bindings = [
   { key = "Right", mods = "Alt", chars = "\u001BF" },
   { key = "Enter", mods = "Command", action = "ToggleMaximized" },
   { key = "C", mods = "Command|Shift", action = "ToggleViMode" },
+]
+
+[general]
+import = [
+  "~/.config/alacritty/themes/wombat.toml"
 ]
 
 # [shell]
