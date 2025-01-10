@@ -8,7 +8,11 @@ local map = LazyVim.safe_keymap_set
 map({ "v", "n", "s", "o" }, "<C-q>", "<cmd>q<cr><esc>", { desc = "Quit file" })
 
 -- Delete Buffer
-map("n", "<S-q>", LazyVim.ui.bufremove, { desc = "Delete Buffer" })
+local deleteBuffer = function()
+  Snacks.bufdelete()
+end
+
+map("n", "<S-q>", deleteBuffer, { desc = "Delete Buffer" })
 
 -- Move the cursor to the first (^ or _)/last (g_) non-whitespace character
 map({ "v", "n" }, "<M-h>", "^", { desc = "Move to first non-whitespace character" })

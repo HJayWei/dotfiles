@@ -4,6 +4,7 @@
 
 vim.opt.shell = "/bin/zsh"
 vim.opt.wrap = true
+vim.opt.colorcolumn = "120"
 
 -- vim.g.clipboard = {
 --   name = "OSC 52",
