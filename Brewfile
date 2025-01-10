@@ -42,6 +42,8 @@ brew "rsync"
 brew "stow"
 # Simplified and community-driven man pages
 brew "tldr"
+# Clean C library for processing UTF-8 Unicode data
+brew "utf8proc"
 # Internet file retriever
 brew "wget"
 # Pluggable terminal workspace, with terminal multiplexer as the base feature
