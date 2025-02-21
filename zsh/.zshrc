@@ -138,7 +138,7 @@ source <(zoxide init zsh)
 alias cd="z"
 
 # ---- asdf ---- #
-source $HOMEBREW_PREFIX/opt/asdf/libexec/asdf.sh
+export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 
 # ---- Rust ---- #
 export PATH=$PATH:$HOME/.cargo/bin
