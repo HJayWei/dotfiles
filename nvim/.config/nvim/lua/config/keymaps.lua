@@ -19,3 +19,8 @@ map({ "v", "n" }, "<M-h>", "^", { desc = "Move to first non-whitespace character
 map({ "v", "n" }, "<M-l>", "g_", { desc = "Move to last non-whitespace character" })
 map("i", "<M-h>", "<esc>I", { desc = "Move to first non-whitespace character" })
 map("i", "<M-l>", "<esc>A", { desc = "Move to last non-whitespace character" })
+
+map("n", "<leader>gdo", ":DiffviewOpen<CR>", { noremap = true, silent = true, desc = "DiffviewOpen" })
+map("n", "<leader>gdc", ":DiffviewClose<CR>", { noremap = true, silent = true, desc = "DiffviewClose" })
+map("n", "<leader>gdh", ":DiffviewFileHistory<CR>", { noremap = true, silent = true, desc = "DiffviewFileHistory" })
+map("n", "<leader>gdl", ":DiffviewLog<CR>", { noremap = true, silent = true, desc = "DiffviewLog" })
