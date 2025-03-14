@@ -11,6 +11,8 @@ if vim.g.neovide then
   vim.g.neovide_input_macos_option_key_is_meta = "both"
   vim.g.neovide_cursor_vfx_mode = "ripple"
 
+  vim.env.TERM = "xterm-256color"
+
   local default_path = vim.fn.expand("~/Project")
   vim.api.nvim_set_current_dir(default_path)
 end
