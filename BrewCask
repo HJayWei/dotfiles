@@ -1,12 +1,13 @@
 # Terminal
 # GPU-accelerated terminal emulator
 cask "alacritty"
+# Terminal emulator that uses platform-native UI and GPU acceleration
+cask "ghostty"
 
 # Browser
 cask "arc"
 cask "opera"
 cask "firefox"
-cask "opera"
 cask "brave-browser"
 cask "microsoft-edge"
 cask "google-chrome"
