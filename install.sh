@@ -48,6 +48,7 @@ brew install --cask font-commit-mono-nerd-font
 brew install --cask font-fira-code-nerd-font
 brew install --cask font-meslo-lg-nerd-font
 brew install --cask font-hack-nerd-font
+brew install --cask font-maple-mono-normal-nf-cn
 
 echo "Install bundle from BrewCask"
 brew bundle install --file BrewCask
