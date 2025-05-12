@@ -32,8 +32,12 @@ brew "lazygit"
 brew "mercurial"
 # Parser generator tool and incremental parsing library
 brew "tree-sitter"
+# Clean C library for processing UTF-8 Unicode data
+brew "utf8proc", args: ["HEAD"]
 # Ambitious Vim-fork focused on extensibility and agility
 brew "neovim"
+# Port scanning utility for large networks
+brew "nmap"
 # Perl-powered file rename script with many helpful built-ins
 brew "rename"
 # Search tool like grep and The Silver Searcher
@@ -44,8 +48,6 @@ brew "rsync"
 brew "stow"
 # Simplified and community-driven man pages
 brew "tldr"
-# Clean C library for processing UTF-8 Unicode data
-brew "utf8proc"
 # Internet file retriever
 brew "wget"
 # Pluggable terminal workspace, with terminal multiplexer as the base feature

@@ -93,6 +93,8 @@ cask "neovide"
 cask "arduino-ide"
 # Open-source code editor
 cask "visual-studio-code"
+# Agentic IDE powered by AI Flow paradigm
+cask "windsurf"
 
 # Virtual Machine
 # Virtual machines UI using QEMU
@@ -122,3 +124,7 @@ cask "postman"
 cask "wireshark"
 # Control your tools with a few keystrokes
 cask "raycast"
+
+
+# Get up and running with large language models locally
+cask "ollama"
