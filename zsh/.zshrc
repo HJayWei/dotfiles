@@ -69,6 +69,7 @@ alias ll='ls -lhg'
 alias lt='eza --tree --level=2 --long --icons --git'
 alias clr='clear'
 alias grep='grep --color=auto'
+alias rg='rg --pretty'
 
 # ---- Fuzzy Finder (FZF) ---- #
 # Set up fzf key bindings and fuzzy completion
