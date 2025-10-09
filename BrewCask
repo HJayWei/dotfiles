@@ -12,6 +12,7 @@ cask "brave-browser"
 cask "microsoft-edge"
 cask "google-chrome"
 cask "tor-browser"
+cask "thebrowsercompany-dia"
 
 # Note
 # App to write, plan, collaborate, and get organised
@@ -31,10 +32,9 @@ cask "tunnelblick"
 # Client program for the OpenVPN Access Server
 cask "openvpn-connect"
 # Mesh VPN based on WireGuard
-cask "tailscale"
-
-# EMail client
-cask "readdle-spark"
+cask "tailscale-app"
+# Reverse proxy, secure introspectable tunnels to localhost
+cask "ngrok"
 
 # Graphical client for Git version control
 cask "sourcetree"
@@ -87,8 +87,8 @@ cask "discord"
 # IDE
 # Multiplayer code editor
 cask "zed"
-# No Nonsense Neovim Client in Rust
-cask "neovide"
+# Neovim Client
+cask "neovide-app"
 # Electronics prototyping platform
 cask "arduino-ide"
 # Open-source code editor
@@ -121,10 +121,14 @@ cask "espanso"
 # Collaboration platform for API development
 cask "postman"
 # Network protocol analyzer
-cask "wireshark"
+cask "wireshark-app"
 # Control your tools with a few keystrokes
 cask "raycast"
+# Keyboard shortcuts for every button on your screen
+cask "homerow"
+# Utility to hide menu bar items
+cask "hiddenbar"
 
 
 # Get up and running with large language models locally
-cask "ollama"
+cask "ollama-app"

@@ -16,21 +16,31 @@ brew "docker-compose"
 brew "eza"
 # Simple, fast and user-friendly alternative to find
 brew "fd"
+# Play, record, convert, and stream audio and video
+brew "ffmpeg"
 # Command-line fuzzy finder written in Go
 brew "fzf"
 # Distributed revision control system
 brew "git"
 # Syntax-highlighting pager for git and diff output
 brew "git-delta"
+# Open source programming language to build simple/reliable/efficient software
+brew "go"
+# Serializes the output of command-line tools to structured JSON output
+brew "jc"
 # Lightweight and flexible command-line JSON processor
 brew "jq"
+# Cross-platform software keyboard remapper for Linux, macOS and Windows
+brew "kanata"
 # Lazier way to manage everything docker
 brew "lazydocker"
 # Simple terminal UI for git commands
 brew "lazygit"
+# Package manager for the Lua programming language
+brew "luarocks"
 # Scalable distributed version control system
 brew "mercurial"
-# Parser generator tool and incremental parsing library
+# Incremental parsing library
 brew "tree-sitter"
 # Clean C library for processing UTF-8 Unicode data
 brew "utf8proc", args: ["HEAD"]
@@ -44,8 +54,12 @@ brew "rename"
 brew "ripgrep"
 # Utility that provides fast incremental file transfer
 brew "rsync"
+# Command-line interface for https://speedtest.net bandwidth tests
+brew "speedtest-cli"
 # Organize software neatly under a single directory tree (e.g. /usr/local)
 brew "stow"
+# Powerful free data recovery utility
+brew "testdisk"
 # Simplified and community-driven man pages
 brew "tldr"
 # Internet file retriever

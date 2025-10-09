@@ -44,11 +44,21 @@ brew bundle install --file Brewfile
 source $HOMEBREW_PREFIX/opt/zinit/zinit.zsh
 
 echo "Install Nerd Font"
+# CommitMono Nerd Font Mono
 brew install --cask font-commit-mono-nerd-font
+# FiraCode Nerd Font Mono
 brew install --cask font-fira-code-nerd-font
+# MesloLGL Nerd Font Mono
+# MesloLGLDZ Nerd Font Mono
+# MesloLGM Nerd Font Mono
+# MesloLGMDZ Nerd Font Mono
 brew install --cask font-meslo-lg-nerd-font
+# Hack Nerd Font Mono
 brew install --cask font-hack-nerd-font
+# Maple Mono Normal NF CN
 brew install --cask font-maple-mono-normal-nf-cn
+# BlexMono Nerd Font Mono
+brew install --cask font-blex-mono-nerd-font
 
 echo "Install bundle from BrewCask"
 brew bundle install --file BrewCask
@@ -88,6 +98,9 @@ stow ssh
 
 echo "Stow Ghostty configuration"
 stow ghostty
+
+echo 'Stow Codeium configuration'
+stow codeium
 
 echo "Install Rust"
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
