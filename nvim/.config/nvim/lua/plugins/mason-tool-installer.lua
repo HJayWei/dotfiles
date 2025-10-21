@@ -11,11 +11,18 @@ return {
         "codelldb",
         "rust-analyzer",
         -- vue packages --
-        "vetur-vls",
+        "vue-language-server",
         -- javascript packages --
         "js-debug-adapter",
         "prettier",
         "vtsls",
+        -- golang packages --
+        "goimports",
+        "gofumpt",
+        "golangci-lint",
+        "delve",
+        "gopls",
+        "go-debug-adapter",
         -- others packages --
         "bash-language-server",
         "json-lsp",
