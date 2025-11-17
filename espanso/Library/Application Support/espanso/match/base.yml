@@ -12,26 +12,47 @@ matches:
   - trigger: ':espanso'
     replace: 'Hi there!'
 
-  # NOTE: espanso uses YAML to define matches, so pay attention to the indentation!
+  - trigger: ':ai-generate-git-message'
+    replace: '{{output}}'
+    vars:
+      - name: form_data
+        type: form
+        params:
+          layout: |
+            更新說明: [[current_change]]
+          fields:
+            current_change:
+              multiline: true
+      - name: output
+        type: shell
+        params:
+          cmd: |
+            CURRENT_CHANGE="{{form_data.current_change}}"
 
-  # But matches can also be dynamic:
+            if [[ -n $CURRENT_CHANGE ]]; then
+              echo "本次調整為，$CURRENT_CHANGE。"
+            fi
 
-  # Print the current date
-  # - trigger: ":date"
-  #   replace: "{{mydate}}"
-  #   vars:
-  #     - name: mydate
-  #       type: date
-  #       params:
-  #         format: "%m/%d/%Y"
+  - trigger: ':ai-generate-git-message'
+    replace: '{{output}}'
+    vars:
+      - name: form_data
+        type: form
+        params:
+          layout: |
+            暫存檔案: [[git_status]]
+          fields:
+            git_status:
+              multiline: true
+      - name: output
+        type: shell
+        params:
+          cmd: |
+            GIT_STATUS="{{form_data.git_status}}"
 
-  # Print the output of a shell command
-  # - trigger: ":shell"
-  #   replace: "{{output}}"
-  #   vars:
-  #     - name: output
-  #       type: shell
-  #       params:
-  #         cmd: "echo 'Hello from your shell'"
+            if [[ -n $GIT_STATUS ]]; then
+              echo "我已經將需要的檔案 git add 加入暫存的變更中，請基於上面的描述以及暫存變更的內容產生合適的 git commit 提交訊息並以英文描述，待我確認完畢後會自行提交
 
-  # And much more! For more information, visit the docs: https://espanso.org/docs/
+              git diff --staged --name-status
+              $GIT_STATUS"
+            fi
