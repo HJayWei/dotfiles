@@ -1,3 +1,4 @@
 *.lock.json
 docker/.docker/cli-plugins/
 docker/.docker/contexts/
+sealos/
