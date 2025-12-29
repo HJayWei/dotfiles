@@ -63,6 +63,10 @@ brew install --cask font-blex-mono-nerd-font
 echo "Install bundle from BrewCask"
 brew bundle install --file BrewCask
 
+echo "Synchronize git submodule"
+git submodule init
+git submodule update --init --recursive
+
 echo "Stow alacritty configuration"
 stow alacritty
 

@@ -12,7 +12,7 @@ matches:
   - trigger: ':espanso'
     replace: 'Hi there!'
 
-  - trigger: ':ai-generate-git-message'
+  - trigger: ':ai-git-update-message'
     replace: '{{output}}'
     vars:
       - name: form_data
