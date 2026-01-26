@@ -20,6 +20,8 @@ brew "fd"
 brew "ffmpeg"
 # Command-line fuzzy finder written in Go
 brew "fzf"
+# GNU awk utility
+brew "gawk"
 # Distributed revision control system
 brew "git"
 # Syntax-highlighting pager for git and diff output
@@ -40,6 +42,8 @@ brew "lazygit"
 brew "luarocks"
 # Scalable distributed version control system
 brew "mercurial"
+# Deep clean and optimize your Mac
+brew "mole"
 # Incremental parsing library
 brew "tree-sitter"
 # Clean C library for processing UTF-8 Unicode data

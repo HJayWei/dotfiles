@@ -126,9 +126,8 @@ cask "wireshark-app"
 cask "raycast"
 # Keyboard shortcuts for every button on your screen
 cask "homerow"
-# Utility to hide menu bar items
-cask "hiddenbar"
-
+# Menu bar manager
+cask "jordanbaird-ice"
 
 # Get up and running with large language models locally
 cask "ollama-app"
