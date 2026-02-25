@@ -2,3 +2,15 @@
 docker/.docker/cli-plugins/
 docker/.docker/contexts/
 sealos/
+.windsurf/
+
+# Go 編譯產物
+bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+go.sum
