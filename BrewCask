@@ -121,13 +121,17 @@ cask "espanso"
 # Collaboration platform for API development
 cask "postman"
 # Network protocol analyzer
-cask "wireshark-app"
+cask "wireshark"
 # Control your tools with a few keystrokes
 cask "raycast"
 # Keyboard shortcuts for every button on your screen
 cask "homerow"
 # Menu bar manager
 cask "jordanbaird-ice"
+# Utility to uninstall apps and remove leftover files from old/uninstalled apps
+cask "pearcleaner"
+# Per-application volume mixer, equalizer, and audio router
+cask "finetune"
 
 # Get up and running with large language models locally
 cask "ollama-app"
