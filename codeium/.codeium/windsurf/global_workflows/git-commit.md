@@ -1,31 +1,22 @@
 ---
-name: git-commit-generator
-description: Generate Conventional Commits compliant commit messages based on git staged changes and conversation context. Use when the user asks to create a commit message, generate a commit, or review staged changes for committing. Analyzes git diff --staged output and conversation history to produce structured commit messages in English following the Conventional Commits specification (https://www.conventionalcommits.org/).
+auto_execution_mode: 0
+description: Generate Conventional Commits compliant commit messages based on git staged changes
 ---
+You are an expert in Git version control and Conventional Commits specification. Your task is to generate professional commit messages in English following the Conventional Commits standard.
 
-# Git Commit Message Generator
-
-Generate commit messages following Conventional Commits specification based on staged changes and conversation context.
-
-## When to Use
-
-- User asks to generate a commit message
-- User asks to create/write a commit
-- User requests review of staged changes for committing
-- User mentions "commit message" or "git commit"
-
-## Workflow
+## Workflow Steps
 
 ### 1. Analyze Staged Changes
 
-First, check git status and staged diff:
+First, check what files are staged and their changes:
 
 ```bash
 git status
+git diff --staged --name-status
 git diff --staged
 ```
 
-### 2. Review Conversation Context
+### 2. Review Context
 
 If there's conversation history in this session, review it to understand:
 - What feature/fix was being worked on
@@ -34,7 +25,7 @@ If there's conversation history in this session, review it to understand:
 
 ### 3. Generate Commit Message
 
-Follow this structure:
+Follow the Conventional Commits structure:
 
 ```
 <type>[optional scope]: <description>
@@ -49,19 +40,19 @@ Follow this structure:
 #### Type Selection
 
 Choose the most appropriate type:
-- `feat`: New feature
-- `fix`: Bug fix
-- `docs`: Documentation only
-- `style`: Code style (formatting, missing semi-colons, etc.)
+- `feat`: New feature for the user
+- `fix`: Bug fix for the user
+- `docs`: Documentation only changes
+- `style`: Code style (formatting, whitespace, etc.)
 - `refactor`: Code change that neither fixes a bug nor adds a feature
 - `perf`: Performance improvement
 - `test`: Adding or updating tests
-- `build`: Build system or external dependencies
+- `build`: Build system or external dependencies changes
 - `ci`: CI configuration files and scripts
-- `chore`: Other changes that don't modify src or test files
+- `chore`: Other changes (maintenance, tooling, etc.)
 - `revert`: Reverts a previous commit
 
-#### Subject Line (<type>[optional scope]: <description>)
+#### Subject Line Rules
 
 - Use imperative mood ("add" not "added" or "adds")
 - No capitalization of first letter
@@ -76,22 +67,18 @@ feat(auth): add OAuth2 login support
 fix(api): resolve race condition in user creation
 docs: update installation guide for macOS
 refactor(parser): simplify token handling logic
+chore: update development dependencies
 ```
 
-#### Body (optional)
+#### Body Guidelines (optional)
 
-Include body when:
-- Changes need explanation beyond the subject
-- Multiple related changes were made
-- Context about "why" is important
-
-Guidelines:
+Include body when changes need explanation:
 - Wrap at 72 characters
 - Explain what and why, not how
 - Use bullet points for multiple items
 - Separate from subject with blank line
 
-#### Footer (optional)
+#### Footer Guidelines (optional)
 
 Use for:
 - Breaking changes: `BREAKING CHANGE: <description>`
@@ -101,20 +88,18 @@ Use for:
 ### 4. Present Options
 
 Provide 2-3 commit message options:
-1. **Concise**: Subject line only
-2. **Detailed**: Subject + body
+1. **Concise**: Subject line only (for simple changes)
+2. **Detailed**: Subject + body (for changes needing context)
 3. **Comprehensive**: Subject + body + footer (if applicable)
 
 ## Examples
 
-### Simple Feature Addition
-
+### Simple Change
 ```
-feat: add dark mode toggle to settings
+feat: add dark mode toggle
 ```
 
-### Bug Fix with Context
-
+### With Context
 ```
 fix(database): prevent connection pool exhaustion
 
@@ -126,7 +111,6 @@ Fixes #234
 ```
 
 ### Breaking Change
-
 ```
 refactor(api)!: change authentication endpoint structure
 
@@ -136,7 +120,6 @@ POST /auth with {"username": "...", "password": "..."}
 ```
 
 ### Multiple Related Changes
-
 ```
 chore: update development dependencies
 
@@ -156,6 +139,10 @@ chore: update development dependencies
 6. **Mark breaking changes**: Use `!` or `BREAKING CHANGE:` footer
 7. **Keep subject under 72 chars**: For better git log readability
 
-## Reference
+## Important Notes
 
-For detailed Conventional Commits specification, see [references/conventional-commits.md](references/conventional-commits.md).
+- Always generate messages in English, regardless of the user's language
+- Analyze the actual code changes, not just file names
+- Consider the broader context from conversation history
+- Provide multiple options for the user to choose from
+- Ensure all messages follow Conventional Commits specification strictly
