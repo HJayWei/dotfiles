@@ -1,8 +1,8 @@
-# 03 · AI 工具使用準則
+# 03 · AI 工具使用準則（補充規則）
 
-> 適用於 Windsurf (Cascade)、Cursor、GitHub Copilot、Claude 等 AI 輔助開發工具。
+> **本文件為 `global_rules.md` 的詳細補充**。AI 使用原則與驗收標準摘要已提取至全域規則，此處提供完整的提示工程、場景分類、Windsurf 特定準則等詳細內容。
 >
-> 參考來源：Anthropic Model Spec、Cursor Rules Community、Windsurf Documentation、OpenAI 提示工程指南
+> 參考來源：Anthropic Model Spec、Windsurf Documentation、OpenAI 提示工程指南
 
 ---
 
@@ -102,64 +102,13 @@ Windsurf 會讀取 `.windsurf/rules/` 目錄中的規則文件。維護準則：
 - **上下文視窗**: 優先提供當前任務最相關的文件
 - 避免在每次對話中重新解釋已記憶的架構決策
 
-### 常用工作流程指令
+### 工作流程指令
 
-依選擇的工作流程模式使用對應指令（詳見 `02-workflow.md`）：
-
-**Mode A · Spec-Kit**
-```
-/speckit.specify    ← 建立功能規格
-/speckit.plan       ← 建立實作計畫
-/speckit.tasks      ← 生成任務清單
-/speckit.implement  ← 執行實作
-/speckit.analyze    ← 一致性分析
-```
-
-**Mode B · OpenSpec (OPSX)**
-```
-/opsx-explore       ← 探索模式（釐清想法）
-/opsx-new           ← 建立新變更
-/opsx-ff            ← 快速生成所有 Artifacts
-/opsx-apply         ← 執行實作任務
-/opsx-verify        ← 驗證實作成果
-/opsx-archive       ← 歸檔已完成變更
-```
-
-**Mode C · Vibe Coding**
-```
-（無特定指令，直接開發；不要忘記 /git-commit 生成 commit message）
-```
-
----
-
-## Cursor 特定準則
-
-### `.cursorrules` 設定建議
-
-```markdown
-# 專案規則
-
-## 核心準則
-- 遵循 SOLID 原則
-- 測試先行（TDD）
-- 使用 TypeScript strict mode
-
-## 程式碼風格
-- 縮排：2 spaces
-- 使用 async/await，避免 callback
-- 匯入順序：內建 → 第三方 → 本地
-
-## 禁止行為
-- 不使用 any 型別
-- 不使用 var
-- 不提交未使用的匯入
-```
-
-### Cursor Composer 使用技巧
-
-- 使用 `@file` 引用特定檔案提供上下文
-- 使用 `@codebase` 讓 Cursor 搜尋相關程式碼
-- 複雜任務先用 Composer 規劃，再切換到 Chat 執行
+各模式的完整指令表請參閱對應規則文件：
+- **Mode A · Spec-Kit**：`specify-rules.md`（`/speckit.*` 系列指令）
+- **Mode B · OPSX**：`opsx-rules.md`（`/opsx-*` 系列指令）
+- **Mode C · Vibe Coding**：無特定指令，使用 `/git-commit` 生成 commit message
+- **通用**：`/git-commit` 生成 Conventional Commits 格式的 commit message
 
 ---
 

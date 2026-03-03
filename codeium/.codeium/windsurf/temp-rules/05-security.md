@@ -1,6 +1,6 @@
-# 05 · 安全性編碼準則
+# 05 · 安全性編碼準則（補充規則）
 
-> 安全性必須從設計階段開始，而非事後補救。
+> **本文件為 `global_rules.md` 的詳細補充**。安全性核心要點摘要已提取至全域規則，此處提供 OWASP Top 10 完整範例與實踐準則。
 >
 > 參考來源：OWASP Top 10、Google Security Engineering、Meta Security Best Practices、CWE/SANS Top 25
 

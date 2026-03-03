@@ -1,46 +1,109 @@
 # 通用開發準則 (Universal Development Rules)
 
-> 整合自 spec-driven.md、企業工程憲章、及 Claude / Google / Meta / OpenAI / Cursor / Windsurf 資深工程師的最佳實踐。
+> 整合自 spec-driven.md、企業工程憲章、及 Google / Meta / OpenAI / Windsurf 資深工程師的最佳實踐。
 >
-> **版本**: 1.1.0 | **更新**: 2026-03-03 | **語言**: 正體中文（技術術語除外）
+> **版本**: 2.0.0 | **更新**: 2025-07 | **語言**: 正體中文（技術術語除外）
 
 ---
 
-## 目錄結構
+## 架構概覽
+
+本規則集依 **Windsurf 三層架構**（Memory → Rules → Workflows/Skills）組織：
 
 ```
-temp-rules/
-├── README.md                  ← 本檔案：目錄總覽
-├── 00-core-principles.md      ← 核心架構原則（Clean Architecture、SOLID、SDD）
-├── 01-code-style.md           ← 通用程式碼風格與格式規範
-├── 02-workflow.md             ← 開發工作流程（可選模式：Spec-Kit / OPSX / Vibe Coding）
-├── 03-ai-tools.md             ← AI 工具使用準則（Cascade / Cursor / Windsurf）
-├── 04-testing.md              ← 測試策略與品質準則
-├── 05-security.md             ← 安全性編碼準則
-├── 06-git.md                  ← Git 工作流程與 Commit 規範（含 AI 輔助 commit 工具）
-├── specify-rules.md           ← Spec-Kit (SDD) 工作流程規則模板（Mode A）
-├── opsx-rules.md              ← OpenSpec (OPSX) 工作流程規則模板（Mode B）
-├── languages/
-│   ├── typescript.md          ← TypeScript / JavaScript 特定準則
-│   ├── python.md              ← Python 特定準則
-│   ├── php.md                 ← PHP (Laravel) 特定準則
-│   └── sql.md                 ← SQL / 資料庫查詢準則
-└── tools/
-    ├── container.md           ← Docker / Podman 容器化準則（雙工具支援）
-    └── linting.md             ← Linting & Formatting 工具設定準則
+┌─────────────────────────────────────────────────────────┐
+│  Memory（全域記憶）                                       │
+│  global_rules.md → 核心摘要，所有專案自動載入               │
+├─────────────────────────────────────────────────────────┤
+│  Rules（規則文件，每個 ≤12000 chars）                      │
+│  ├── Always On：00-core-principles, 01-code-style,      │
+│  │              03-ai-tools                             │
+│  ├── Model Decision：02-workflow, 04-testing,           │
+│  │                   05-security, 06-git, tools/*       │
+│  ├── Glob：languages/* (*.py, *.ts, *.php, *.sql)       │
+│  └── Manual：opsx-rules, specify-rules                  │
+├─────────────────────────────────────────────────────────┤
+│  Workflows（/slash-command）& Skills（@skill-name）       │
+│  ├── /git-commit, /opsx-*, /speckit.*                   │
+│  └── @git-commit-generator, @webapp-testing             │
+└─────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 工作流程模式快速導覽
+## 目錄結構與 Windsurf 分類
 
-| 模式 | 適用場景 | 核心指令 | 詳見 |
-|------|---------|---------|------|
-| **Spec-Kit (SDD)** | 正式專案、需求明確、團隊協作 | `/speckit.*` | `02-workflow.md` |
-| **OpenSpec (OPSX)** | AI 驅動、快速迭代、結構化且靈活 | `/opsx-*` | `02-workflow.md` |
-| **Vibe Coding** | 探索原型、個人 POC、學習實作 | 無特定指令 | `02-workflow.md` |
+### Memory（全域記憶）
 
-> 所有模式均遵循通用準則（分支策略、PR 規範、Code Review、Conventional Commits）。
+| 檔案 | 說明 | 部署位置 |
+|------|------|---------|
+| `global_rules.md` | 所有規則的核心摘要（6.8K chars） | `~/.codeium/windsurf/memories/global_rules.md` |
+
+### Rules（補充規則）
+
+| 檔案 | 啟用模式 | 說明 | chars |
+|------|---------|------|-------|
+| `00-core-principles.md` | Always On | Nine Articles、SOLID、Clean Architecture 完整範例 | 7.7K |
+| `01-code-style.md` | Always On | 命名、格式、錯誤處理完整範例 | 7.3K |
+| `02-workflow.md` | Model Decision | Vibe Coding、分支策略、PR、Code Review | 6.3K |
+| `03-ai-tools.md` | Always On | 提示工程、場景分類、Windsurf 特定準則 | 5.8K |
+| `04-testing.md` | Model Decision | TDD 完整範例、整合測試、契約測試 | 9.0K |
+| `05-security.md` | Model Decision | OWASP Top 10 完整範例 | 8.3K |
+| `06-git.md` | Model Decision | Conventional Commits 完整範例、Rebase、Hooks | 8.8K |
+| `opsx-rules.md` | Manual | OpenSpec (OPSX) 工作流程規則 | 4.3K |
+| `specify-rules.md` | Manual | Spec-Kit (SDD) 工作流程規則 | 5.3K |
+| `languages/typescript.md` | Glob: `*.ts,*.tsx,*.js,*.jsx` | TypeScript/JavaScript 特定準則 | 8.0K |
+| `languages/python.md` | Glob: `*.py` | Python 特定準則 | 7.6K |
+| `languages/php.md` | Glob: `*.php` | PHP (Laravel) 特定準則 | 8.3K |
+| `languages/sql.md` | Glob: `*.sql` | SQL / 資料庫查詢準則 | 7.7K |
+| `tools/container.md` | Model Decision | Docker / Podman 容器化準則 | 9.8K |
+| `tools/linting.md` | Model Decision | Linting & Formatting 工具設定 | 8.3K |
+
+### 啟用模式說明
+
+| 模式 | 行為 |
+|------|------|
+| **Always On** | 每次對話自動載入 |
+| **Model Decision** | AI 依任務內容判斷是否載入（需撰寫觸發描述） |
+| **Glob** | 當操作的檔案符合 glob pattern 時自動載入 |
+| **Manual** | 使用者在 Cascade 中 `@規則名稱` 手動啟用 |
+
+---
+
+## 部署指南
+
+將 `temp-rules/` 內容部署至 Windsurf 正式位置：
+
+```bash
+# 1. 部署 Memory（全域記憶）
+cp temp-rules/global_rules.md ~/.codeium/windsurf/memories/global_rules.md
+
+# 2. 部署 Rules（補充規則）至專案 .windsurf/rules/
+#    或全域 ~/.codeium/windsurf/rules/
+TARGET=~/.codeium/windsurf/rules   # 全域
+# TARGET=.windsurf/rules           # 專案級
+
+mkdir -p "$TARGET/languages" "$TARGET/tools"
+cp temp-rules/0*.md temp-rules/opsx-rules.md temp-rules/specify-rules.md "$TARGET/"
+cp temp-rules/languages/*.md "$TARGET/languages/"
+cp temp-rules/tools/*.md "$TARGET/tools/"
+
+# 3. Workflows 和 Skills 已由 OpenSpec/Spec-Kit init 自動建立
+#    /git-commit → ~/.codeium/windsurf/global_workflows/git-commit.md（已存在）
+#    @git-commit-generator → ~/.codeium/windsurf/skills/git-commit-generator/（已存在）
+```
+
+> **注意**：部署後需在 Windsurf Customizations 面板中設定各規則的啟用模式。
+
+---
+
+## 工作流程模式
+
+| 模式 | 適用場景 | 核心指令 | 規則文件 |
+|------|---------|---------|---------|
+| **Spec-Kit (SDD)** | 正式專案、多人協作 | `/speckit.*` | `@specify-rules` |
+| **OpenSpec (OPSX)** | AI 驅動、快速迭代 | `/opsx-*` | `@opsx-rules` |
+| **Vibe Coding** | 探索/原型/POC | 無 | `02-workflow.md` |
 
 ---
 
@@ -50,73 +113,47 @@ temp-rules/
 使用者即時指示  >  本規則集  >  框架預設慣例  >  語言標準
 ```
 
-當規則間產生衝突時，遵循上方優先級。所有規則均允許在有充分技術理由時例外，但必須在 `plan.md` 的 Complexity Tracking 中文件化。
-
 ---
 
 ## 設計哲學
 
-本規則集基於四大核心哲學，源自 GitHub Spec-Kit 的 Constitutional Foundation：
-
 | 哲學 | 意涵 |
 |------|------|
-| **Observability over Opacity** | 一切必須可被觀察與驗證；透過 CLI 介面暴露功能 |
-| **Simplicity over Cleverness** | 先求簡單，僅在證明有必要時才增加複雜度 |
-| **Integration over Isolation** | 在真實環境中測試，而非人工隔離環境 |
-| **Modularity over Monoliths** | 每個功能都是具備清晰邊界的模組 |
+| **Observability over Opacity** | 一切可觀察可驗證；透過介面暴露功能 |
+| **Simplicity over Cleverness** | 先求簡單，僅在必要時增加複雜度 |
+| **Integration over Isolation** | 真實環境測試，而非人工隔離 |
+| **Modularity over Monoliths** | 每個功能具備清晰邊界 |
 
 ---
 
 ## 快速參考
 
-### 必須遵循（Non-Negotiable）
+### Non-Negotiable
 
-- [ ] SOLID 原則 — 詳見 `00-core-principles.md`
-- [ ] 測試先行（Test-First）— 詳見 `04-testing.md`
-- [ ] 函式不超過 50 行，檔案不超過 500 行 — 詳見 `01-code-style.md`
-- [ ] 所有敏感資訊使用環境變數 — 詳見 `05-security.md`
-- [ ] Conventional Commits 格式 — 詳見 `06-git.md`
+- SOLID 原則（`00-core-principles.md`）
+- 測試先行 TDD（`04-testing.md`）
+- 函式 ≤50 行、檔案 ≤500 行（`01-code-style.md`）
+- 敏感資訊使用環境變數（`05-security.md`）
+- Conventional Commits（`06-git.md`）
 
-### AI 工具快速索引
+### 常用指令
 
-| 需求 | 工具 / 指令 |
-|------|------------|
-| 生成 commit message | `/git-commit` 或 `git-commit-generator` skill |
+| 需求 | 指令 |
+|------|------|
+| 生成 commit message | `/git-commit` |
 | 開始新功能（OPSX） | `/opsx-new` 或 `/opsx-ff` |
-| 繼續開發（OPSX） | `/opsx-apply` |
-| 驗證實作（OPSX） | `/opsx-verify` |
+| 執行任務（OPSX） | `/opsx-apply` |
+| 驗證（OPSX） | `/opsx-verify` |
 | 探索想法 | `/opsx-explore` |
-
-### Code Review 快速清單
-
-- [ ] 遵循 SOLID 原則？
-- [ ] 是否符合 MVP 範圍（無過度設計）？
-- [ ] 有適當測試覆蓋？
-- [ ] 命名清晰、無魔法數字？
-- [ ] 錯誤處理完善？
-- [ ] 無硬編碼的敏感資訊？
-- [ ] Linting 全部通過？
-
----
-
-## 工具一覽
-
-| 工具類型 | 選項 | 說明 |
-|---------|------|------|
-| **容器化** | Docker / Podman | 指令高度相容，詳見 `tools/container.md` |
-| **Commit 生成** | `/git-commit` workflow | 自動分析 staged changes，輸出英文 |
-| **Workflow** | Spec-Kit / OPSX | 依專案性質選擇，詳見 `02-workflow.md` |
+| 需求規格（SDD） | `/speckit.specify` |
+| 實作（SDD） | `/speckit.implement` |
 
 ---
 
 ## 參考來源
 
-- [GitHub Spec-Kit: Spec-Driven Development](https://github.com/github/spec-kit/blob/main/spec-driven.md)
+- [GitHub Spec-Kit](https://github.com/github/spec-kit/blob/main/spec-driven.md)
 - [Fission-AI OpenSpec](https://github.com/Fission-AI/OpenSpec)
 - [Google Engineering Practices](https://google.github.io/eng-practices/)
-- [Meta Engineering Blog](https://engineering.fb.com/)
-- [OpenAI Prompt Engineering Guide](https://platform.openai.com/docs/guides/prompt-engineering)
-- [Anthropic Model Spec](https://www.anthropic.com/news/claude-s-constitution)
-- [Cursor Rules Community](https://cursor.directory/)
-- [Windsurf Documentation](https://docs.codeium.com/windsurf)
-- [Podman Documentation](https://docs.podman.io/)
+- [Windsurf Documentation](https://docs.windsurf.com/)
+- [Conventional Commits](https://www.conventionalcommits.org/)

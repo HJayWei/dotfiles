@@ -1,6 +1,8 @@
-# 01 · 通用程式碼風格與格式規範
+# 01 · 通用程式碼風格與格式規範（補充規則）
 
-> 語言特定規則詳見 `languages/` 目錄。本文件定義跨語言的通用準則。
+> **本文件為 `global_rules.md` 的詳細補充**。核心命名與格式規則已提取至全域規則，此處提供完整範例。
+>
+> 語言特定規則詳見 `languages/` 目錄。
 >
 > 參考來源：Google Style Guides、Airbnb Style Guide、Microsoft TypeScript Guidelines
 

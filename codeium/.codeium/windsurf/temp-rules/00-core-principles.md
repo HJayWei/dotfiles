@@ -1,5 +1,7 @@
-# 00 · 核心架構原則
+# 00 · 核心架構原則（補充規則）
 
+> **本文件為 `global_rules.md` 的詳細補充**。核心摘要已提取至全域規則，此處提供完整範例與實踐要求。
+>
 > **權威性**: 本文件優先於所有其他開發慣例。任何違反須在 `plan.md` Complexity Tracking 中文件化。
 >
 > 來源：GitHub Spec-Kit（Nine Articles of Development）、Clean Architecture、SOLID
