@@ -21,11 +21,14 @@
 │  │              03-ai-tools                             │
 │  ├── Model Decision：02-workflow, 04-testing,           │
 │  │     05-security, 06-git, tool-container, tool-linting│
-│  ├── Glob：lang-* (*.py, *.ts, *.php, *.sql)            │
+│  ├── Glob：lang-* (*.py, *.ts, *.php, *.sql, *.go,    │
+│  │         *.swift, *.rs, *.vue)                        │
 │  └── Manual：opsx-rules, specify-rules                  │
 ├─────────────────────────────────────────────────────────┤
 │  Workflows（/slash-command）& Skills（@skill-name）       │
-│  ├── /git-commit, /opsx-*, /speckit.*                   │
+│  ├── /git-commit, /plan, /tdd, /build-fix, /verify,    │
+│  │   /refactor-clean, /test-coverage, /built-in-review  │
+│  ├── /opsx-*, /speckit.*                                │
 │  └── @git-commit-generator, @webapp-testing             │
 └─────────────────────────────────────────────────────────┘
 ```
@@ -59,6 +62,10 @@
 | `lang-python.md` | Glob: `**/*.py` | Python 特定準則 |
 | `lang-php.md` | Glob: `**/*.php` | PHP (Laravel) 特定準則 |
 | `lang-sql.md` | Glob: `**/*.sql` | SQL / 資料庫查詢準則 |
+| `lang-golang.md` | Glob: `**/*.go, **/go.mod, **/go.sum` | Go 特定準則 |
+| `lang-swift.md` | Glob: `**/*.swift, **/Package.swift` | Swift 特定準則 |
+| `lang-rust.md` | Glob: `**/*.rs, **/Cargo.toml, **/Cargo.lock` | Rust 特定準則 |
+| `lang-vue.md` | Glob: `**/*.vue, **/*.ts, **/*.js` | Vue.js 特定準則 |
 | `tool-container.md` | Model Decision | Docker / Podman 容器化準則 |
 | `tool-linting.md` | Model Decision | Linting & Formatting 工具設定 |
 
@@ -119,6 +126,13 @@
 | 需求 | 指令 |
 |------|------|
 | 生成 commit message | `/git-commit` |
+| 實作規劃（確認才動手）| `/plan` |
+| TDD 開發循環 | `/tdd` |
+| 修復建置錯誤 | `/build-fix` |
+| 全面驗證 | `/verify` |
+| 清除 dead code | `/refactor-clean` |
+| 覆蓋率分析與補齊 | `/test-coverage` |
+| 程式碼審查 | `/built-in-review` |
 | 開始新功能（OPSX） | `/opsx-new` 或 `/opsx-ff` |
 | 執行任務（OPSX） | `/opsx-apply` |
 | 驗證（OPSX） | `/opsx-verify` |

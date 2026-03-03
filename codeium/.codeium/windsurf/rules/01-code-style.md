@@ -6,7 +6,7 @@ trigger: always_on
 
 > 本文件定義跨語言的通用程式碼風格與格式規範完整範例。
 >
-> 語言特定規則詳見 `lang-typescript.md`、`lang-python.md`、`lang-php.md`、`lang-sql.md`。
+> 語言特定規則詳見 `lang-typescript.md`、`lang-python.md`、`lang-php.md`、`lang-sql.md`、`lang-golang.md`、`lang-swift.md`、`lang-rust.md`、`lang-vue.md`。
 >
 > 參考來源：Google Style Guides、Airbnb Style Guide、Microsoft TypeScript Guidelines
 
@@ -275,6 +275,82 @@ const [user, orders] = await Promise.all([
   orderRepository.findByUserId(userId),
 ]);
 ```
+
+---
+
+## 不可變性（Immutability）
+
+### 原則
+
+優先建立新物件，避免直接修改既有物件。不可變性降低副作用、提升可預測性與並行安全性。
+
+### 語言對應實踐
+
+| 語言 | 不可變宣告 | 不可變資料結構 |
+|------|-----------|---------------|
+| TypeScript | `const`, `readonly`, `as const` | `Readonly<T>`, `ReadonlyArray<T>` |
+| Python | 慣例（無強制）| `tuple`, `frozenset`, `@dataclass(frozen=True)` |
+| Swift | `let`, `struct` | 值型別預設不可變 |
+| Rust | 預設不可變 | `let`（需 `mut` 才可變） |
+| Go | 無語言層面強制 | 回傳新結構而非修改原結構 |
+
+```typescript
+// ❌ 直接修改物件
+function updateUser(user: User, name: string): User {
+  user.name = name;
+  return user;
+}
+
+// ✅ 建立新物件（spread operator）
+function updateUser(user: User, name: string): User {
+  return { ...user, name };
+}
+
+// ✅ 陣列操作：使用不修改原陣列的方法
+const updated = items.map((item) =>
+  item.id === targetId ? { ...item, status: 'done' } : item,
+);
+```
+
+### 規則
+
+- 變數預設使用 `const`（TS/JS）、`let`（Swift）、`let`（Rust），僅在必要時使用可變宣告
+- 函式應回傳新物件而非修改輸入參數
+- 使用 `readonly` / `Readonly<T>` 標記不應被修改的屬性
+- 陣列操作優先使用 `map` / `filter` / `reduce`，避免 `push` / `splice` 直接修改
+
+---
+
+## 輸入驗證
+
+### 原則
+
+**永遠不信任外部輸入**。所有來自使用者、API、外部服務的資料必須在系統邊界處驗證。
+
+```typescript
+// ✅ 使用 schema 驗證（zod 範例）
+import { z } from 'zod';
+
+const CreateUserSchema = z.object({
+  name: z.string().min(1).max(100),
+  email: z.string().email(),
+  age: z.number().int().min(0).max(150),
+});
+
+type CreateUserInput = z.infer<typeof CreateUserSchema>;
+
+function createUser(raw: unknown): Promise<User> {
+  const input = CreateUserSchema.parse(raw); // 驗證失敗會拋出 ZodError
+  return userService.create(input);
+}
+```
+
+### 規則
+
+- 在系統邊界（API handler、CLI 輸入、外部 webhook）驗證所有輸入
+- 使用 schema-based 驗證庫（zod、joi、Pydantic、Laravel Form Request）
+- 驗證失敗時快速失敗，提供清楚的錯誤訊息
+- 禁止信任前端驗證 — 後端必須獨立驗證
 
 ---
 
