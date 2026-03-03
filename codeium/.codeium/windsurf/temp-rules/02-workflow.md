@@ -1,12 +1,32 @@
-# 02 · 開發工作流程（Spec-Driven Development）
+# 02 · 開發工作流程（可選模式）
 
-> 基於 GitHub Spec-Kit 的 Specification-Driven Development (SDD) 方法論，整合 AI 輔助開發最佳實踐。
+> 支援三種工作流程模式，依專案性質與開發階段選擇適合的方式。所有模式均遵循通用準則（分支策略、PR 規範、Code Review）。
 >
-> 參考來源：GitHub Spec-Kit、Google Engineering Practices、Meta Engineering、Agile/Scrum Best Practices
+> 參考來源：GitHub Spec-Kit、Fission-AI OpenSpec、Google Engineering Practices、Agile/Scrum Best Practices
 
 ---
 
-## SDD 核心思想
+## 工作流程模式選擇
+
+| 模式 | 適用場景 | 主要工具 |
+|------|---------|----------|
+| **[A] Spec-Kit (SDD)** | 正式專案、需求明確、團隊協作 | [GitHub Spec-Kit](https://github.com/github/spec-kit) |
+| **[B] OpenSpec (OPSX)** | AI 輔助驅動、快速迭代、結構化且靈活 | [Fission-AI OpenSpec](https://github.com/Fission-AI/OpenSpec) |
+| **[C] Vibe Coding** | 探索性開發、個人原型、快速驗證想法 | 無特定工具 |
+
+**選擇指引**：
+- 有正式需求規格、多人協作 → Mode A
+- 使用 Windsurf OPSX workflow、AI 驅動迭代 → Mode B
+- 快速原型、個人探索、POC → Mode C
+- 所有模式均遵循下方「通用準則」（分支策略、PR、Code Review）
+
+---
+
+## Mode A：Spec-Kit（Specification-Driven Development）
+
+> 基於 GitHub Spec-Kit 的 SDD 方法論，規格是第一公民，程式碼是其表達式。
+
+### SDD 核心思想
 
 **規格（Specification）是第一公民，程式碼是其表達式。**
 
@@ -22,9 +42,9 @@ SDD 開發：想法 → 規格化 → 計畫 → 任務 → 實作 → 驗證
 
 ---
 
-## 五階段開發流程
+### 五階段開發流程
 
-### Phase 1 · 需求規格（`/speckit.specify`）
+#### Phase 1 · 需求規格（`/speckit.specify`）
 
 **輸出物**: `specs/{feature-name}/spec.md`
 
@@ -55,7 +75,7 @@ SDD 開發：想法 → 規格化 → 計畫 → 任務 → 實作 → 驗證
 
 ---
 
-### Phase 2 · 實作規劃（`/speckit.plan`）
+#### Phase 2 · 實作規劃（`/speckit.plan`）
 
 **輸出物**: `specs/{feature-name}/plan.md`
 
@@ -84,7 +104,7 @@ SDD 開發：想法 → 規格化 → 計畫 → 任務 → 實作 → 驗證
 
 ---
 
-### Phase 3 · 任務拆解（`/speckit.tasks`）
+#### Phase 3 · 任務拆解（`/speckit.tasks`）
 
 **輸出物**: `specs/{feature-name}/tasks.md`
 
@@ -117,7 +137,7 @@ Setup → Infrastructure → Domain Layer → Service Layer → API Layer → Fr
 
 ---
 
-### Phase 4 · 實作（`/speckit.implement`）
+#### Phase 4 · 實作（`/speckit.implement`）
 
 **實作紀律**:
 1. 嚴格按任務順序：P1 完成並驗證後，才能進行 P2
@@ -139,7 +159,7 @@ Setup → Infrastructure → Domain Layer → Service Layer → API Layer → Fr
 
 ---
 
-### Phase 5 · 品質驗證（`/speckit.analyze`）
+#### Phase 5 · 品質驗證（`/speckit.analyze`）
 
 **執行跨文件一致性檢查**:
 - [ ] `spec.md` 的需求是否全部在 `tasks.md` 中有對應任務？
@@ -150,7 +170,68 @@ Setup → Infrastructure → Domain Layer → Service Layer → API Layer → Fr
 
 ---
 
-## 分支策略（Git Flow 簡化版）
+## Mode B：OpenSpec（OPSX）
+
+> 適用工具：[Fission-AI OpenSpec](https://github.com/Fission-AI/OpenSpec)，透過結構化 Artifact 引導 AI 輔助開發，比 Spec-Kit 更輕量、更彈性。
+
+### OPSX 開發流程
+
+```
+探索想法 → 建立變更 → 生成 Artifacts → 執行實作 → 驗證 → 歸檔
+```
+
+### 常用指令
+
+| 指令 | 用途 |
+|------|------|
+| `/opsx-explore` | 探索模式：思考問題、釐清需求（開始前使用）|
+| `/opsx-new` | 建立新變更，逐步引導建立所有 Artifacts |
+| `/opsx-ff` | Fast-forward：一次生成所有 Artifacts（快速啟動）|
+| `/opsx-continue` | 繼續目前變更，建立下一個 Artifact |
+| `/opsx-apply` | 根據 Artifacts 執行實作任務 |
+| `/opsx-verify` | 驗證實作是否符合 Artifacts 定義 |
+| `/opsx-sync` | 同步 Delta Spec 至主規格 |
+| `/opsx-archive` | 歸檔已完成的變更 |
+
+### OPSX 工作紀律
+
+1. 開始實作前必須先完成 Artifact 建立（至少有 Delta Spec 與任務清單）
+2. 使用 `/opsx-verify` 確認後再執行 `/opsx-archive`
+3. 每個變更範圍控制在單一邏輯功能單元
+4. 變更對應一組有意義的 Conventional Commits
+
+---
+
+## Mode C：Vibe Coding（探索式開發）
+
+> 適用場景：個人專案原型、技術探索、快速 POC、學習性實作。快速移動，但保持最低限度的紀律。
+
+### 精簡工作流程
+
+```
+想法 → 直接實作 → 驗證可行性 → （若需轉正式）補寫規格
+```
+
+### 最低要求（即使 Vibe Coding 也不可省略）
+
+- [ ] 使用 Conventional Commits 格式提交（詳見 `06-git.md`）
+- [ ] 不提交含有敏感資訊的程式碼（API Key、密碼等）
+- [ ] 基本的錯誤處理，避免靜默失敗
+- [ ] 若確定轉為正式專案，補寫 `spec.md` 並切換至 Mode A 或 B
+
+### 升級路徑
+
+| 階段 | 動作 |
+|------|------|
+| POC 成功，要轉正式專案 | 補寫 spec.md，切換至 Mode A 或 B |
+| 探索中，需要他人協作 | 整理程式結構，補充基本文件 |
+| 純個人使用，不轉正式 | 維持 Vibe Coding 即可 |
+
+---
+
+## 通用準則（所有模式適用）
+
+### 分支策略（Git Flow 簡化版）
 
 ```
 main          ← 生產環境，隨時可部署
@@ -174,7 +255,7 @@ chore/update-dependencies
 
 ---
 
-## Pull Request 規範
+### Pull Request 規範
 
 ### PR 標題格式
 
@@ -223,9 +304,9 @@ fix(order): 修正訂單金額計算精度問題
 
 ---
 
-## Code Review 準則
+### Code Review 準則
 
-### Reviewer 職責
+#### Reviewer 職責
 
 **必須檢查**:
 - [ ] 邏輯正確性（業務邏輯是否符合需求）
@@ -236,7 +317,7 @@ fix(order): 修正訂單金額計算精度問題
 
 **不應該**: 強制個人風格偏好（已由 Linting 工具處理）
 
-### 意見格式
+#### 意見格式
 
 使用標準前綴讓意見意圖清晰：
 ```
@@ -253,7 +334,7 @@ fix(order): 修正訂單金額計算精度問題
 [praise] 這個錯誤處理設計非常清晰！
 ```
 
-### 回應時限
+#### 回應時限
 
 | 優先級 | 首次回應 | 完成 Review |
 |--------|---------|------------|
@@ -263,7 +344,7 @@ fix(order): 修正訂單金額計算精度問題
 
 ---
 
-## 環境管理
+### 環境管理
 
 ```
 本地開發 (local) → 整合測試 (staging) → 生產環境 (production)

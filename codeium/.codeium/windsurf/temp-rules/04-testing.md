@@ -302,3 +302,22 @@ test:
 | **寫了測試但不運行** | 失去信心保障 | CI 強制執行測試 |
 | **一個測試驗證多個行為** | 失敗時難以定位問題 | 每個測試只驗證一件事 |
 | **使用 `sleep()` 等待** | 測試不穩定（flaky） | 使用確定性的等待機制 |
+
+---
+
+## Web App E2E 測試工具
+
+Web 應用程式的前端 E2E 測試可使用 **`webapp-testing` skill**（基於 Python Playwright），透過 Windsurf 呼叫 skill 進行 UI 驗證、截圖、Console Log 擷取。
+
+**適用場景**：
+- 驗證前端 UI 功能與互動行為
+- 除錯動態頁面渲染問題
+- 擷取瀏覽器截圖作為測試證據
+
+**使用方式**：
+```bash
+# 使用 helper script 啟動 server 並執行自動化測試
+python scripts/with_server.py --server "npm run dev" --port 5173 -- python your_automation.py
+```
+
+> 詳細使用方式請參考 `webapp-testing` skill 文件，首次使用請先執行 `--help` 查看參數。

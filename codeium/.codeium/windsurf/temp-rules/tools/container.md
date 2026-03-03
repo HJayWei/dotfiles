@@ -1,8 +1,38 @@
-# Docker / 容器化開發準則
+# Docker / Podman 容器化開發準則
 
-> 適用於本地開發環境、CI/CD Pipeline、以及 Kubernetes 部署。
+> 適用於本地開發環境、CI/CD Pipeline、以及 Kubernetes 部署。支援 Docker 與 Podman 雙工具。
 >
-> 參考來源：Docker 官方最佳實踐、Google Container Best Practices、Meta 容器化指引
+> 參考來源：Docker 官方最佳實踐、Podman 官方文件、Google Container Best Practices、Meta 容器化指引
+
+---
+
+## 工具選擇
+
+| 項目 | Docker | Podman |
+|------|--------|--------|
+| **架構** | Daemon-based | Daemonless，無需 root |
+| **安全性** | 需 root daemon | 原生 rootless 支援 |
+| **Compose 工具** | `docker compose` | `podman-compose` 或 `podman kube` |
+| **macOS 本地開發** | Docker Desktop | Podman Desktop / podman-machine |
+| **CI/CD** | 廣泛支援 | 公司環境限制時適用 |
+| **Kubernetes 相容性** | 退出 OCI 標準 | 原生 OCI，支援 `podman generate kube` |
+
+**選擇建議**：
+- 將 `docker` 與 `podman` 視為可互換指令（Podman 支援 `alias docker=podman`）
+- 小型 / CI 環境限制：Podman rootless 更安全
+- 開發團隊已統一使用 Docker Desktop：繼續使用 Docker
+
+### 基礎映像 / OS 選擇
+
+| 用途 | 優先選擇 | 次選 | 判斷依據 |
+|------|---------|------|---------|
+| **Container 映像** | Alpine / Debian (slim) | Arch | 映像大小優先；Alpine 極輕量，Debian slim 套件生態完整 |
+| **VM 部署環境** | Debian | Alpine / Arch | 穩定性與套件支援優先；長期維運首選 Debian |
+
+**選擇原則**：主要判斷開發時所需套件是否能良好支援該系統。
+- **Alpine**：極小映像（~5MB），適合 Container；但 musl libc 可能導致部分套件不相容
+- **Debian (slim)**：套件生態最完整，glibc 相容性最佳；VM 與 Container 均適用
+- **Arch**：滾動更新，套件最新；適合需要最新版套件的場景，但穩定性風險較高
 
 ---
 
@@ -303,6 +333,8 @@ services:
 
 ## 本地開發常用指令
 
+### Docker 指令
+
 ```bash
 # 啟動所有服務
 docker compose up -d
@@ -324,6 +356,57 @@ docker stats
 
 # 檢查映像層大小
 docker history myapp:latest
+
+# 建置映像
+docker build -t myapp:latest .
+
+# 加入 BuildKit 快取（加速建置）
+DOCKER_BUILDKIT=1 docker build -t myapp:latest .
+```
+
+### Podman 指令
+
+Podman CLI 與 Docker 高度相容，大多數情況可直接用 `podman` 取代 `docker`：
+
+```bash
+# 建議設定 alias（加入 ~/.zshrc 或 ~/.bashrc）
+alias docker=podman
+alias docker-compose=podman-compose
+
+# 建置映像
+podman build -t myapp:latest .
+
+# 啟動容器（rootless）
+podman run -d -p 3000:3000 myapp:latest
+
+# 使用 podman-compose
+podman-compose up -d
+podman-compose logs -f app
+podman-compose down -v
+
+# 過渡工具：從 Dockerfile 生成 Kubernetes YAML
+podman generate kube myapp-container > deployment.yaml
+
+# 查看容器資源
+podman stats
+
+# 清理未使用資源
+podman system prune
+```
+
+### Podman Machine（macOS 本地開發）
+
+```bash
+# 建立並啟動 Podman machine
+podman machine init
+podman machine start
+
+# 查看狀態
+podman machine list
+podman machine inspect
+
+# 停止
+podman machine stop
 ```
 
 ---

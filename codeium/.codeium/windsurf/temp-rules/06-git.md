@@ -48,20 +48,29 @@ docs(readme):      ← README 文件
 
 ### Description（描述）規則
 
-- **正體中文**（技術術語除外）
-- **動詞開頭**（新增、修正、移除、更新、重構、改善）
+- **語言選擇**：依專案性質決定
+  - 中文專案 / 個人專案：**正體中文**（技術術語除外）
+  - 開源專案 / 國際團隊 / 使用 `/git-commit` 自動生成：**英文**
+- **動詞開頭**
+  - 中文：新增、修正、移除、更新、重構、改善
+  - 英文：add, fix, remove, update, refactor, improve（imperative mood）
 - **不超過 72 字元**（含 type 和 scope）
 - **不加句點結尾**
 
 ```
-// ✅ 正確
+// ✅ 正確（中文專案）
 feat(auth): 新增使用者 Google OAuth 登入功能
 fix(payment): 修正台幣金額四捨五入計算錯誤
 refactor(user): 提取使用者驗證邏輯至 UserValidator 類別
 
+// ✅ 正確（開源專案 / 自動生成）
+feat(auth): add Google OAuth login support
+fix(payment): fix TWD amount rounding calculation
+refactor(user): extract validation logic to UserValidator
+
 // ❌ 錯誤
 feat: 我做了一些更改
-fix: fixed a bug.    ← 加了句點、英文、不具體
+fix: fixed a bug.    ← 加了句點、不具體
 update stuff         ← 缺少 type
 ```
 
@@ -280,6 +289,31 @@ logs/
 .env.example        ← 列出所有必要的 env key（值為佔位符）
 .vscode/extensions.json  ← 推薦的 VS Code 擴充套件（團隊共用）
 ```
+
+---
+
+## AI 輔助 Commit Message 生成
+
+透過以下工具自動分析 staged changes 並生成 Conventional Commits 格式的 commit message（生成結果為英文）：
+
+**Windsurf Workflow**：輸入 `/git-commit` 啟動，定義於 `global_workflows/git-commit.md`
+
+**Skill**：`git-commit-generator`，AI 會分析目前 staged changes 與對話上下文，提供 2–3 種 commit message 選項
+
+**使用流程**：
+```bash
+# 1. 暂存變更
+git add <files>
+
+# 2. 輸入指令以 AI 生成 commit message
+# Windsurf: /git-commit
+# 或呼叫 git-commit-generator skill
+
+# 3. 選擇合適的 message 後執行
+git commit -m "<選擇的 message>"
+```
+
+> **注意**：自動生成的 commit message 為英文；若專案想要中文 commit，不要使用 AI 自動生成，手動撰寫即可。
 
 ---
 

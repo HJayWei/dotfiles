@@ -2,7 +2,7 @@
 
 > 整合自 spec-driven.md、企業工程憲章、及 Claude / Google / Meta / OpenAI / Cursor / Windsurf 資深工程師的最佳實踐。
 >
-> **版本**: 1.0.0 | **建立**: 2026-02-27 | **語言**: 正體中文（技術術語除外）
+> **版本**: 1.1.0 | **更新**: 2026-03-03 | **語言**: 正體中文（技術術語除外）
 
 ---
 
@@ -13,20 +13,34 @@ temp-rules/
 ├── README.md                  ← 本檔案：目錄總覽
 ├── 00-core-principles.md      ← 核心架構原則（Clean Architecture、SOLID、SDD）
 ├── 01-code-style.md           ← 通用程式碼風格與格式規範
-├── 02-workflow.md             ← 開發工作流程（Spec-Driven Development）
+├── 02-workflow.md             ← 開發工作流程（可選模式：Spec-Kit / OPSX / Vibe Coding）
 ├── 03-ai-tools.md             ← AI 工具使用準則（Cascade / Cursor / Windsurf）
 ├── 04-testing.md              ← 測試策略與品質準則
 ├── 05-security.md             ← 安全性編碼準則
-├── 06-git.md                  ← Git 工作流程與 Commit 規範
+├── 06-git.md                  ← Git 工作流程與 Commit 規範（含 AI 輔助 commit 工具）
+├── specify-rules.md           ← Spec-Kit (SDD) 工作流程規則模板（Mode A）
+├── opsx-rules.md              ← OpenSpec (OPSX) 工作流程規則模板（Mode B）
 ├── languages/
 │   ├── typescript.md          ← TypeScript / JavaScript 特定準則
 │   ├── python.md              ← Python 特定準則
 │   ├── php.md                 ← PHP (Laravel) 特定準則
 │   └── sql.md                 ← SQL / 資料庫查詢準則
 └── tools/
-    ├── docker.md              ← Docker / 容器化準則
+    ├── container.md           ← Docker / Podman 容器化準則（雙工具支援）
     └── linting.md             ← Linting & Formatting 工具設定準則
 ```
+
+---
+
+## 工作流程模式快速導覽
+
+| 模式 | 適用場景 | 核心指令 | 詳見 |
+|------|---------|---------|------|
+| **Spec-Kit (SDD)** | 正式專案、需求明確、團隊協作 | `/speckit.*` | `02-workflow.md` |
+| **OpenSpec (OPSX)** | AI 驅動、快速迭代、結構化且靈活 | `/opsx-*` | `02-workflow.md` |
+| **Vibe Coding** | 探索原型、個人 POC、學習實作 | 無特定指令 | `02-workflow.md` |
+
+> 所有模式均遵循通用準則（分支策略、PR 規範、Code Review、Conventional Commits）。
 
 ---
 
@@ -63,6 +77,16 @@ temp-rules/
 - [ ] 所有敏感資訊使用環境變數 — 詳見 `05-security.md`
 - [ ] Conventional Commits 格式 — 詳見 `06-git.md`
 
+### AI 工具快速索引
+
+| 需求 | 工具 / 指令 |
+|------|------------|
+| 生成 commit message | `/git-commit` 或 `git-commit-generator` skill |
+| 開始新功能（OPSX） | `/opsx-new` 或 `/opsx-ff` |
+| 繼續開發（OPSX） | `/opsx-apply` |
+| 驗證實作（OPSX） | `/opsx-verify` |
+| 探索想法 | `/opsx-explore` |
+
 ### Code Review 快速清單
 
 - [ ] 遵循 SOLID 原則？
@@ -75,12 +99,24 @@ temp-rules/
 
 ---
 
+## 工具一覽
+
+| 工具類型 | 選項 | 說明 |
+|---------|------|------|
+| **容器化** | Docker / Podman | 指令高度相容，詳見 `tools/container.md` |
+| **Commit 生成** | `/git-commit` workflow | 自動分析 staged changes，輸出英文 |
+| **Workflow** | Spec-Kit / OPSX | 依專案性質選擇，詳見 `02-workflow.md` |
+
+---
+
 ## 參考來源
 
 - [GitHub Spec-Kit: Spec-Driven Development](https://github.com/github/spec-kit/blob/main/spec-driven.md)
+- [Fission-AI OpenSpec](https://github.com/Fission-AI/OpenSpec)
 - [Google Engineering Practices](https://google.github.io/eng-practices/)
 - [Meta Engineering Blog](https://engineering.fb.com/)
 - [OpenAI Prompt Engineering Guide](https://platform.openai.com/docs/guides/prompt-engineering)
 - [Anthropic Model Spec](https://www.anthropic.com/news/claude-s-constitution)
 - [Cursor Rules Community](https://cursor.directory/)
 - [Windsurf Documentation](https://docs.codeium.com/windsurf)
+- [Podman Documentation](https://docs.podman.io/)

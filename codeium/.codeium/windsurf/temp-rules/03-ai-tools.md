@@ -85,7 +85,8 @@ Windsurf 會讀取 `.windsurf/rules/` 目錄中的規則文件。維護準則：
 ```
 .windsurf/rules/
 ├── global.md          ← 適用所有場景的全域規則
-├── specify-rules.md   ← SDD 工作流程特定規則
+├── specify-rules.md   ← SDD 工作流程特定規則（Mode A）
+├── opsx-rules.md      ← OPSX 工作流程特定規則（Mode B）
 └── {feature}.md       ← 特定功能開發期間的臨時規則
 ```
 
@@ -103,12 +104,30 @@ Windsurf 會讀取 `.windsurf/rules/` 目錄中的規則文件。維護準則：
 
 ### 常用工作流程指令
 
+依選擇的工作流程模式使用對應指令（詳見 `02-workflow.md`）：
+
+**Mode A · Spec-Kit**
 ```
 /speckit.specify    ← 建立功能規格
 /speckit.plan       ← 建立實作計畫
 /speckit.tasks      ← 生成任務清單
 /speckit.implement  ← 執行實作
 /speckit.analyze    ← 一致性分析
+```
+
+**Mode B · OpenSpec (OPSX)**
+```
+/opsx-explore       ← 探索模式（釐清想法）
+/opsx-new           ← 建立新變更
+/opsx-ff            ← 快速生成所有 Artifacts
+/opsx-apply         ← 執行實作任務
+/opsx-verify        ← 驗證實作成果
+/opsx-archive       ← 歸檔已完成變更
+```
+
+**Mode C · Vibe Coding**
+```
+（無特定指令，直接開發；不要忘記 /git-commit 生成 commit message）
 ```
 
 ---
