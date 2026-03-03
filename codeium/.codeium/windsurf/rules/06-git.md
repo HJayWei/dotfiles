@@ -1,6 +1,11 @@
+---
+trigger: model_decision
+description: Applied when creating git commits, managing branches, merging, rebasing, tagging releases, configuring git hooks, or following Conventional Commits format
+---
+
 # 06 · Git 工作流程與 Commit 規範（補充規則）
 
-> **本文件為 `global_rules.md` 的詳細補充**。Conventional Commits 格式、分支策略、版本標籤摘要已提取至全域規則，此處提供完整範例、Rebase 流程、Git Hooks 設定等詳細內容。
+> 本文件定義 Git 工作流程與 Commit 規範，包含 Conventional Commits 完整範例、分支策略、Rebase 流程、Git Hooks 設定等詳細內容。
 >
 > 參考來源：Conventional Commits Specification、Google Engineering Practices、Angular Commit Guidelines
 

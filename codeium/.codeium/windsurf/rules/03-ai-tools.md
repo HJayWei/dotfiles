@@ -1,6 +1,10 @@
+---
+trigger: always_on
+---
+
 # 03 · AI 工具使用準則（補充規則）
 
-> **本文件為 `global_rules.md` 的詳細補充**。AI 使用原則與驗收標準摘要已提取至全域規則，此處提供完整的提示工程、場景分類、Windsurf 特定準則等詳細內容。
+> 本文件定義 AI 工具使用準則，包含提示工程、場景分類、Windsurf 特定準則、驗收標準等詳細內容。
 >
 > 參考來源：Anthropic Model Spec、Windsurf Documentation、OpenAI 提示工程指南
 

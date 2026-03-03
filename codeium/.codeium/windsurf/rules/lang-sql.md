@@ -1,3 +1,8 @@
+---
+trigger: glob
+globs: **/*.sql
+---
+
 # SQL / 資料庫開發準則
 
 > 適用於 PostgreSQL（主要）、MySQL、SQLite 的查詢與 Migration 設計。

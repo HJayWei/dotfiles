@@ -1,3 +1,8 @@
+---
+trigger: glob
+globs: **/*.php
+---
+
 # PHP (Laravel) 開發準則
 
 > 適用於 Laravel 11+ 後端 API 開發。

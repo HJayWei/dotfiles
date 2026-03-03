@@ -2,25 +2,26 @@
 
 > 整合自 spec-driven.md、企業工程憲章、及 Google / Meta / OpenAI / Windsurf 資深工程師的最佳實踐。
 >
-> **版本**: 2.0.0 | **更新**: 2025-07 | **語言**: 正體中文（技術術語除外）
+> **版本**: 2.0.0 | **更新**: 2026-03-03 | **語言**: 正體中文（技術術語除外）
 
 ---
 
 ## 架構概覽
 
-本規則集依 **Windsurf 三層架構**（Memory → Rules → Workflows/Skills）組織：
+本規則集依 **Windsurf 三層架構**（Memory → Rules → Workflows/Skills）組織。
+所有規則檔案為**扁平結構**（Windsurf `.windsurf/rules/` 不支援子目錄）。
 
 ```
 ┌─────────────────────────────────────────────────────────┐
 │  Memory（全域記憶）                                       │
 │  global_rules.md → 核心摘要，所有專案自動載入               │
 ├─────────────────────────────────────────────────────────┤
-│  Rules（規則文件，每個 ≤12000 chars）                      │
+│  Rules（規則文件，每個 ≤12000 chars，扁平放置）             │
 │  ├── Always On：00-core-principles, 01-code-style,      │
 │  │              03-ai-tools                             │
 │  ├── Model Decision：02-workflow, 04-testing,           │
-│  │                   05-security, 06-git, tools/*       │
-│  ├── Glob：languages/* (*.py, *.ts, *.php, *.sql)       │
+│  │     05-security, 06-git, tool-container, tool-linting│
+│  ├── Glob：lang-* (*.py, *.ts, *.php, *.sql)            │
 │  └── Manual：opsx-rules, specify-rules                  │
 ├─────────────────────────────────────────────────────────┤
 │  Workflows（/slash-command）& Skills（@skill-name）       │
@@ -31,7 +32,7 @@
 
 ---
 
-## 目錄結構與 Windsurf 分類
+## 檔案清單與 Windsurf 分類
 
 ### Memory（全域記憶）
 
@@ -41,23 +42,25 @@
 
 ### Rules（補充規則）
 
-| 檔案 | 啟用模式 | 說明 | chars |
-|------|---------|------|-------|
-| `00-core-principles.md` | Always On | Nine Articles、SOLID、Clean Architecture 完整範例 | 7.7K |
-| `01-code-style.md` | Always On | 命名、格式、錯誤處理完整範例 | 7.3K |
-| `02-workflow.md` | Model Decision | Vibe Coding、分支策略、PR、Code Review | 6.3K |
-| `03-ai-tools.md` | Always On | 提示工程、場景分類、Windsurf 特定準則 | 5.8K |
-| `04-testing.md` | Model Decision | TDD 完整範例、整合測試、契約測試 | 9.0K |
-| `05-security.md` | Model Decision | OWASP Top 10 完整範例 | 8.3K |
-| `06-git.md` | Model Decision | Conventional Commits 完整範例、Rebase、Hooks | 8.8K |
-| `opsx-rules.md` | Manual | OpenSpec (OPSX) 工作流程規則 | 4.3K |
-| `specify-rules.md` | Manual | Spec-Kit (SDD) 工作流程規則 | 5.3K |
-| `languages/typescript.md` | Glob: `*.ts,*.tsx,*.js,*.jsx` | TypeScript/JavaScript 特定準則 | 8.0K |
-| `languages/python.md` | Glob: `*.py` | Python 特定準則 | 7.6K |
-| `languages/php.md` | Glob: `*.php` | PHP (Laravel) 特定準則 | 8.3K |
-| `languages/sql.md` | Glob: `*.sql` | SQL / 資料庫查詢準則 | 7.7K |
-| `tools/container.md` | Model Decision | Docker / Podman 容器化準則 | 9.8K |
-| `tools/linting.md` | Model Decision | Linting & Formatting 工具設定 | 8.3K |
+> **注意**：所有檔案必須放在 `.windsurf/rules/` 根目錄下，不可使用子目錄。
+
+| 檔案 | 啟用模式 | 說明 |
+|------|---------|------|
+| `00-core-principles.md` | Always On | Nine Articles、SOLID、Clean Architecture 完整範例 |
+| `01-code-style.md` | Always On | 命名、格式、錯誤處理完整範例 |
+| `02-workflow.md` | Model Decision | Vibe Coding、分支策略、PR、Code Review |
+| `03-ai-tools.md` | Always On | 提示工程、場景分類、Windsurf 特定準則 |
+| `04-testing.md` | Model Decision | TDD 完整範例、整合測試、契約測試 |
+| `05-security.md` | Model Decision | OWASP Top 10 完整範例 |
+| `06-git.md` | Model Decision | Conventional Commits 完整範例、Rebase、Hooks |
+| `opsx-rules.md` | Manual | OpenSpec (OPSX) 工作流程規則 |
+| `specify-rules.md` | Manual | Spec-Kit (SDD) 工作流程規則 |
+| `lang-typescript.md` | Glob: `**/*.ts, **/*.tsx, **/*.js, **/*.jsx` | TypeScript/JavaScript 特定準則 |
+| `lang-python.md` | Glob: `**/*.py` | Python 特定準則 |
+| `lang-php.md` | Glob: `**/*.php` | PHP (Laravel) 特定準則 |
+| `lang-sql.md` | Glob: `**/*.sql` | SQL / 資料庫查詢準則 |
+| `tool-container.md` | Model Decision | Docker / Podman 容器化準則 |
+| `tool-linting.md` | Model Decision | Linting & Formatting 工具設定 |
 
 ### 啟用模式說明
 
@@ -68,32 +71,7 @@
 | **Glob** | 當操作的檔案符合 glob pattern 時自動載入 |
 | **Manual** | 使用者在 Cascade 中 `@規則名稱` 手動啟用 |
 
----
-
-## 部署指南
-
-將 `temp-rules/` 內容部署至 Windsurf 正式位置：
-
-```bash
-# 1. 部署 Memory（全域記憶）
-cp temp-rules/global_rules.md ~/.codeium/windsurf/memories/global_rules.md
-
-# 2. 部署 Rules（補充規則）至專案 .windsurf/rules/
-#    或全域 ~/.codeium/windsurf/rules/
-TARGET=~/.codeium/windsurf/rules   # 全域
-# TARGET=.windsurf/rules           # 專案級
-
-mkdir -p "$TARGET/languages" "$TARGET/tools"
-cp temp-rules/0*.md temp-rules/opsx-rules.md temp-rules/specify-rules.md "$TARGET/"
-cp temp-rules/languages/*.md "$TARGET/languages/"
-cp temp-rules/tools/*.md "$TARGET/tools/"
-
-# 3. Workflows 和 Skills 已由 OpenSpec/Spec-Kit init 自動建立
-#    /git-commit → ~/.codeium/windsurf/global_workflows/git-commit.md（已存在）
-#    @git-commit-generator → ~/.codeium/windsurf/skills/git-commit-generator/（已存在）
-```
-
-> **注意**：部署後需在 Windsurf Customizations 面板中設定各規則的啟用模式。
+> **注意**：啟用模式已透過各檔案的 YAML frontmatter 設定（`trigger: always_on | model_decision | glob | manual`），部署後 Windsurf 會自動讀取。
 
 ---
 

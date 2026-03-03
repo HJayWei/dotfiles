@@ -1,6 +1,11 @@
+---
+trigger: model_decision
+description: Applied when discussing development workflows, branching strategies, PR reviews, code review processes, or selecting between Spec-Kit/OpenSpec/Vibe Coding modes
+---
+
 # 02 · 開發工作流程（補充規則）
 
-> **本文件為 `global_rules.md` 的詳細補充**。模式選擇與通用準則摘要已提取至全域規則，此處提供 Vibe Coding 詳細流程、分支策略、PR 規範、Code Review 等完整內容。
+> 本文件定義三種開發工作流程模式的選擇指引，以及通用準則（Vibe Coding 詳細流程、分支策略、PR 規範、Code Review）。
 >
 > 參考來源：GitHub Spec-Kit、Fission-AI OpenSpec、Google Engineering Practices、Agile/Scrum Best Practices
 

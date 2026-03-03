@@ -1,3 +1,8 @@
+---
+trigger: model_decision
+description: Applied when working with Docker, Podman, containers, Dockerfiles, docker-compose, container orchestration, or deploying containerized applications
+---
+
 # Docker / Podman 容器化開發準則
 
 > 適用於本地開發環境、CI/CD Pipeline、以及 Kubernetes 部署。支援 Docker 與 Podman 雙工具。

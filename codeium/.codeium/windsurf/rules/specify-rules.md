@@ -1,3 +1,7 @@
+---
+trigger: manual
+---
+
 # Spec-Kit (SDD) 工作流程規則（Mode A）
 
 > 此規則檔適用於使用 GitHub Spec-Kit 進行 Specification-Driven Development 的專案。

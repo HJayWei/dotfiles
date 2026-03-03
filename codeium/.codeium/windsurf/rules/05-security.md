@@ -1,6 +1,11 @@
+---
+trigger: model_decision
+description: Applied when implementing authentication, authorization, encryption, input validation, handling secrets, security headers, or reviewing code for OWASP vulnerabilities
+---
+
 # 05 · 安全性編碼準則（補充規則）
 
-> **本文件為 `global_rules.md` 的詳細補充**。安全性核心要點摘要已提取至全域規則，此處提供 OWASP Top 10 完整範例與實踐準則。
+> 本文件定義安全性編碼準則，包含 OWASP Top 10 完整範例、敵感資訊管理、安全 Headers、輸入驗證等實踐準則。
 >
 > 參考來源：OWASP Top 10、Google Security Engineering、Meta Security Best Practices、CWE/SANS Top 25
 

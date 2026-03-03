@@ -1,6 +1,11 @@
+---
+trigger: model_decision
+description: Applied when writing tests, discussing TDD, test coverage, unit/integration/E2E testing strategies, mocking, or test data management
+---
+
 # 04 · 測試策略與品質準則（補充規則）
 
-> **本文件為 `global_rules.md` 的詳細補充**。測試金字塔、覆蓋率目標、TDD 流程摘要已提取至全域規則，此處提供完整範例、整合測試、契約測試、測試資料管理等詳細內容。
+> 本文件定義測試策略與品質準則，包含測試金字塔、TDD 完整範例、整合測試、契約測試、測試資料管理等詳細內容。
 >
 > 參考來源：Google Testing Blog、Meta Engineering（TestPilot）、TDD by Example（Kent Beck）
 

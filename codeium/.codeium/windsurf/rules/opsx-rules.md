@@ -1,3 +1,7 @@
+---
+trigger: manual
+---
+
 # OpenSpec (OPSX) 工作流程規則（Mode B）
 
 > 此規則檔適用於使用 Fission-AI OpenSpec 進行 AI 輔助開發的專案。

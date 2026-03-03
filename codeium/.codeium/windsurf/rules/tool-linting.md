@@ -1,3 +1,8 @@
+---
+trigger: model_decision
+description: Applied when configuring or running ESLint, Prettier, Stylelint, PHPStan, pylint, or other linting and formatting tools
+---
+
 # Linting & Formatting 工具設定準則
 
 > 自動化的程式碼品質檢查是最有效率的 Code Review 輔助工具。

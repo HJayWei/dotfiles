@@ -1,3 +1,8 @@
+---
+trigger: glob
+globs: **/*.ts, **/*.tsx, **/*.js, **/*.jsx
+---
+
 # TypeScript / JavaScript 開發準則
 
 > 適用於 Node.js 後端、React 前端、Next.js、NestJS 等 TypeScript/JavaScript 專案。

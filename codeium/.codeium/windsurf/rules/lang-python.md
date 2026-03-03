@@ -1,3 +1,8 @@
+---
+trigger: glob
+globs: **/*.py
+---
+
 # Python 開發準則
 
 > 適用於 Django、FastAPI、Flask 後端以及資料科學/機器學習專案。
