@@ -127,7 +127,7 @@ cask "raycast"
 # Keyboard shortcuts for every button on your screen
 cask "homerow"
 # Menu bar manager
-cask "jordanbaird-ice"
+cask "thaw"
 # Utility to uninstall apps and remove leftover files from old/uninstalled apps
 cask "pearcleaner"
 # Per-application volume mixer, equalizer, and audio router
