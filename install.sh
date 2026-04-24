@@ -63,6 +63,9 @@ brew install --cask font-blex-mono-nerd-font
 echo "Install bundle from BrewCask"
 brew bundle install --file BrewCask
 
+echo "Install claude code"
+curl -fsSL https://claude.ai/install.sh | bash
+
 echo "Synchronize git submodule"
 git submodule init
 git submodule update --init --recursive
@@ -105,6 +108,9 @@ stow ghostty
 
 echo 'Stow Codeium configuration'
 stow codeium
+
+echo 'Stow Claude configuration'
+stow claude
 
 echo "Install Rust"
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
