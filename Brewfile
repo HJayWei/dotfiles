@@ -1,7 +1,13 @@
 tap "homebrew/bundle"
 tap "homebrew/services"
+# Browser automation CLI for AI agents
+brew "agent-browser"
+# Distributed revision control system
+brew "git"
 # Extendable version manager with support for Ruby, Node.js, Erlang & more
 brew "asdf"
+# Code searching, linting, rewriting
+brew "ast-grep"
 # Clone of cat(1) with syntax highlighting and Git integration
 brew "bat"
 # Resource monitor. C++ version and continuation of bashtop and bpytop
@@ -16,20 +22,22 @@ brew "docker-compose"
 brew "eza"
 # Simple, fast and user-friendly alternative to find
 brew "fd"
-# Play, record, convert, and stream audio and video
+# Play, record, convert, and stream select audio and video codecs
 brew "ffmpeg"
 # Command-line fuzzy finder written in Go
 brew "fzf"
 # GNU awk utility
 brew "gawk"
-# Distributed revision control system
-brew "git"
 # Syntax-highlighting pager for git and diff output
 brew "git-delta"
+# GNU Privacy Guard (OpenPGP)
+brew "gnupg"
 # Open source programming language to build simple/reliable/efficient software
 brew "go"
 # Serializes the output of command-line tools to structured JSON output
 brew "jc"
+# Command-line pager for JSON data
+brew "jless"
 # Lightweight and flexible command-line JSON processor
 brew "jq"
 # Cross-platform software keyboard remapper for Linux, macOS and Windows
@@ -44,14 +52,12 @@ brew "luarocks"
 brew "mercurial"
 # Deep clean and optimize your Mac
 brew "mole"
-# Incremental parsing library
-brew "tree-sitter"
-# Clean C library for processing UTF-8 Unicode data
-brew "utf8proc", args: ["HEAD"]
 # Ambitious Vim-fork focused on extensibility and agility
 brew "neovim"
 # Port scanning utility for large networks
 brew "nmap"
+# Alternative to docker-compose using podman
+brew "podman-compose"
 # Perl-powered file rename script with many helpful built-ins
 brew "rename"
 # Search tool like grep and The Silver Searcher
@@ -66,6 +72,12 @@ brew "stow"
 brew "testdisk"
 # Simplified and community-driven man pages
 brew "tldr"
+# Terminal multiplexer
+brew "tmux"
+# Incremental parsing library
+brew "tree-sitter"
+# Extremely fast Python package installer and resolver, written in Rust
+brew "uv"
 # Internet file retriever
 brew "wget"
 # Pluggable terminal workspace, with terminal multiplexer as the base feature
