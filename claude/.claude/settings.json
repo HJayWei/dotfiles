@@ -1,7 +1,33 @@
 {
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(grep:*)",
+      "Bash(docker:*)",
+      "Bash(podman:*)",
+      "Bash(podman-compose:*)"
+    ]
+  },
   "statusLine": {
     "type": "command",
     "command": "~/.claude/scripts/statusline-command.sh"
   },
+  "enabledPlugins": {},
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true,
+    "allowUnsandboxedCommands": false,
+    "excludedCommands": [
+      "docker *",
+      "podman *",
+      "podman-compose *"
+    ]
+  },
+  "effortLevel": "high",
   "theme": "dark"
 }
