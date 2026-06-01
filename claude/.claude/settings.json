@@ -5,6 +5,7 @@
   },
   "permissions": {
     "allow": [
+      "Bash(git add:*)",
       "Bash(ls:*)",
       "Bash(cat:*)",
       "Bash(grep:*)",
@@ -17,16 +18,24 @@
     "type": "command",
     "command": "~/.claude/scripts/statusline-command.sh"
   },
-  "enabledPlugins": {},
+  "enabledPlugins": {
+    "gopls-lsp@claude-plugins-official": true,
+    "rust-analyzer-lsp@claude-plugins-official": true,
+    "lua-lsp@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "pyright-lsp@claude-plugins-official": true,
+    "php-lsp@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {},
+  "language": "繁體中文",
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": true,
     "allowUnsandboxedCommands": false,
-    "excludedCommands": [
-      "docker *",
-      "podman *",
-      "podman-compose *"
-    ]
+    "network": {
+      "allowedDomains": []
+    },
+    "excludedCommands": ["podman *", "podman-compose *", "docker *"]
   },
   "effortLevel": "high",
   "theme": "dark"
