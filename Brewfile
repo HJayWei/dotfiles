@@ -28,12 +28,16 @@ brew "ffmpeg"
 brew "fzf"
 # GNU awk utility
 brew "gawk"
+# GitHub command-line tool
+brew "gh"
 # Syntax-highlighting pager for git and diff output
 brew "git-delta"
 # GNU Privacy Guard (OpenPGP)
 brew "gnupg"
 # Open source programming language to build simple/reliable/efficient software
 brew "go"
+# Post-modern modal text editor
+brew "helix"
 # Serializes the output of command-line tools to structured JSON output
 brew "jc"
 # Command-line pager for JSON data
@@ -76,6 +80,8 @@ brew "tldr"
 brew "tmux"
 # Incremental parsing library
 brew "tree-sitter"
+# Source code spell checker
+brew "typos-cli"
 # Extremely fast Python package installer and resolver, written in Rust
 brew "uv"
 # Internet file retriever
