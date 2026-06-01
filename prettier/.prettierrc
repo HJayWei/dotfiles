@@ -12,26 +12,10 @@
   "htmlWhitespaceSensitivity": "css",
   "vueIndentScriptAndStyle": false,
   "proseWrap": "preserve",
-  "insertPragma": true,
+  "insertPragma": false,
   "requirePragma": false,
-  "tabWidth": 4,
+  "tabWidth": 2,
   "useTabs": false,
   "embeddedLanguageFormatting": "auto",
-  "printWidth": 100,
-  "overrides": [
-    {
-      "files": ".prettierrc",
-      "options": {
-        "tabWidth": 2,
-        "insertPragma": false
-      }
-    },
-    {
-      "files": "*.yml",
-      "options": {
-        "tabWidth": 2,
-        "insertPragma": false
-      }
-    }
-  ]
+  "printWidth": 120
 }
