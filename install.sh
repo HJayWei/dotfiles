@@ -79,7 +79,7 @@ stow zsh
 echo "Stow git configuration"
 stow git
 
-echo "Stow NeoVim onfiguration"
+echo "Stow NeoVim configuration"
 stow nvim
 mkdir $HOME/Project
 
@@ -115,4 +115,7 @@ stow claude
 echo "Install Rust"
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
-# agent-browser install
+
+# agent-browser install 
+
+# npm install -g @rivolink/leaf
