@@ -93,8 +93,6 @@ cask "neovide-app"
 cask "arduino-ide"
 # Open-source code editor
 cask "visual-studio-code"
-# Agentic IDE powered by AI Flow paradigm
-cask "windsurf"
 
 # Virtual Machine
 # Virtual machines UI using QEMU
