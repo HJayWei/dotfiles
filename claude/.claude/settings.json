@@ -11,8 +11,14 @@
       "Bash(grep:*)",
       "Bash(docker:*)",
       "Bash(podman:*)",
-      "Bash(podman-compose:*)"
+      "Bash(podman-compose:*)",
+      "Bash(docker-compose:*)",
+      "Bash(agent-browser:*)",
+      "Bash(gh:*)"
     ]
+  },
+  "worktree": {
+    "baseRef": "head"
   },
   "statusLine": {
     "type": "command",
@@ -35,7 +41,7 @@
     "network": {
       "allowedDomains": []
     },
-    "excludedCommands": ["podman *", "podman-compose *", "docker *"]
+    "excludedCommands": ["podman *", "podman-compose *", "docker *", "docker-compose *", "agent-browser *", "gh *"]
   },
   "effortLevel": "high",
   "theme": "dark"
