@@ -119,3 +119,4 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 # agent-browser install 
 
 # npm install -g @rivolink/leaf
+# npm install -g "@fission-ai/openspec"
