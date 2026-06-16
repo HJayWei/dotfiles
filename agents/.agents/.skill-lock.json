@@ -111,6 +111,16 @@
       "skillFolderHash": "c1470a475a0472fceda2401ea6763708a91680a8",
       "installedAt": "2026-05-10T14:09:52.844Z",
       "updatedAt": "2026-05-10T14:09:52.844Z"
+    },
+    "frontend-design": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/anthropics/skills.git",
+      "skillPath": "skills/frontend-design/SKILL.md",
+      "skillFolderHash": "928950704df8a8b885c03de5da626331e6f29cf8",
+      "pluginName": "example-skills",
+      "installedAt": "2026-06-04T13:34:00.974Z",
+      "updatedAt": "2026-06-04T13:34:00.974Z"
     }
   },
   "dismissed": {
@@ -134,3 +144,4 @@
     "windsurf"
   ]
 }
+
