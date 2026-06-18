@@ -1,0 +1,16 @@
+{{ if eq .profile "workstation" -}}
+#!/bin/sh
+# 應用層工具,只在 workstation(mac 工作機)安裝。
+# 非 workstation 時整段渲染為空,chezmoi 自動略過。
+set -eu
+
+echo "==> [app] 安裝應用層工具 (workstation only)"
+
+# leaf — TUI Markdown previewer(Rust;apt/brew 都沒有,用官方 install script)
+if ! command -v leaf >/dev/null 2>&1; then
+    curl -fsSL https://raw.githubusercontent.com/RivoLink/leaf/main/scripts/install.sh | sh
+fi
+
+# TODO: markitdown(Python / pipx)、defuddle(Node / npm)
+#       建議先用 mise 備妥 python / node,再以 pipx / npm -g 安裝。
+{{ end -}}

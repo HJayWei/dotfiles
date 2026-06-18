@@ -1,0 +1,24 @@
+# 共通工具清單。宣告與執行分離:這裡只宣告「裝什麼」,
+# 安裝腳本(run_*)負責「怎麼裝」,並處理各平台套件名差異。
+
+packages:
+  # 各平台套件管理器都穩定提供的基礎工具。
+  # (Debian 11 bullseye 的 apt 已內含這些,執行檔名差異由安裝腳本以 symlink 處理)
+  system:
+    - { brew: git,     apt: git }
+    - { brew: zsh,     apt: zsh }
+    - { brew: curl,    apt: curl }
+    - { brew: fzf,     apt: fzf }
+    - { brew: jq,      apt: jq }
+    - { brew: ripgrep, apt: ripgrep }
+    - { brew: bat,     apt: bat }      # Debian 執行檔為 batcat
+    - { brew: fd,      apt: fd-find }  # Debian 執行檔為 fdfind
+
+  # Debian 11 的 apt 沒有(或版本過舊)的現代 CLI / runtime,
+  # 改用 mise 跨平台安裝預編譯 binary,確保各環境版本一致。
+  mise:
+    - eza
+    - zoxide
+    - delta
+    - jless
+    - node@lts

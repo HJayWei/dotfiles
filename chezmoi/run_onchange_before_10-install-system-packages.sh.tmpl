@@ -1,0 +1,26 @@
+#!/bin/sh
+# 安裝各平台套件管理器都穩定提供的基礎工具。
+# run_onchange:本檔(套件清單展開後)內容變動時才會重跑。
+set -eu
+
+echo "==> [system] 安裝基礎套件"
+
+{{ if eq .chezmoi.os "darwin" -}}
+brew install {{ range .packages.system }}{{ .brew }} {{ end }}
+{{ else if eq .chezmoi.os "linux" -}}
+SUDO=""
+if [ "$(id -u)" -ne 0 ] && command -v sudo >/dev/null 2>&1; then
+    SUDO="sudo"
+fi
+
+$SUDO apt-get update -y
+$SUDO apt-get install -y {{ range .packages.system }}{{ .apt }} {{ end }}
+
+# Debian 的 fd / bat 執行檔名與其他平台不同,建立相容 symlink。
+mkdir -p "$HOME/.local/bin"
+if [ -e /usr/bin/fdfind ]; then ln -sf /usr/bin/fdfind "$HOME/.local/bin/fd"; fi
+if [ -e /usr/bin/batcat ]; then ln -sf /usr/bin/batcat "$HOME/.local/bin/bat"; fi
+{{ else -}}
+echo "未支援的 OS: {{ .chezmoi.os }}" >&2
+exit 1
+{{ end -}}

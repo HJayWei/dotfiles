@@ -1,0 +1,3 @@
+-- workstation profile 專用的佔位檔。
+-- 非 workstation profile 會被 .chezmoiignore 排除,不會部署到測試環境。
+-- 之後在此放你的 neovim + LazyVim 設定(或改為指向既有的 nvim 設定 submodule)。

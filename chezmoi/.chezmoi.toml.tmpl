@@ -1,0 +1,5 @@
+{{- /* chezmoi init 時詢問一次,把結果存進 config,之後所有 template 都讀 .profile */ -}}
+{{- $profile := promptStringOnce . "profile" "環境 profile (container/vm/workstation)" "vm" -}}
+
+[data]
+    profile = {{ $profile | quote }}

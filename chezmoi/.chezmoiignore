@@ -1,0 +1,8 @@
+# 本目錄自身的說明文件,不該被部署到 home。
+README.md
+
+# 依 profile 排除不需要的設定檔。
+# 非 workstation(測試用的 vm / container)不部署臃腫的編輯器設定。
+{{ if ne .profile "workstation" }}
+.config/nvim
+{{ end }}
