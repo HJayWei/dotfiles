@@ -1,8 +1,14 @@
 # 由 chezmoi 管理 — profile: {{ .profile }}(可攜核心;機制/主題層留給 workstation stow)
+{{ if or .git_name .git_email -}}
 [user]
-    name = JWei
-    email = jay0935199@gmail.com
+{{- if .git_name }}
+    name = {{ .git_name }}
+{{- end }}
+{{- if .git_email }}
+    email = {{ .git_email }}
+{{- end }}
 
+{{ end -}}
 [color]
     ui = true
 

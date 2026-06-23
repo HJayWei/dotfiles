@@ -1,5 +1,16 @@
 {{- /* chezmoi init 時詢問一次,把結果存進 config,之後所有 template 都讀 .profile */ -}}
 {{- $profile := promptStringOnce . "profile" "環境 profile (container/vm/workstation)" "vm" -}}
 
+{{- /* git 身分僅 vm 用得到(gitconfig vm-only)。留空則 dot_gitconfig 不寫該欄位;
+       非 vm 仍寫空字串進 data,避免 template 缺 key 報錯。 */ -}}
+{{- $gitName := "" -}}
+{{- $gitEmail := "" -}}
+{{- if eq $profile "vm" -}}
+{{-   $gitName = promptStringOnce . "git_name" "Git user.name(留空則不寫入)" "" -}}
+{{-   $gitEmail = promptStringOnce . "git_email" "Git user.email(留空則不寫入)" "" -}}
+{{- end -}}
+
 [data]
     profile = {{ $profile | quote }}
+    git_name = {{ $gitName | quote }}
+    git_email = {{ $gitEmail | quote }}

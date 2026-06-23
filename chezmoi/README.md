@@ -99,8 +99,9 @@ chezmoi apply --verbose
 - **VM 的 shell/git 設定是裁切版,非整份照搬**:mac 的 `zsh/.zshrc` 與 mac/Homebrew 深度耦合
   (zinit 走 `$HOMEBREW_PREFIX`、p10k 需 Nerd Font、寫死的 `/Users/...` 與 `/opt/homebrew/...` PATH),
   整份套到 VM 會大量報錯。故只移植「可攜層」:`env.sh` 帶工具別名(`command -v` 守衛,工具不在時退回原生)
-  與 history(分 bash/zsh);`dot_gitconfig.tmpl` 帶 identity/alias/delta pager,**刻意捨棄** sourcetree、
-  `core.editor=nvim`(改用 git 預設)、delta `chameleon` 主題(主題檔未受管)。機制/主題層續留 workstation stow。
+  與 history(分 bash/zsh);`dot_gitconfig.tmpl` 帶 alias/delta pager,git 身分(name/email)於
+  `chezmoi init` 時以 `promptStringOnce` 詢問(僅 vm 詢問、可留空 → 不寫入該欄位),**刻意捨棄**
+  sourcetree、`core.editor=nvim`(改用 git 預設)、delta `chameleon` 主題(主題檔未受管)。機制/主題層續留 workstation stow。
 - **workstation 的 shell rc 不由 chezmoi 串接**:mac 的 `.zshrc` 由 stow 管理,
   `40-wire-shell-rc` 刻意略過 workstation,避免與 stow 衝突;其 PATH 由既有 `.zshrc` 自理。
 - **與現有 stow / Brewfile 的關係**:目前各自獨立。若未來決定全面轉 chezmoi,
