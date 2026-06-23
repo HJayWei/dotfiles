@@ -10,7 +10,7 @@
 | profile | 對應場景 | 部署內容 |
 |---|---|---|
 | `container` | docker / podman 用完即丟 | 僅 `system` 基礎套件 |
-| `vm` | Debian 測試 VM | `system` + `mise` 現代 CLI/runtime,並把工具串進 shell rc |
+| `vm` | Debian 測試 VM | `system` + `mise` 現代 CLI/runtime,把工具串進 shell rc,並部署可攜別名/history 與 gitconfig 核心 |
 | `workstation` | mac m4 工作機 | 全部,含 nvim 設定與應用層工具(leaf 等) |
 
 profile 在 `chezmoi init` 時詢問一次(見 `.chezmoi.toml.tmpl`),之後所有
@@ -30,10 +30,11 @@ dotfiles/
 └── chezmoi/
     ├── .chezmoi.toml.tmpl                     # init 時詢問 profile
     ├── .chezmoidata.yaml                      # 套件清單 + 跨平台名稱映射(宣告層)
-    ├── .chezmoiignore                         # 非 workstation 排除 .config/nvim
+    ├── .chezmoiignore                         # 非 workstation 排除 nvim;非 vm 排除 .gitconfig
+    ├── dot_gitconfig.tmpl                     # vm-only;可攜核心(identity/alias/delta pager)
     ├── dot_config/
     │   ├── nvim/init.lua                      # workstation-only(其餘 profile 被忽略)
-    │   └── shell/env.sh.tmpl                  # 共通;設定 PATH(.local/bin + mise shims)
+    │   └── shell/env.sh.tmpl                  # 共通;PATH(.local/bin + mise shims)+ 可攜別名 + history
     ├── run_onchange_before_10-install-system-packages.sh.tmpl   # 全 profile:apt/brew 基礎套件
     ├── run_onchange_before_20-install-mise-tools.sh.tmpl        # vm/workstation:mise + 現代 CLI
     ├── run_onchange_after_30-install-app-tools.sh.tmpl          # workstation:leaf 等應用層
@@ -81,6 +82,9 @@ chezmoi apply --verbose
 
 - **`vm` profile:已在真實 Debian 13 (trixie) arm64 端到端實跑通過** —— apt 安裝、
   fd/bat symlink、mise 裝預編譯 binary、shims 上 PATH、rc 串接皆驗證,`eza`/`zoxide`/`delta` 可執行。
+- **可攜別名/history 與 gitconfig 核心:目前僅本機 render 驗證**(三 profile `chezmoi cat` 渲染正確、
+  `.gitconfig` 僅 vm 部署、env.sh 經 `bash -n`/`zsh -n` 語法檢查通過),**尚未在 VM 開新 shell 端到端實跑**——
+  待下次 VM `chezmoi apply` 後確認 `type ls cat rg`、`git lg`、`git config core.pager` 再回填此處。
 - `container` / `workstation` profile:目前僅到 render / dry-run 層級,**尚未在各自的真實目標實跑**。
 
 ## 已知限制 / 待辦
@@ -92,6 +96,11 @@ chezmoi apply --verbose
   `~/.local/bin` 建立 `fd` / `bat` symlink;`env.sh` 已把該路徑加上 PATH。
 - **應用層尚未完成**:`30-install-app-tools` 目前只裝 `leaf`;`markitdown`(Python)、
   `defuddle`(Node)留為 TODO,需先用 mise 備妥 runtime。
+- **VM 的 shell/git 設定是裁切版,非整份照搬**:mac 的 `zsh/.zshrc` 與 mac/Homebrew 深度耦合
+  (zinit 走 `$HOMEBREW_PREFIX`、p10k 需 Nerd Font、寫死的 `/Users/...` 與 `/opt/homebrew/...` PATH),
+  整份套到 VM 會大量報錯。故只移植「可攜層」:`env.sh` 帶工具別名(`command -v` 守衛,工具不在時退回原生)
+  與 history(分 bash/zsh);`dot_gitconfig.tmpl` 帶 identity/alias/delta pager,**刻意捨棄** sourcetree、
+  `core.editor=nvim`(改用 git 預設)、delta `chameleon` 主題(主題檔未受管)。機制/主題層續留 workstation stow。
 - **workstation 的 shell rc 不由 chezmoi 串接**:mac 的 `.zshrc` 由 stow 管理,
   `40-wire-shell-rc` 刻意略過 workstation,避免與 stow 衝突;其 PATH 由既有 `.zshrc` 自理。
 - **與現有 stow / Brewfile 的關係**:目前各自獨立。若未來決定全面轉 chezmoi,

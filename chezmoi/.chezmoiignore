@@ -6,3 +6,9 @@ README.md
 {{ if ne .profile "workstation" }}
 .config/nvim
 {{ end }}
+
+# gitconfig 僅部署到 vm:container 無 delta(pager=delta 會報錯),
+# workstation 的 ~/.gitconfig 由 stow 符號連結擁有,chezmoi 不應覆寫。
+{{ if ne .profile "vm" }}
+.gitconfig
+{{ end }}
