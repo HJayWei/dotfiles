@@ -15,5 +15,12 @@ if ! command -v mise >/dev/null 2>&1; then
 fi
 
 export PATH="$HOME/.local/bin:$PATH"
-mise use -g {{ range .packages.mise }}{{ . }} {{ end }}
+{{- /* jless 無 linux/arm64 預編譯 binary,於該平台從清單剔除(jq 已能滿足 JSON 檢視)。 */ -}}
+{{- $tools := list -}}
+{{- range .packages.mise -}}
+{{- if not (and (eq . "jless") (eq $.chezmoi.os "linux") (eq $.chezmoi.arch "arm64")) -}}
+{{- $tools = append $tools . -}}
+{{- end -}}
+{{- end }}
+mise use -g {{ range $tools }}{{ . }} {{ end }}
 {{ end -}}
