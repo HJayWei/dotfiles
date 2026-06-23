@@ -1,0 +1,19 @@
+{{ if ne .profile "workstation" -}}
+#!/bin/sh
+# 把 env.sh 串接進 shell rc,讓 init 後重開 shell 即可用 mise 工具。
+# workstation 不處理:其 .zshrc 由 stow 管理,chezmoi 去改會與 stow 衝突。
+# 非 workstation 時整段渲染為空,chezmoi 自動略過。
+set -eu
+
+echo "==> [rc] 串接 env.sh 進 shell rc"
+
+LINE='[ -f "$HOME/.config/shell/env.sh" ] && . "$HOME/.config/shell/env.sh"'
+
+# 只對已存在的 rc 追加,且用固定子字串判斷是否已串接(冪等)。
+for rc in "$HOME/.bashrc" "$HOME/.zshrc"; do
+    if [ -f "$rc" ] && ! grep -qF '.config/shell/env.sh' "$rc"; then
+        printf '\n# 由 chezmoi 串接 — 載入跨平台 env.sh\n%s\n' "$LINE" >> "$rc"
+        echo "    已追加: $rc"
+    fi
+done
+{{ end -}}
