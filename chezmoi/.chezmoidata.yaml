@@ -16,9 +16,32 @@ packages:
 
   # Debian 11 的 apt 沒有(或版本過舊)的現代 CLI / runtime,
   # 改用 mise 跨平台安裝預編譯 binary,確保各環境版本一致。
+  # 分層:common 給所有非 container(vm + workstation);workstation 僅 mac 額外加裝。
   mise:
-    - eza
-    - zoxide
-    - delta
-    - jless
-    - node@lts
+    # 所有非 container(vm + workstation):runtime + 既有現代 CLI
+    common:
+      - eza
+      - zoxide
+      - delta
+      - jless
+      - node@lts
+      - go
+      - uv
+      # rust:mise 委派 rustup;mac 現以獨立 rustup 安裝(zsh/.zshrc L151-152)。
+      #       暫不納入,避免與 rustup 雙頭;待 mac 編排移交時再決定。
+    # 僅 workstation(mac):從 Brewfile 遷入的開發向 CLI(aqua/ubi backend,高信心)
+    # 註:gh/lazygit/btop/direnv 在 vm 也好用,先放這維持 vm 精簡;要在 vm 用就移到 common。
+    workstation:
+      - neovim
+      - helix
+      - zellij
+      - tree-sitter
+      - ast-grep
+      - typos-cli
+      - glab
+      - fastfetch
+      - lazygit
+      - lazydocker
+      - btop
+      - direnv
+      - gh

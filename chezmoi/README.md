@@ -11,7 +11,7 @@
 |---|---|---|
 | `container` | docker / podman 用完即丟 | 僅 `system` 基礎套件 |
 | `vm` | Debian 測試 VM | `system` + `mise` 現代 CLI/runtime,把工具串進 shell rc,並部署可攜別名/history、gitconfig 核心與 tmux(含 TPM 外掛) |
-| `workstation` | mac m4 工作機 | 全部,含 nvim 設定與應用層工具(leaf 等) |
+| `workstation` | mac m4 工作機 | 全部,含 nvim 設定、應用層工具(leaf 等),以及 `mise` 的 workstation tier 開發向 CLI |
 
 profile 在 `chezmoi init` 時詢問一次(見 `.chezmoi.toml.tmpl`),之後所有
 template / `.chezmoiignore` / 安裝腳本都依 `.profile` 分支。
@@ -76,9 +76,15 @@ chezmoi apply --verbose
 
 - **`system`**(`.chezmoidata.yaml` → `10-install-system-packages`):各平台套件管理器都穩定提供的
   基礎工具(git / zsh / curl / fzf / jq / ripgrep / bat / fd),mac 用 brew、Debian 用 apt。
-- **`mise`**(`20-install-mise-tools`):`eza` / `zoxide` / `delta` / `jless` / `node@lts`。
+- **`mise`**(`20-install-mise-tools`):分兩層宣告(`.chezmoidata.yaml` → `packages.mise`)。
+  - **`common`**(vm + workstation):runtime + 現代 CLI —— `eza` / `zoxide` / `delta` / `jless` /
+    `node@lts` / `go` / `uv`。
+  - **`workstation`**(僅 mac):由 Brewfile 遷入的開發向 CLI —— `neovim` / `helix` / `zellij` /
+    `tree-sitter` / `ast-grep` / `typos-cli` / `glab` / `fastfetch` / `lazygit` / `lazydocker` /
+    `btop` / `direnv` / `gh`。
   改由 [mise](https://mise.jdx.dev) 安裝預編譯 binary,以在較舊的 Debian(如 bullseye,apt 缺
-  或過舊)也能取得一致版本。mise 工具透過 **shims 目錄上 PATH** 暴露(見 `env.sh`),不用 `mise activate`。
+  或過舊)也能取得一致版本,並可 `mise outdated` / `upgrade` 追蹤版本。mise 工具透過
+  **shims 目錄上 PATH** 暴露(見 `env.sh`),不用 `mise activate`。
 
 ## 驗證狀態(誠實標註)
 
@@ -120,4 +126,10 @@ chezmoi apply --verbose
   `40-wire-shell-rc` 刻意略過 workstation,避免與 stow 衝突;其 PATH 由既有 `.zshrc` 自理。
 - **與現有 stow / Brewfile 的關係**:目前各自獨立。若未來決定全面轉 chezmoi,
   再把現有 dotfile 以 `chezmoi add` 逐步納入並 template 化。
+- **Brewfile / `.zshrc` 去重屬後續(尚未執行)**:`mise` 的 `workstation` tier 已宣告 neovim/helix/
+  zellij/lazygit… 等(原本由 `Brewfile` 安裝),但 mac 目前仍以 `install.sh` + `Brewfile` 為實際安裝
+  路徑,故**尚未從 Brewfile 移除**,以免重複/破壞現行流程。待 chezmoi 接手 mac 編排時,再一併:
+  ① 從 `Brewfile` 移除已遷入 mise 的工具;② 移除 `asdf`(mise 取代,並清掉 `zsh/.zshrc` L149 的 asdf
+  shims PATH);③ 評估 rust 由 rustup(`.zshrc` L151-152)改 mise。「需查證」CLI(tldr→tealdeer、
+  jc/speedtest 走 pipx、kanata 需驅動、agent-browser)先留 brew,逐個確認 backend 後再搬。
 ```
