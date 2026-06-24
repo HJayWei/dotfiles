@@ -10,7 +10,7 @@
 | profile | 對應場景 | 部署內容 |
 |---|---|---|
 | `container` | docker / podman 用完即丟 | 僅 `system` 基礎套件 |
-| `vm` | Debian 測試 VM | `system` + `mise` 現代 CLI/runtime,把工具串進 shell rc,並部署可攜別名/history 與 gitconfig 核心 |
+| `vm` | Debian 測試 VM | `system` + `mise` 現代 CLI/runtime,把工具串進 shell rc,並部署可攜別名/history、gitconfig 核心與 tmux(含 TPM 外掛) |
 | `workstation` | mac m4 工作機 | 全部,含 nvim 設定與應用層工具(leaf 等) |
 
 profile 在 `chezmoi init` 時詢問一次(見 `.chezmoi.toml.tmpl`),之後所有
@@ -30,15 +30,17 @@ dotfiles/
 └── chezmoi/
     ├── .chezmoi.toml.tmpl                     # init 時詢問 profile
     ├── .chezmoidata.yaml                      # 套件清單 + 跨平台名稱映射(宣告層)
-    ├── .chezmoiignore                         # 非 workstation 排除 nvim;非 vm 排除 .gitconfig
+    ├── .chezmoiignore                         # 非 workstation 排除 nvim;非 vm 排除 .gitconfig 與 .config/tmux
     ├── dot_gitconfig.tmpl                     # vm-only;可攜核心(identity/alias/delta pager)
     ├── dot_config/
     │   ├── nvim/init.lua                      # workstation-only(其餘 profile 被忽略)
-    │   └── shell/env.sh.tmpl                  # 共通;PATH(.local/bin + mise shims)+ 可攜別名 + history
+    │   ├── shell/env.sh.tmpl                  # 共通;PATH(.local/bin + mise shims)+ 可攜別名 + history
+    │   └── tmux/tmux.conf.tmpl                # vm-only;Linux 可攜版(OSC52 剪貼簿,TPM 外掛)
     ├── run_onchange_before_10-install-system-packages.sh.tmpl   # 全 profile:apt/brew 基礎套件
     ├── run_onchange_before_20-install-mise-tools.sh.tmpl        # vm/workstation:mise + 現代 CLI
     ├── run_onchange_after_30-install-app-tools.sh.tmpl          # workstation:leaf 等應用層
-    └── run_onchange_after_40-wire-shell-rc.sh.tmpl              # 非 workstation:把 env.sh 串進 shell rc
+    ├── run_onchange_after_40-wire-shell-rc.sh.tmpl              # 非 workstation:把 env.sh 串進 shell rc
+    └── run_onchange_after_50-setup-tmux.sh.tmpl                 # vm:apt 裝 tmux + clone TPM + 裝外掛
 ```
 
 ## 試用(務必先 dry-run)
@@ -85,6 +87,10 @@ chezmoi apply --verbose
 - **可攜別名/history 與 gitconfig 核心:目前僅本機 render 驗證**(三 profile `chezmoi cat` 渲染正確、
   `.gitconfig` 僅 vm 部署、env.sh 經 `bash -n`/`zsh -n` 語法檢查通過),**尚未在 VM 開新 shell 端到端實跑**——
   待下次 VM `chezmoi apply` 後確認 `type ls cat rg`、`git lg`、`git config core.pager` 再回填此處。
+- **tmux(設定 + 安裝腳本):已在真實 Debian VM `chezmoi apply` 端到端實跑** —— 套用成功、
+  `command -v tmux` 可執行、`~/.tmux/plugins` 外掛(tpm/sensible/resurrect/continuum)齊全;
+  本機另以 `chezmoi cat` 三 profile render(僅 vm 部署)+ 安裝腳本 `sh -n` 驗證。
+  (OSC52 複製、Catppuccin 主題、Alt 快捷鍵屬互動操作,日常使用中,未逐項自動化驗證。)
 - `container` / `workstation` profile:目前僅到 render / dry-run 層級,**尚未在各自的真實目標實跑**。
 
 ## 已知限制 / 待辦
@@ -102,6 +108,14 @@ chezmoi apply --verbose
   與 history(分 bash/zsh);`dot_gitconfig.tmpl` 帶 alias/delta pager,git 身分(name/email)於
   `chezmoi init` 時以 `promptStringOnce` 詢問(僅 vm 詢問、可留空 → 不寫入該欄位),**刻意捨棄**
   sourcetree、`core.editor=nvim`(改用 git 預設)、delta `chameleon` 主題(主題檔未受管)。機制/主題層續留 workstation stow。
+- **VM 的 tmux 是 Linux 裁切版**:以 stow 的 `tmux/.config/tmux/tmux.conf` 為基礎,但 macOS 專用的
+  `copy-pipe-and-cancel "pbcopy"` 在 Linux 是死綁定,故改用 `set -g set-clipboard on`(OSC52,經終端機
+  回傳本機剪貼簿,SSH/headless 適用)+ `copy-selection-and-cancel`,並**移除依賴 xclip 的 tmux-yank 外掛**;
+  其餘(prefix、Alt 快捷鍵、Catppuccin 主題、resurrect/continuum)照搬。tmux 本體與 TPM 由 vm-gated 的
+  `50-setup-tmux` 以 apt + `git clone` + `install_plugins` 備妥(**刻意不進 `.chezmoidata.yaml`**,避免裝到
+  container)。workstation/mac 的 tmux 仍走 stow 原版(pbcopy),與 chezmoi 並存。
+- **tmux 首次啟動會顯示 `Tmux resurrect file not found`**:這是 `@continuum-restore 'on'` 在尚無存檔時
+  叫 resurrect 還原所致,屬一次性提示、無害;首次自動或手動(`prefix + Ctrl-s`)存檔後即消失。維持現狀不改設定。
 - **workstation 的 shell rc 不由 chezmoi 串接**:mac 的 `.zshrc` 由 stow 管理,
   `40-wire-shell-rc` 刻意略過 workstation,避免與 stow 衝突;其 PATH 由既有 `.zshrc` 自理。
 - **與現有 stow / Brewfile 的關係**:目前各自獨立。若未來決定全面轉 chezmoi,

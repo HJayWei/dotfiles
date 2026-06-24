@@ -1,0 +1,173 @@
+# 由 chezmoi 管理 — profile: {{ .profile }}(Linux 可攜版;機制/主題與 stow mac 版分開維護)
+# =============================================================================
+# Catppuccin Macchiato · Zellij-style keybindings · Claude Code optimized
+# =============================================================================
+
+# 基礎設定
+set -g default-terminal "tmux-256color"
+set -as terminal-features ",xterm-256color:RGB"
+set -g history-limit 10000
+set -g base-index 1
+set -g pane-base-index 1
+set -g renumber-windows on
+set -g mouse on
+set -g focus-events on
+set -g mode-keys vi
+set -g status-keys vi
+set -sg escape-time 10
+set -g status-interval 5
+# OSC52:讓複製經終端機 escape sequence 回傳本機剪貼簿(SSH/headless 也能用,免 xclip)
+set -g set-clipboard on
+
+# Prefix: Ctrl+a（比預設 Ctrl+b 更符合人體工學）
+unbind C-b
+set -g prefix C-a
+bind C-a send-prefix
+
+# 重新載入配置
+bind r source-file ~/.config/tmux/tmux.conf \; display "tmux.conf reloaded!"
+
+# =============================================================================
+# Prefix 後的操作（作為 Alt 快捷鍵的 fallback）
+# =============================================================================
+bind "|" split-window -h -c "#{pane_current_path}"
+bind "-" split-window -v -c "#{pane_current_path}"
+bind "%" split-window -h -c "#{pane_current_path}"
+bind '"' split-window -v -c "#{pane_current_path}"
+bind c   new-window -c "#{pane_current_path}"
+bind x   kill-pane
+bind X   kill-window
+bind z   resize-pane -Z
+bind ,   command-prompt -p "Rename window:" "rename-window '%%'"
+bind d   detach-client
+bind s   choose-session
+bind w   choose-tree -Zs
+bind h   select-pane -L
+bind j   select-pane -D
+bind k   select-pane -U
+bind l   select-pane -R
+bind H   resize-pane -L 5
+bind J   resize-pane -D 5
+bind K   resize-pane -U 5
+bind L   resize-pane -R 5
+bind n   next-window
+bind p   previous-window
+
+# =============================================================================
+# vim-tmux-navigator: Ctrl+h/j/k/l 在 nvim 和 tmux 之間無縫導航
+# 在 nvim 內：透傳給 nvim（lazyvim 預設支援 Ctrl+h/j/k/l 切換 split）
+# 在 shell 內：切換 tmux pane
+# 需搭配 nvim 插件：{ "christoomey/vim-tmux-navigator", lazy = false }
+# =============================================================================
+is_vim="ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?(view|l?n?vim?x?|fzf)(diff)?$'"
+bind -n C-h if-shell "$is_vim" "send-keys C-h" "select-pane -L"
+bind -n C-j if-shell "$is_vim" "send-keys C-j" "select-pane -D"
+bind -n C-k if-shell "$is_vim" "send-keys C-k" "select-pane -U"
+bind -n C-l if-shell "$is_vim" "send-keys C-l" "select-pane -R"
+bind -T copy-mode-vi C-h select-pane -L
+bind -T copy-mode-vi C-j select-pane -D
+bind -T copy-mode-vi C-k select-pane -U
+bind -T copy-mode-vi C-l select-pane -R
+
+# =============================================================================
+# Alt 鍵直接綁定（無需 Prefix，仿 zellij 體驗）
+# Ghostty 已內建 Option-as-Alt，無需額外設定
+# Ctrl+Q 故意不綁定，讓它自由穿透給 nvim/shell（解決 zellij 的 Ctrl+Q 衝突問題）
+# =============================================================================
+
+# --- Pane 導航（Alt+h/j/k/l，對應 zellij Alt+h/l MoveFocusOrTab）---
+# 在 nvim 內：若 nvim 使用到 Alt+h/l（如行首/行尾），透傳給 nvim
+# 在 shell 內：切換 tmux pane
+bind -n M-h if-shell "$is_vim" "send-keys M-h" "select-pane -L"
+bind -n M-j if-shell "$is_vim" "send-keys M-j" "select-pane -D"
+bind -n M-k if-shell "$is_vim" "send-keys M-k" "select-pane -U"
+bind -n M-l if-shell "$is_vim" "send-keys M-l" "select-pane -R"
+
+# --- Pane 分割與管理 ---
+bind -n M-n new-window    -c "#{pane_current_path}"   # 新 window（對應 zellij Alt+n）
+bind -n M-\\ split-window -h -c "#{pane_current_path}" # 水平分割（左右）
+bind -n M-- split-window  -v -c "#{pane_current_path}" # 垂直分割（上下）
+bind -n M-x kill-pane                                  # 關閉 pane（對應 zellij Pane 模式 x）
+bind -n M-z resize-pane -Z                             # 最大化/還原 pane（對應 zellij Pane 模式 f）
+
+# --- Window 切換（對應 zellij Tab 模式）---
+bind -n M-[ previous-window                            # 前一個 window（對應 zellij Alt+[）
+bind -n M-] next-window                                # 下一個 window（對應 zellij Alt+]）
+bind -n M-i swap-window -t -1 \; previous-window      # 移動 window 往左（對應 zellij Alt+i）
+bind -n M-o swap-window -t +1 \; next-window           # 移動 window 往右（對應 zellij Alt+o）
+
+# --- 直接切換 window（Alt+1-9，對應 zellij Tab 模式 1-9）---
+bind -n M-1 select-window -t 1
+bind -n M-2 select-window -t 2
+bind -n M-3 select-window -t 3
+bind -n M-4 select-window -t 4
+bind -n M-5 select-window -t 5
+bind -n M-6 select-window -t 6
+bind -n M-7 select-window -t 7
+bind -n M-8 select-window -t 8
+bind -n M-9 select-window -t 9
+
+# --- Resize Pane（Alt+Shift+h/j/k/l，對應 zellij Resize 模式 h/j/k/l）---
+bind -n M-H resize-pane -L 3
+bind -n M-J resize-pane -D 3
+bind -n M-K resize-pane -U 3
+bind -n M-L resize-pane -R 3
+
+# =============================================================================
+# vi Copy Mode（與 nvim 操作習慣一致;複製經 set-clipboard 走 OSC52）
+# =============================================================================
+bind -T copy-mode-vi v       send-keys -X begin-selection
+bind -T copy-mode-vi y       send-keys -X copy-selection-and-cancel
+bind -T copy-mode-vi r       send-keys -X rectangle-toggle
+bind -T copy-mode-vi Escape  send-keys -X cancel
+
+# =============================================================================
+# 外觀：Catppuccin Macchiato（與 zellij 主題一致）
+# 狀態列置頂，仿 zellij tab bar 風格
+# =============================================================================
+set -g status-position top
+set -g status-style       "bg=#24273a,fg=#cad3f5"
+set -g status-left-length  40
+set -g status-right-length 60
+
+# 左側：session 名稱（sapphire 色）
+set -g status-left "#[bg=#7dc4e4,fg=#181926,bold] #S #[fg=#7dc4e4,bg=#24273a] "
+
+# Window 列表（正常：藍色編號；active：peach 色高亮）
+set -g window-status-separator ""
+set -g window-status-format \
+  "#[fg=#363a4f,bg=#24273a]#[bg=#363a4f,fg=#8aadf4] #I #[fg=#cad3f5]#W #[fg=#363a4f,bg=#24273a] "
+set -g window-status-current-format \
+  "#[fg=#f5a97f,bg=#24273a]#[bg=#f5a97f,fg=#181926,bold] #I #[fg=#f5a97f,bg=#494d64]#[bg=#494d64,fg=#f5a97f,bold]#W #[fg=#494d64,bg=#24273a] "
+
+# 右側：日期時間
+set -g status-right "#[fg=#494d64,bg=#24273a]#[bg=#494d64,fg=#cad3f5] %Y-%m-%d %H:%M #[default]"
+
+# Pane 邊框（active 用 blue 高亮，非 active 用 surface）
+set -g pane-border-style        "fg=#494d64"
+set -g pane-active-border-style "fg=#8aadf4"
+
+# 訊息與命令提示列樣式
+set -g message-style         "bg=#363a4f,fg=#eed49f,bold"
+set -g message-command-style "bg=#363a4f,fg=#f5a97f,bold"
+set -g mode-style            "bg=#5b6078,fg=#cad3f5"
+
+# =============================================================================
+# TPM 插件（必須放在最後）
+# 安裝方式：啟動 tmux 後按 Ctrl+a + I（大寫）
+# =============================================================================
+set -g @plugin 'tmux-plugins/tpm'
+set -g @plugin 'tmux-plugins/tmux-sensible'
+
+# tmux-resurrect：保存/恢復 session（類似 zellij session_serialization）
+set -g @plugin 'tmux-plugins/tmux-resurrect'
+set -g @resurrect-capture-pane-contents 'on'
+set -g @resurrect-strategy-nvim 'session'
+
+# tmux-continuum：每 15 分鐘自動保存，啟動時自動恢復
+set -g @plugin 'tmux-plugins/tmux-continuum'
+set -g @continuum-restore 'on'
+set -g @continuum-save-interval '15'
+
+# 初始化 TPM（必須是最後一行）
+run '~/.tmux/plugins/tpm/tpm'

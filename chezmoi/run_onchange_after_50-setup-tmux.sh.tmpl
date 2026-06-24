@@ -1,0 +1,26 @@
+{{ if eq .profile "vm" -}}
+#!/bin/sh
+# 安裝 tmux 與 TPM 外掛(僅 vm)。非 vm 時整段渲染為空,chezmoi 自動略過。
+set -eu
+
+echo "==> [tmux] 安裝 tmux 與 TPM"
+
+# tmux 本體(Debian apt;沿用 10-install-system-packages 的 sudo 偵測模式)
+SUDO=""
+if [ "$(id -u)" -ne 0 ] && command -v sudo >/dev/null 2>&1; then
+    SUDO="sudo"
+fi
+if ! command -v tmux >/dev/null 2>&1; then
+    $SUDO apt-get update -y
+    $SUDO apt-get install -y tmux
+fi
+
+# TPM:clone 一次,冪等
+TPM_DIR="$HOME/.tmux/plugins/tpm"
+if [ ! -d "$TPM_DIR" ]; then
+    git clone --depth 1 https://github.com/tmux-plugins/tpm "$TPM_DIR"
+fi
+
+# 非互動安裝 tmux.conf 宣告的外掛,免手動 prefix+I
+"$TPM_DIR/bin/install_plugins"
+{{ end -}}

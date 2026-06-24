@@ -12,3 +12,8 @@ README.md
 {{ if ne .profile "vm" }}
 .gitconfig
 {{ end }}
+
+# tmux 設定僅部署到 vm:workstation 的 ~/.config/tmux 由 stow 擁有,container 精簡不需要。
+{{ if ne .profile "vm" }}
+.config/tmux
+{{ end }}
