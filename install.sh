@@ -112,6 +112,10 @@ stow codeium
 echo 'Stow Claude configuration'
 stow claude
 
+echo 'Stow TMUX configuration'
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+stow tmux
+
 echo "Install Rust"
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
