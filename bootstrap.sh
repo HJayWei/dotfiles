@@ -32,6 +32,11 @@ else
   printf "未偵測到 chezmoi,要安裝嗎? [y/N]: "; read -r ans
   case "$ans" in
     [Yy]*)
+      if ! command -v curl >/dev/null 2>&1; then
+        echo "找不到 curl,無法下載 chezmoi 安裝程式。" >&2
+        echo "請先安裝 curl(Debian: sudo apt-get update && sudo apt-get install -y curl)後重跑本腳本。" >&2
+        exit 1
+      fi
       mkdir -p "$HOME/.local/bin"
       sh -c "$(curl -fsSL get.chezmoi.io)" -- -b "$HOME/.local/bin"
       CHEZMOI="$HOME/.local/bin/chezmoi"
