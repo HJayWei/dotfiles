@@ -43,6 +43,21 @@ dotfiles/
     └── run_onchange_after_50-setup-tmux.sh.tmpl                 # vm:apt 裝 tmux + clone TPM + 裝外掛
 ```
 
+## VM 快速開始(一支選單腳本)
+
+乾淨 VM 上最省事的方式:clone 後跑 repo 根的 `bootstrap.sh`——它把「選 profile →
+檢查/詢問安裝 chezmoi → `chezmoi init`(互動詢問 git name/email)→ dry-run 預覽 →
+確認 → apply」包成一條互動流程,零依賴(只需 git + shell + curl)。
+
+```sh
+git clone https://github.com/HJayWei/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+./bootstrap.sh        # 選 1) vm;沒裝 chezmoi 會問你要不要裝;最後 dry-run 確認才 apply
+```
+
+> 目前選單僅開放 `vm`;`container` / `workstation` 標示為尚未開放。
+> 想手動逐步操作、或在其他平台,見下方「試用」。
+
 ## 試用(務必先 dry-run)
 
 ```sh
