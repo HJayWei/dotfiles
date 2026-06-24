@@ -90,10 +90,11 @@ chezmoi apply --verbose
 ## 套件分層
 
 - **`system`**(`.chezmoidata.yaml` → `10-install-system-packages`):各平台套件管理器都穩定提供的
-  基礎工具(git / zsh / curl / fzf / jq / ripgrep / bat / fd),mac 用 brew、Debian 用 apt。
+  基礎工具(git / zsh / curl / jq / ripgrep / bat / fd),mac 用 brew、Debian 用 apt。
 - **`mise`**(`20-install-mise-tools`):分兩層宣告(`.chezmoidata.yaml` → `packages.mise`)。
-  - **`common`**(vm + workstation):runtime + 現代 CLI —— `eza` / `zoxide` / `delta` / `jless` /
-    `node@lts` / `go` / `uv`。
+  - **`common`**(vm + workstation):runtime + 現代 CLI —— `eza` / `zoxide` / `fzf` / `delta` / `jless` /
+    `node@lts` / `go` / `uv`。(`fzf` 原在 `system`/apt,但 bullseye 的 0.24 太舊、缺 zoxide 互動選單
+    所需的新 `--preview-window` 選項而報錯,故改由 mise 取得一致版本。)
   - **`workstation`**(僅 mac):由 Brewfile 遷入的開發向 CLI —— `neovim` / `helix` / `zellij` /
     `tree-sitter` / `ast-grep` / `typos-cli` / `glab` / `fastfetch` / `lazygit` / `lazydocker` /
     `btop` / `direnv` / `gh`。

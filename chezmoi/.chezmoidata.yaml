@@ -8,7 +8,6 @@ packages:
     - { brew: git,     apt: git }
     - { brew: zsh,     apt: zsh }
     - { brew: curl,    apt: curl }
-    - { brew: fzf,     apt: fzf }
     - { brew: jq,      apt: jq }
     - { brew: ripgrep, apt: ripgrep }
     - { brew: bat,     apt: bat }      # Debian 執行檔為 batcat
@@ -22,6 +21,7 @@ packages:
     common:
       - eza
       - zoxide
+      - fzf          # 移自 system:apt(bullseye)的 fzf 0.24 太舊,缺 zoxide 互動選單要的新選項
       - delta
       - jless
       - node@lts
