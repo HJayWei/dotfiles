@@ -10,7 +10,7 @@
 | profile | 對應場景 | 部署內容 |
 |---|---|---|
 | `container` | docker / podman 用完即丟 | 僅 `system` 基礎套件 |
-| `vm` | Debian 測試 VM | `system` + `mise` 現代 CLI/runtime,把工具串進 shell rc,並部署可攜別名/history、gitconfig 核心與 tmux(含 TPM 外掛) |
+| `vm` | Debian 測試 VM | `system` + `mise` 現代 CLI/runtime,把工具串進 shell rc,並部署可攜別名(含 git 縮寫)/history/zoxide、gitconfig 核心與 tmux(含 TPM 外掛) |
 | `workstation` | mac m4 工作機 | 全部,含 nvim 設定、應用層工具(leaf 等),以及 `mise` 的 workstation tier 開發向 CLI |
 
 profile 在 `chezmoi init` 時詢問一次(見 `.chezmoi.toml.tmpl`),之後所有
@@ -34,7 +34,7 @@ dotfiles/
     ├── dot_gitconfig.tmpl                     # vm-only;可攜核心(identity/alias/delta pager)
     ├── dot_config/
     │   ├── nvim/init.lua                      # workstation-only(其餘 profile 被忽略)
-    │   ├── shell/env.sh.tmpl                  # 共通;PATH(.local/bin + mise shims)+ 可攜別名 + history
+    │   ├── shell/env.sh.tmpl                  # 共通;PATH + 可攜別名(含 git 縮寫)+ history + zoxide(cd=z)
     │   └── tmux/tmux.conf.tmpl                # vm-only;Linux 可攜版(OSC52 剪貼簿,TPM 外掛)
     ├── run_onchange_before_10-install-system-packages.sh.tmpl   # 全 profile:apt/brew 基礎套件
     ├── run_onchange_before_20-install-mise-tools.sh.tmpl        # vm/workstation:mise + 現代 CLI
@@ -105,8 +105,9 @@ chezmoi apply --verbose
 
 - **`vm` profile:已在真實 Debian 13 (trixie) arm64 端到端實跑通過** —— apt 安裝、
   fd/bat symlink、mise 裝預編譯 binary、shims 上 PATH、rc 串接皆驗證,`eza`/`zoxide`/`delta` 可執行。
-- **可攜別名/history 與 gitconfig 核心:目前僅本機 render 驗證**(三 profile `chezmoi cat` 渲染正確、
-  `.gitconfig` 僅 vm 部署、env.sh 經 `bash -n`/`zsh -n` 語法檢查通過),**尚未在 VM 開新 shell 端到端實跑**——
+- **可攜別名(含 git 縮寫)/history/zoxide 與 gitconfig 核心:目前僅本機 render 驗證**(三 profile
+  `chezmoi cat` 渲染正確、`.gitconfig` 僅 vm 部署、env.sh 經 `bash -n`/`zsh -n`/`sh -n` 語法檢查通過),
+  **尚未在 VM 開新 shell 端到端實跑**——
   待下次 VM `chezmoi apply` 後確認 `type ls cat rg`、`git lg`、`git config core.pager` 再回填此處。
 - **tmux(設定 + 安裝腳本):已在真實 Debian VM `chezmoi apply` 端到端實跑** —— 套用成功、
   `command -v tmux` 可執行、`~/.tmux/plugins` 外掛(tpm/sensible/resurrect/continuum)齊全;
@@ -125,10 +126,14 @@ chezmoi apply --verbose
   `defuddle`(Node)留為 TODO,需先用 mise 備妥 runtime。
 - **VM 的 shell/git 設定是裁切版,非整份照搬**:mac 的 `zsh/.zshrc` 與 mac/Homebrew 深度耦合
   (zinit 走 `$HOMEBREW_PREFIX`、p10k 需 Nerd Font、寫死的 `/Users/...` 與 `/opt/homebrew/...` PATH),
-  整份套到 VM 會大量報錯。故只移植「可攜層」:`env.sh` 帶工具別名(`command -v` 守衛,工具不在時退回原生)
-  與 history(分 bash/zsh);`dot_gitconfig.tmpl` 帶 alias/delta pager,git 身分(name/email)於
+  整份套到 VM 會大量報錯。故只移植「可攜層」:`env.sh` 帶工具別名(`command -v` 守衛,工具不在時退回原生)、
+  history(分 bash/zsh)、git 縮寫(精選對應 mac OMZ git 外掛常用子集:`g`/`gst`/`gco`/`gc`/`gcmsg`/`gp`/`gl`/`gd`…,
+  跨 bash/zsh 的純 alias;`g`=git 搭配下方 gitconfig alias 即 `g lg` / `g st`),以及 zoxide 初始化
+  (`zoxide init --cmd cd`,讓 `cd` 具 frecency 跳轉;`command -v` 守衛,container 無 zoxide 則跳過);
+  `dot_gitconfig.tmpl` 帶 alias/delta pager,git 身分(name/email)於
   `chezmoi init` 時以 `promptStringOnce` 詢問(僅 vm 詢問、可留空 → 不寫入該欄位),**刻意捨棄**
-  sourcetree、`core.editor=nvim`(改用 git 預設)、delta `chameleon` 主題(主題檔未受管)。機制/主題層續留 workstation stow。
+  sourcetree、`core.editor=nvim`(改用 git 預設)、delta `chameleon` 主題(主題檔未受管),以及 mac 那層
+  zinit/p10k/fzf 與整包 OMZ git 外掛(zsh-only、需 Nerd Font/網路)。機制/主題層續留 workstation stow。
 - **VM 的 tmux 是 Linux 裁切版**:以 stow 的 `tmux/.config/tmux/tmux.conf` 為基礎,但 macOS 專用的
   `copy-pipe-and-cancel "pbcopy"` 在 Linux 是死綁定,故改用 `set -g set-clipboard on`(OSC52,經終端機
   回傳本機剪貼簿,SSH/headless 適用)+ `copy-selection-and-cancel`,並**移除依賴 xclip 的 tmux-yank 外掛**;
