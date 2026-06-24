@@ -2,3 +2,8 @@
 docker/.docker/cli-plugins/
 docker/.docker/contexts/
 sealos/
+
+claude/.claude/skills/agent-browser/
+claude/.claude/skills/find-skills/
+claude/.claude/skills/frontend-design/
+codeium/.codeium/windsurf/skills/find-skills/

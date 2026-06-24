@@ -106,14 +106,16 @@ chezmoi apply --verbose
 
 - **`vm` profile:已在真實 Debian 13 (trixie) arm64 端到端實跑通過** —— apt 安裝、
   fd/bat symlink、mise 裝預編譯 binary、shims 上 PATH、rc 串接皆驗證,`eza`/`zoxide`/`delta` 可執行。
-- **可攜別名(含 git 縮寫)/history/zoxide 與 gitconfig 核心:目前僅本機 render 驗證**(三 profile
-  `chezmoi cat` 渲染正確、`.gitconfig` 僅 vm 部署、env.sh 經 `bash -n`/`zsh -n`/`sh -n` 語法檢查通過),
-  **尚未在 VM 開新 shell 端到端實跑**——
-  待下次 VM `chezmoi apply` 後確認 `type ls cat rg`、`git lg`、`git config core.pager` 再回填此處。
+- **可攜別名(含 git 縮寫)/history/zoxide、mise common runtime(go/uv/fzf)與 gitconfig 核心:
+  已在 VM `chezmoi apply` 後開新 shell 端到端確認** —— 別名與 `g` / `gst` / `g lg` 生效、`cd` 具 zoxide
+  frecency 跳轉(`fzf` 改由 mise 供應後不再報 `invalid preview window option`)、`go` / `uv` / `fzf`
+  經 `mise ls` 確認安裝;本機另以三 profile `chezmoi cat` render + `bash -n` / `zsh -n` / `sh -n` 把關。
 - **tmux(設定 + 安裝腳本):已在真實 Debian VM `chezmoi apply` 端到端實跑** —— 套用成功、
   `command -v tmux` 可執行、`~/.tmux/plugins` 外掛(tpm/sensible/resurrect/continuum)齊全;
   本機另以 `chezmoi cat` 三 profile render(僅 vm 部署)+ 安裝腳本 `sh -n` 驗證。
   (OSC52 複製、Catppuccin 主題、Alt 快捷鍵屬互動操作,日常使用中,未逐項自動化驗證。)
+- **`bootstrap.sh`(VM 入口選單):已在 VM 實際使用確認** —— 目前 VM 都透過它執行(選 profile →
+  檢查/安裝 chezmoi → `init` 問 git → dry-run → 確認 → apply),整段流程無誤。
 - `container` / `workstation` profile:目前僅到 render / dry-run 層級,**尚未在各自的真實目標實跑**。
 
 ## 已知限制 / 待辦
@@ -153,4 +155,8 @@ chezmoi apply --verbose
   ① 從 `Brewfile` 移除已遷入 mise 的工具;② 移除 `asdf`(mise 取代,並清掉 `zsh/.zshrc` L149 的 asdf
   shims PATH);③ 評估 rust 由 rustup(`.zshrc` L151-152)改 mise。「需查證」CLI(tldr→tealdeer、
   jc/speedtest 走 pipx、kanata 需驅動、agent-browser)先留 brew,逐個確認 backend 後再搬。
+- **`mise` workstation tier 的 backend 尚未實機查證**:`neovim` / `helix` / `zellij` / `tree-sitter` /
+  `ast-grep` / `typos-cli` / `glab` / `fastfetch` / `lazygit` / `lazydocker` / `btop` / `direnv` / `gh`
+  是依認知歸類(應有 aqua/ubi backend),**尚未實際安裝驗證**。待真的在 workstation 啟用時,逐個
+  `mise registry | rg <tool>` 或 `mise use aqua:<owner>/<repo>` 確認;有出入再調整清單。
 ```
