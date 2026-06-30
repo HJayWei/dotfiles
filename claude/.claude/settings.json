@@ -5,7 +5,7 @@
   },
   "permissions": {
     "allow": [
-      "Bash(git add:*)",
+      "Bash(git:*)",
       "Bash(ls:*)",
       "Bash(cat:*)",
       "Bash(grep:*)",
@@ -14,9 +14,21 @@
       "Bash(podman-compose:*)",
       "Bash(docker-compose:*)",
       "Bash(agent-browser:*)",
-      "Bash(gh:*)"
+      "Bash(gh:*)",
+      "Bash(rg:*)",
+      "Bash(fd:*)",
+      "Bash(eza:*)",
+      "Bash(bat:*)",
+      "Bash(jq:*)",
+      "Bash(jless:*)",
+      "Bash(tldr:*)",
+      "Bash(ast-grep:*)",
+      "Bash(sg:*)",
+      "Bash(jc:*)",
+      "Bash(delta:*)"
     ]
   },
+  "model": "opus",
   "worktree": {
     "baseRef": "head"
   },
@@ -32,7 +44,20 @@
     "pyright-lsp@claude-plugins-official": true,
     "php-lsp@claude-plugins-official": true
   },
-  "extraKnownMarketplaces": {},
+  "extraKnownMarketplaces": {
+    "claude-code-plugins": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/anthropics/claude-code.git"
+      }
+    },
+    "everything-claude-code": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/affaan-m/everything-claude-code.git"
+      }
+    }
+  },
   "language": "繁體中文",
   "sandbox": {
     "enabled": true,
@@ -44,5 +69,6 @@
     "excludedCommands": ["podman *", "podman-compose *", "docker *", "docker-compose *", "agent-browser *", "gh *"]
   },
   "effortLevel": "high",
-  "theme": "dark"
+  "theme": "dark",
+  "tui": "fullscreen"
 }
