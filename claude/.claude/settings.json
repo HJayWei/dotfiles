@@ -17,6 +17,7 @@
       "Bash(gh:*)",
       "Bash(rg:*)",
       "Bash(fd:*)",
+      "Bash(find:*)",
       "Bash(eza:*)",
       "Bash(bat:*)",
       "Bash(jq:*)",
@@ -25,6 +26,7 @@
       "Bash(ast-grep:*)",
       "Bash(sg:*)",
       "Bash(jc:*)",
+      "Bash(echo:*)",
       "Bash(delta:*)"
     ]
   },
@@ -69,6 +71,6 @@
     "excludedCommands": ["podman *", "podman-compose *", "docker *", "docker-compose *", "agent-browser *", "gh *"]
   },
   "effortLevel": "high",
-  "theme": "dark",
-  "tui": "fullscreen"
+  "tui": "fullscreen",
+  "theme": "dark"
 }
