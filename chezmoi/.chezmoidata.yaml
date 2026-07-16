@@ -2,16 +2,13 @@
 # 安裝腳本(run_*)負責「怎麼裝」,並處理各平台套件名差異。
 
 packages:
-  # 各平台套件管理器都穩定提供的基礎工具。
-  # (Debian 11 bullseye 的 apt 已內含這些,執行檔名差異由安裝腳本以 symlink 處理)
+  # bootstrap 的前置工具,需 root(apt)才能裝。
+  # git(clone 專案)與 curl(抓 chezmoi/mise)實務上必然已存在——沒有它們根本跑不到這步——
+  # 故本層對 vm/workstation 是 no-op,留著僅為 container(極簡 image 可能真的缺)的安全網。
+  # 其餘現代 CLI 一律改由 mise 提供,讓「非 root 且無 sudo」的使用者也能裝齊(安裝腳本會 fail-loud 跳過本層)。
   system:
-    - { brew: git,     apt: git }
-    - { brew: zsh,     apt: zsh }
-    - { brew: curl,    apt: curl }
-    - { brew: jq,      apt: jq }
-    - { brew: ripgrep, apt: ripgrep }
-    - { brew: bat,     apt: bat }      # Debian 執行檔為 batcat
-    - { brew: fd,      apt: fd-find }  # Debian 執行檔為 fdfind
+    - { brew: git,  apt: git }
+    - { brew: curl, apt: curl }
 
   # Debian 11 的 apt 沒有(或版本過舊)的現代 CLI / runtime,
   # 改用 mise 跨平台安裝預編譯 binary,確保各環境版本一致。
@@ -20,6 +17,10 @@ packages:
     # 所有非 container(vm + workstation):runtime + 既有現代 CLI
     common:
       - eza
+      - bat          # 移自 system:apt(Debian 需 root,執行檔名 batcat);mise 裝的直接叫 bat
+      - fd           # 移自 system:apt(Debian 需 root,執行檔名 fdfind);mise 裝的直接叫 fd
+      - ripgrep      # 移自 system:apt,改由 mise 免 root
+      - jq           # 移自 system:apt,改由 mise 免 root
       - zoxide
       - fzf          # 移自 system:apt(bullseye)的 fzf 0.24 太舊,缺 zoxide 互動選單要的新選項
       - delta

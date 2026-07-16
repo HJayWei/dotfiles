@@ -1,0 +1,34 @@
+{{ if eq .profile "vm" -}}
+#!/bin/sh
+# 安裝 tmux 與 TPM 外掛(僅 vm)。非 vm 時整段渲染為空,chezmoi 自動略過。
+# 用 run_after_(每次 apply 都跑)而非 run_onchange:兩段工作都有冪等 guard,
+# 故無權限使用者「先手動裝 tmux → 再重跑 ./bootstrap.sh」時,能自然接續完成 TPM 設定。
+set -eu
+
+echo "==> [tmux] 安裝 tmux 與 TPM"
+
+# tmux 本體(Debian apt,需 root)。tmux 不在且無權限裝 → fail-loud 印手動指令並跳過整段:
+# TPM 的 install_plugins 需啟動 tmux server,沒有 tmux 就無從安裝外掛。
+if ! command -v tmux >/dev/null 2>&1; then
+    SUDO=""
+    if [ "$(id -u)" -eq 0 ]; then
+        :
+    elif command -v sudo >/dev/null 2>&1; then
+        SUDO="sudo"
+    else
+        echo "==> [tmux] 略過:未裝 tmux 且非 root 又無 sudo,無權限以 apt 安裝。" >&2
+        echo "    取得 root/sudo 後執行下列指令,再重跑 ./bootstrap.sh 即會自動 clone TPM 並裝外掛:" >&2
+        echo "      sudo apt-get update && sudo apt-get install -y tmux" >&2
+        exit 0
+    fi
+    $SUDO apt-get update -y
+    $SUDO apt-get install -y tmux
+fi
+
+# TPM:clone + 首次安裝外掛(冪等:TPM 目錄已存在即整段跳過,故每次 apply 皆為快速 no-op)
+TPM_DIR="$HOME/.tmux/plugins/tpm"
+if [ ! -d "$TPM_DIR" ]; then
+    git clone --depth 1 https://github.com/tmux-plugins/tpm "$TPM_DIR"
+    "$TPM_DIR/bin/install_plugins"
+fi
+{{ end -}}

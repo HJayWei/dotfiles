@@ -8,18 +8,23 @@ echo "==> [system] 安裝基礎套件"
 {{ if eq .chezmoi.os "darwin" -}}
 brew install {{ range .packages.system }}{{ .brew }} {{ end }}
 {{ else if eq .chezmoi.os "linux" -}}
+# apt 需 root。非 root 且無 sudo → fail-loud 跳過本層(git/curl 已存在,其餘 CLI 由 mise 提供),
+# 而非讓 apt 直接噴一堆看不懂的 lock 權限錯誤。
 SUDO=""
-if [ "$(id -u)" -ne 0 ] && command -v sudo >/dev/null 2>&1; then
+if [ "$(id -u)" -eq 0 ]; then
+    :
+elif command -v sudo >/dev/null 2>&1; then
     SUDO="sudo"
+else
+    echo "==> [system] 略過:非 root 且無 sudo,無權限以 apt 安裝系統套件。" >&2
+    echo "    實務上無影響:git/curl 能執行到這步即代表已存在;其餘現代 CLI 由 mise 提供,本次套用已裝。" >&2
+    echo "    若確實缺少,取得 root/sudo 後執行:" >&2
+    echo "      sudo apt-get update && sudo apt-get install -y {{ range .packages.system }}{{ .apt }} {{ end }}" >&2
+    exit 0
 fi
 
 $SUDO apt-get update -y
 $SUDO apt-get install -y {{ range .packages.system }}{{ .apt }} {{ end }}
-
-# Debian 的 fd / bat 執行檔名與其他平台不同,建立相容 symlink。
-mkdir -p "$HOME/.local/bin"
-if [ -e /usr/bin/fdfind ]; then ln -sf /usr/bin/fdfind "$HOME/.local/bin/fd"; fi
-if [ -e /usr/bin/batcat ]; then ln -sf /usr/bin/batcat "$HOME/.local/bin/bat"; fi
 {{ else -}}
 echo "未支援的 OS: {{ .chezmoi.os }}" >&2
 exit 1

@@ -40,7 +40,7 @@ dotfiles/
     ├── run_onchange_before_20-install-mise-tools.sh.tmpl        # vm/workstation:mise + 現代 CLI
     ├── run_onchange_after_30-install-app-tools.sh.tmpl          # workstation:leaf 等應用層
     ├── run_onchange_after_40-wire-shell-rc.sh.tmpl              # 非 workstation:把 env.sh 串進 shell rc
-    └── run_onchange_after_50-setup-tmux.sh.tmpl                 # vm:apt 裝 tmux + clone TPM + 裝外掛
+    └── run_after_50-setup-tmux.sh.tmpl                          # vm:apt 裝 tmux + clone TPM + 裝外掛(每次 apply,冪等 guard)
 ```
 
 ## VM 快速開始(一支選單腳本)
@@ -89,12 +89,20 @@ chezmoi apply --verbose
 
 ## 套件分層
 
-- **`system`**(`.chezmoidata.yaml` → `10-install-system-packages`):各平台套件管理器都穩定提供的
-  基礎工具(git / zsh / curl / jq / ripgrep / bat / fd),mac 用 brew、Debian 用 apt。
+- **`system`**(`.chezmoidata.yaml` → `10-install-system-packages`):bootstrap 的前置工具
+  (git / curl),需 root(apt)才能裝。兩者實務上必然已存在——沒有 git 無法 clone 專案、
+  沒有 curl 抓不到 chezmoi/mise,**根本跑不到這步**——故本層對 vm/workstation 是 no-op,
+  留著僅為 container(極簡 image 可能真的缺)的安全網。
+  **非 root 且無 sudo 時,`10-install-system-packages` 會 fail-loud 印訊息並跳過本層**
+  (不讓 apt 直接噴 lock 權限錯誤),其餘 CLI 一律由 mise 提供,故無權限使用者仍能裝齊現代工具。
+  (`zsh` 曾列於本層,已移除:vm 用 bash 且 `apt install zsh` 不會建立 `~/.zshrc`,
+  `40-wire-shell-rc` 因而不會串接,裝了等於裸 zsh;mac 用系統內建 zsh + Brewfile 的 zinit,
+  從未裝過 brew 版 zsh。三個 profile 皆無需求。)
 - **`mise`**(`20-install-mise-tools`):分兩層宣告(`.chezmoidata.yaml` → `packages.mise`)。
-  - **`common`**(vm + workstation):runtime + 現代 CLI —— `eza` / `zoxide` / `fzf` / `delta` / `jless` /
-    `node@lts` / `go` / `uv`。(`fzf` 原在 `system`/apt,但 bullseye 的 0.24 太舊、缺 zoxide 互動選單
-    所需的新 `--preview-window` 選項而報錯,故改由 mise 取得一致版本。)
+  - **`common`**(vm + workstation):runtime + 現代 CLI —— `eza` / `bat` / `fd` / `ripgrep` / `jq` /
+    `zoxide` / `fzf` / `delta` / `jless` / `node@lts` / `go` / `uv`。(`bat`/`fd`/`ripgrep`/`jq` 原在
+    `system`/apt,為支援無 sudo 使用者改由 mise 供應——順帶免去 Debian `batcat`/`fdfind` 的 symlink;
+    `fzf` 則因 bullseye 的 0.24 太舊、缺 zoxide 互動選單所需的新 `--preview-window` 選項而報錯,同樣改用 mise。)
   - **`workstation`**(僅 mac):由 Brewfile 遷入的開發向 CLI —— `neovim` / `helix` / `zellij` /
     `tree-sitter` / `ast-grep` / `typos-cli` / `glab` / `fastfetch` / `lazygit` / `lazydocker` /
     `btop` / `direnv` / `gh`。
@@ -105,7 +113,9 @@ chezmoi apply --verbose
 ## 驗證狀態(誠實標註)
 
 - **`vm` profile:已在真實 Debian 13 (trixie) arm64 端到端實跑通過** —— apt 安裝、
-  fd/bat symlink、mise 裝預編譯 binary、shims 上 PATH、rc 串接皆驗證,`eza`/`zoxide`/`delta` 可執行。
+  mise 裝預編譯 binary、shims 上 PATH、rc 串接皆驗證,`eza`/`zoxide`/`delta` 可執行。
+  (註:該次實跑為舊分層;`bat`/`fd`/`ripgrep`/`jq` 改由 mise 供應與「無 sudo 跳過 apt」屬新變更,
+  已另在無權限 VM 實跑驗證——見下方已知限制。)
 - **可攜別名(含 git 縮寫)/history/zoxide、mise common runtime(go/uv/fzf)與 gitconfig 核心:
   已在 VM `chezmoi apply` 後開新 shell 端到端確認** —— 別名與 `g` / `gst` / `g lg` 生效、`cd` 具 zoxide
   frecency 跳轉(`fzf` 改由 mise 供應後不再報 `invalid preview window option`)、`go` / `uv` / `fzf`
@@ -122,9 +132,16 @@ chezmoi apply --verbose
 
 - **jless 無 linux/arm64 預編譯 binary**:mise(aqua registry)僅支援 `linux/amd64` 與 `darwin`。
   `20-install-mise-tools` 已用 `.chezmoi.arch` 在 `linux/arm64` 把 jless 從清單剔除(其餘照裝);
-  該平台的 JSON 檢視以 apt 的 `jq` 替代。amd64 Linux 與 macOS 仍正常安裝 jless。
-- **fd / bat 名稱差異**:Debian 執行檔為 `fdfind` / `batcat`,`10-install-system-packages` 會在
-  `~/.local/bin` 建立 `fd` / `bat` symlink;`env.sh` 已把該路徑加上 PATH。
+  該平台的 JSON 檢視以 mise 的 `jq` 替代(`jq` 有 linux/arm64 binary)。amd64 Linux 與 macOS 仍正常安裝 jless。
+- **無 sudo 路徑:主要部分已在真實無權限 VM(Debian / arm64)實跑驗證**:
+  `10-install-system-packages` 與 `50-setup-tmux` 皆為「非 root 且無 sudo → 印訊息並 `exit 0` 跳過 apt」
+  (tmux 無法裝時連 TPM 外掛一併跳過,因 `install_plugins` 需啟動 tmux server),兩支跳過時都會印手動指令。
+  已驗證:`10` 的略過訊息如實印出;`bat`/`fd`/`ripgrep`/`jq` 改由 mise 供應後於 arm64 實裝
+  **11/11 成功**(eza/bat/fd/ripgrep/jq/zoxide/fzf/delta/node/go/uv),`jless` 依 `.chezmoi.arch` 正確剔除。
+  **尚未驗證**:`50-setup-tmux` 的無權限略過訊息,以及「手動裝 tmux → 重跑 `./bootstrap.sh` →
+  TPM 自動補裝」的接續流程(該次實跑中兩支 tmux 腳本被一併誤刪,故未執行到)。
+  重跑語意的差異:`50-setup-tmux` 特意用 `run_after_`(每次 apply 都跑、冪等 guard),上述接續流程才成立;
+  `10-install-system-packages` 仍為 `run_onchange_`,但其內容對 vm 本就是 no-op,不依賴重跑。
 - **應用層尚未完成**:`30-install-app-tools` 目前只裝 `leaf`;`markitdown`(Python)、
   `defuddle`(Node)留為 TODO,需先用 mise 備妥 runtime。
 - **VM 的 shell/git 設定是裁切版,非整份照搬**:mac 的 `zsh/.zshrc` 與 mac/Homebrew 深度耦合
