@@ -51,6 +51,36 @@ fi
 "$CHEZMOI" init --source "$REPO_DIR" \
   --promptString "環境 profile (container/vm/workstation)=$PROFILE"
 
+# 收尾摘要:apply 後統一列出「需 root 而本次未安裝」的項目。
+# 放這裡而非各 run_ 腳本內的理由:
+#   1. 腳本的略過訊息會被埋在 apply 中段,使用者容易錯過。
+#   2. 10-install-system-packages 是 run_onchange_,重跑時不會再執行;
+#      唯有在此檢查「實際狀態」才能每次都如實反映仍缺什麼。
+report_missing_root_packages() {
+    # 需 root 的項目 = packages.system(從 .chezmoidata.yaml 取,避免兩處各寫一份)
+    #                  + tmux(50-setup-tmux 專屬,刻意不列入 .chezmoidata.yaml)
+    # 假設:這些 apt 套件名與命令名相同(git/zsh/curl/tmux 皆是)。
+    need=$("$CHEZMOI" execute-template --source "$REPO_DIR" \
+        '{{ range .packages.system }}{{ .apt }} {{ end }}' 2>/dev/null || true)
+    need="$need tmux"
+
+    missing=""
+    for pkg in $need; do
+        command -v "$pkg" >/dev/null 2>&1 || missing="$missing $pkg"
+    done
+    [ -n "$missing" ] || return 0
+
+    echo
+    echo "────────────────────────────────────────────────────────────"
+    echo " ⚠ 下列項目需 root 權限,本次未安裝:$missing"
+    echo
+    echo "   取得 root/sudo 後執行:"
+    echo "     sudo apt-get update && sudo apt-get install -y$missing"
+    echo
+    echo "   完成後重跑 ./bootstrap.sh,tmux 外掛(TPM)會自動補裝。"
+    echo "────────────────────────────────────────────────────────────"
+}
+
 # 5. dry-run 預覽 → 確認 → 實際 apply
 echo "== 預覽(dry-run,不會實際變更)=="
 "$CHEZMOI" apply --source "$REPO_DIR" --dry-run --verbose
@@ -58,7 +88,8 @@ printf "以上為將套用的變更,確認要實際 apply 嗎? [y/N]: "; read -r
 case "$go" in
   [Yy]*)
     "$CHEZMOI" apply --source "$REPO_DIR" --verbose
-    echo "完成。開新 shell 即可使用(mise 工具 / 別名 / tmux)。"
+    echo "完成。開新 shell 即可使用(mise 工具 / 別名)。"
+    report_missing_root_packages
     ;;
   *) echo "已取消 apply。可稍後手動執行:$CHEZMOI apply --source $REPO_DIR" ;;
 esac

@@ -47,7 +47,11 @@ dotfiles/
 
 乾淨 VM 上最省事的方式:clone 後跑 repo 根的 `bootstrap.sh`——它把「選 profile →
 檢查/詢問安裝 chezmoi → `chezmoi init`(互動詢問 git name/email)→ dry-run 預覽 →
-確認 → apply」包成一條互動流程,零依賴(只需 git + shell + curl)。
+確認 → apply → 收尾摘要」包成一條互動流程,零依賴(只需 git + shell + curl)。
+
+收尾摘要會在最後統一列出「需 root 而本次未安裝」的項目(如無 sudo 時的 `tmux`)
+與補裝指令,免得略過訊息被埋在 apply 中段而錯過;全部裝齊時則不印任何東西。
+它檢查的是**實際狀態**(`command -v`)而非腳本回報,故重跑時仍能如實反映還缺什麼。
 
 ```sh
 git clone https://github.com/HJayWei/dotfiles.git ~/dotfiles
@@ -126,6 +130,8 @@ chezmoi apply --verbose
   (OSC52 複製、Catppuccin 主題、Alt 快捷鍵屬互動操作,日常使用中,未逐項自動化驗證。)
 - **`bootstrap.sh`(VM 入口選單):已在 VM 實際使用確認** —— 目前 VM 都透過它執行(選 profile →
   檢查/安裝 chezmoi → `init` 問 git → dry-run → 確認 → apply),整段流程無誤。
+  (收尾摘要已在真實無權限 VM 確認顯示;本機另以假造 PATH 實跑函式驗證「缺 tmux 時列出補裝指令」
+  與「全裝齊時不印任何東西」兩情境。)
 - `container` / `workstation` profile:目前僅到 render / dry-run 層級,**尚未在各自的真實目標實跑**。
 
 ## 已知限制 / 待辦
@@ -137,7 +143,8 @@ chezmoi apply --verbose
   `10-install-system-packages` 與 `50-setup-tmux` 皆為「非 root 且無 sudo → 印訊息並 `exit 0` 跳過 apt」
   (tmux 無法裝時連 TPM 外掛一併跳過,因 `install_plugins` 需啟動 tmux server),兩支跳過時都會印手動指令。
   已驗證:`10` 的略過訊息如實印出;`bat`/`fd`/`ripgrep`/`jq` 改由 mise 供應後於 arm64 實裝
-  **11/11 成功**(eza/bat/fd/ripgrep/jq/zoxide/fzf/delta/node/go/uv),`jless` 依 `.chezmoi.arch` 正確剔除。
+  **11/11 成功**(eza/bat/fd/ripgrep/jq/zoxide/fzf/delta/node/go/uv),`jless` 依 `.chezmoi.arch` 正確剔除;
+  bootstrap 收尾摘要亦確認顯示。
   **尚未驗證**:`50-setup-tmux` 的無權限略過訊息,以及「手動裝 tmux → 重跑 `./bootstrap.sh` →
   TPM 自動補裝」的接續流程(該次實跑中兩支 tmux 腳本被一併誤刪,故未執行到)。
   重跑語意的差異:`50-setup-tmux` 特意用 `run_after_`(每次 apply 都跑、冪等 guard),上述接續流程才成立;
