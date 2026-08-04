@@ -12,47 +12,17 @@ matches:
   - trigger: ':espanso'
     replace: 'Hi there!'
 
-  - trigger: ':ai-git-update-message'
-    replace: '{{output}}'
-    vars:
-      - name: form_data
-        type: form
-        params:
-          layout: |
-            更新說明: [[current_change]]
-          fields:
-            current_change:
-              multiline: true
-      - name: output
-        type: shell
-        params:
-          cmd: |
-            CURRENT_CHANGE="{{form_data.current_change}}"
+  - trigger: ':ai-trans'
+    replace: '以下我將使用 "A|B" 的方式進行提問，A 為我的中文原意，B 為我嘗試將 A 翻譯為英文，希望你可以修正我的 B 翻譯內容，讓他更符合英文母語者與科技業者常使用的語句，除此之外，希望你能再提供我，在不參考 B 的情況下，你會如何翻譯 A'
 
-            if [[ -n $CURRENT_CHANGE ]]; then
-              echo "本次調整為，$CURRENT_CHANGE。"
-            fi
+  - trigger: ':ai-plan-ending'
+    replace: '以上需求為我的想法，請確認可行性以及思考是否有任何疑慮或疑問可以向我提出，以確保雙方達成共識後再進行實作。'
 
-  - trigger: ':ai-generate-git-message'
-    replace: '{{output}}'
-    vars:
-      - name: form_data
-        type: form
-        params:
-          layout: |
-            暫存檔案: [[git_status]]
-          fields:
-            git_status:
-              multiline: true
-      - name: output
-        type: shell
-        params:
-          cmd: |
-            GIT_STATUS="{{form_data.git_status}}"
+  - trigger: ':ai-impl-git-rule'
+    replace: '過程中請依照原子性原則進行提交，以確保程式可複驗及必要時的回朔。'
 
-            if [[ -n $GIT_STATUS ]]; then
-              echo "我已經將需要的檔案 git add 加入暫存的變更中，請基於上面的描述以及暫存變更的內容產生合適的 git commit 提交訊息並以英文描述，待我確認完畢後會自行提交
+  - trigger: ':ai-impl-tdd-rule'
+    replace: '過程中請遵循 tdd 原則進行規劃、測試、實作、驗證等流程確保程式碼品質與交付結果的穩定性與可驗證性。'
 
-              git diff --staged --name-status
-              $GIT_STATUS"
-            fi
+  - trigger: ':ai-impl-container-rule'
+    replace: '過程中若需要執行任何命令，請優先使用 podman compose exec 為前綴在 container 中運行，若真的有需要在本機執行，請向我提出請求。'

@@ -12,6 +12,7 @@
       "Bash(docker:*)",
       "Bash(podman:*)",
       "Bash(podman-compose:*)",
+      "Bash(podman compose:*)",
       "Bash(docker-compose:*)",
       "Bash(agent-browser:*)",
       "Bash(gh:*)",
@@ -30,7 +31,7 @@
       "Bash(delta:*)"
     ]
   },
-  "model": "opus",
+  "model": "opus[1m]",
   "worktree": {
     "baseRef": "head"
   },
@@ -68,9 +69,19 @@
     "network": {
       "allowedDomains": []
     },
-    "excludedCommands": ["podman *", "podman-compose *", "docker *", "docker-compose *", "agent-browser *", "gh *"]
+    "excludedCommands": [
+      "git *",
+      "make *",
+      "podman *",
+      "podman-compose *",
+      "podman compose *",
+      "docker *",
+      "docker-compose *",
+      "agent-browser *",
+      "gh *"
+    ]
   },
-  "effortLevel": "high",
+  "effortLevel": "xhigh",
   "tui": "fullscreen",
   "theme": "dark"
 }

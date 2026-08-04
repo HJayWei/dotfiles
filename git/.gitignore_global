@@ -3,3 +3,5 @@
 state.yml
 
 **/.claude/settings.local.json
+
+**/.claude/.cc-writes/
