@@ -1,0 +1,117 @@
+{
+  "version": 3,
+  "skills": {
+    "excalidraw-diagram": {
+      "source": "git@github.com:axtonliu/axton-obsidian-visual-skills.git",
+      "sourceType": "git",
+      "sourceUrl": "git@github.com:axtonliu/axton-obsidian-visual-skills.git",
+      "skillPath": "excalidraw-diagram/SKILL.md",
+      "skillFolderHash": "9c9592ccce8ec78626088714ca35f164d0dd2a79235e130e52f43f308ee83315",
+      "pluginName": "obsidian-visual-skills",
+      "installedAt": "2026-05-09T10:12:24.158Z",
+      "updatedAt": "2026-05-09T10:12:24.158Z"
+    },
+    "mermaid-visualizer": {
+      "source": "git@github.com:axtonliu/axton-obsidian-visual-skills.git",
+      "sourceType": "git",
+      "sourceUrl": "git@github.com:axtonliu/axton-obsidian-visual-skills.git",
+      "skillPath": "mermaid-visualizer/SKILL.md",
+      "skillFolderHash": "4cd0c51a2c2568ddff0b1b21b6a82f7ee2369d60f32f5a34e784588bf5f8c2b4",
+      "pluginName": "obsidian-visual-skills",
+      "installedAt": "2026-05-09T10:12:24.159Z",
+      "updatedAt": "2026-05-09T10:12:24.159Z"
+    },
+    "obsidian-canvas-creator": {
+      "source": "git@github.com:axtonliu/axton-obsidian-visual-skills.git",
+      "sourceType": "git",
+      "sourceUrl": "git@github.com:axtonliu/axton-obsidian-visual-skills.git",
+      "skillPath": "obsidian-canvas-creator/SKILL.md",
+      "skillFolderHash": "8da7f394270c3a4fe3829d54757074b0bb016495325945ea2a2f29f451c266b9",
+      "pluginName": "obsidian-visual-skills",
+      "installedAt": "2026-05-09T10:12:24.159Z",
+      "updatedAt": "2026-05-09T10:12:24.159Z"
+    },
+    "defuddle": {
+      "source": "git@github.com:kepano/obsidian-skills.git",
+      "sourceType": "git",
+      "sourceUrl": "git@github.com:kepano/obsidian-skills.git",
+      "skillPath": "skills/defuddle/SKILL.md",
+      "skillFolderHash": "0ed68bc3e818ba0e6b8d192357ea3daaf552a3893f8854e7fd43c06831f91323",
+      "installedAt": "2026-05-09T10:14:41.938Z",
+      "updatedAt": "2026-05-09T10:14:41.938Z"
+    },
+    "json-canvas": {
+      "source": "git@github.com:kepano/obsidian-skills.git",
+      "sourceType": "git",
+      "sourceUrl": "git@github.com:kepano/obsidian-skills.git",
+      "skillPath": "skills/json-canvas/SKILL.md",
+      "skillFolderHash": "56cbac74a93e4fba97f4d44bccfdeaae89e545b223f47df392c7705e01e6c543",
+      "installedAt": "2026-05-09T10:14:41.939Z",
+      "updatedAt": "2026-05-09T10:14:41.939Z"
+    },
+    "obsidian-bases": {
+      "source": "git@github.com:kepano/obsidian-skills.git",
+      "sourceType": "git",
+      "sourceUrl": "git@github.com:kepano/obsidian-skills.git",
+      "skillPath": "skills/obsidian-bases/SKILL.md",
+      "skillFolderHash": "ed0a53502693e56c67575a9958daca9a3a1ac7ba483367f400b4cad9488bfb3c",
+      "installedAt": "2026-05-09T10:14:41.940Z",
+      "updatedAt": "2026-05-09T10:14:41.940Z"
+    },
+    "obsidian-cli": {
+      "source": "git@github.com:kepano/obsidian-skills.git",
+      "sourceType": "git",
+      "sourceUrl": "git@github.com:kepano/obsidian-skills.git",
+      "skillPath": "skills/obsidian-cli/SKILL.md",
+      "skillFolderHash": "f46ae626875f7e47c410c2ee93896c4526024ebe127719e8fb430261b5677edc",
+      "installedAt": "2026-05-09T10:14:41.940Z",
+      "updatedAt": "2026-05-09T10:14:41.940Z"
+    },
+    "obsidian-markdown": {
+      "source": "git@github.com:kepano/obsidian-skills.git",
+      "sourceType": "git",
+      "sourceUrl": "git@github.com:kepano/obsidian-skills.git",
+      "skillPath": "skills/obsidian-markdown/SKILL.md",
+      "skillFolderHash": "cacc9058a35ad3fd4985b4c31121bff8202f1337c39808c1326ded6a19a7915f",
+      "installedAt": "2026-05-09T10:14:41.941Z",
+      "updatedAt": "2026-05-09T10:14:41.941Z"
+    },
+    "tutor": {
+      "source": "RoundTable02/tutor-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/RoundTable02/tutor-skills.git",
+      "skillPath": "skills/tutor/SKILL.md",
+      "skillFolderHash": "2086002c29352ef45ef2d5937a3100a44a99e6b8",
+      "installedAt": "2026-05-09T10:25:54.293Z",
+      "updatedAt": "2026-05-09T10:25:54.293Z"
+    },
+    "tutor-setup": {
+      "source": "RoundTable02/tutor-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/RoundTable02/tutor-skills.git",
+      "skillPath": "skills/tutor-setup/SKILL.md",
+      "skillFolderHash": "0028508546eb487fe8079e0b5660c23cf788be9c",
+      "installedAt": "2026-05-09T10:25:54.295Z",
+      "updatedAt": "2026-05-09T10:25:54.295Z"
+    }
+  },
+  "dismissed": {
+    "findSkillsPrompt": true
+  },
+  "lastSelectedAgents": [
+    "amp",
+    "antigravity",
+    "antigravity-cli",
+    "cline",
+    "codex",
+    "cursor",
+    "deepagents",
+    "gemini-cli",
+    "github-copilot",
+    "kimi-code-cli",
+    "opencode",
+    "warp",
+    "zed",
+    "claude-code"
+  ]
+}
