@@ -162,3 +162,6 @@ copy() {
     echo -en "\e]52;c;$encoded\a"
     echo "Content copied to clipboard!"
 }
+
+# mise
+eval "$(mise activate zsh)"

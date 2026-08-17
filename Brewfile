@@ -1,5 +1,6 @@
-tap "homebrew/bundle"
-tap "homebrew/services"
+tap "atlassian/acli"
+tap "brewsci/bio"
+tap "brewsci/science"
 # Browser automation CLI for AI agents
 brew "agent-browser"
 # Distributed revision control system
@@ -12,6 +13,8 @@ brew "ast-grep"
 brew "bat"
 # Resource monitor. C++ version and continuation of bashtop and bpytop
 brew "btop"
+# Manage your dotfiles across multiple diverse machines, securely
+brew "chezmoi"
 # Load/unload environment variables based on $PWD
 brew "direnv"
 # Pack, ship and run any application as a lightweight container
@@ -58,6 +61,8 @@ brew "lazygit"
 brew "luarocks"
 # Scalable distributed version control system
 brew "mercurial"
+# Polyglot runtime manager (asdf rust clone)
+brew "mise"
 # Deep clean and optimize your Mac
 brew "mole"
 # Ambitious Vim-fork focused on extensibility and agility
