@@ -1,0 +1,147 @@
+# 由 chezmoi 管理 — profile: {{ .profile }}(wsl 專用)
+# 自 mac stow 版 zsh/.zshrc 移植:保留 zinit / p10k / OMZ snippets / 外掛 / fzf 整合,
+# 去除 Homebrew、寫死的 /Users/... 與 PHP / Windsurf / Antigravity / LM Studio 等 mac 專屬段落;
+# 別名、history、PATH(mise shims)、zoxide 統一由 ~/.config/shell/env.sh 提供(與 bash 共用),本檔不重複定義。
+
+# ---- Zinit(由 run_after_60-setup-zsh clone)---- #
+ZINIT_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/zinit/zinit.git"
+if [[ -r "$ZINIT_HOME/zinit.zsh" ]]; then
+  source "$ZINIT_HOME/zinit.zsh"
+
+  # Powerlevel10k
+  zinit ice depth=1; zinit light romkatv/powerlevel10k
+
+  # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+  # Initialization code that may require console input (password prompts, [y/n]
+  # confirmations, etc.) must go above this block; everything else may go below.
+  if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+    source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+  fi
+
+  # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+  [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+  # Package from Oh My Zsh
+  zinit snippet OMZ::lib/completion.zsh
+  zinit snippet OMZ::lib/history.zsh
+  zinit snippet OMZ::lib/key-bindings.zsh
+  zinit snippet OMZ::lib/theme-and-appearance.zsh
+  zinit snippet OMZ::lib/clipboard.zsh
+  zinit snippet OMZ::lib/functions.zsh
+  zinit snippet OMZ::lib/termsupport.zsh
+  zinit snippet OMZ::lib/git.zsh
+  zinit snippet OMZ::plugins/git/git.plugin.zsh
+
+  # Lazy Load Plugins
+  zinit ice wait'!' lucid
+  zinit light zsh-users/zsh-completions
+
+  zinit ice wait lucid
+  zinit light zsh-users/zsh-history-substring-search
+
+  zinit ice wait lucid
+  zinit light zdharma-continuum/fast-syntax-highlighting
+
+  zinit ice wait lucid
+  zinit load zsh-users/zsh-autosuggestions
+  zinit load djui/alias-tips
+else
+  echo "zinit 未安裝($ZINIT_HOME),外掛與 p10k 未載入;執行 chezmoi apply 補裝。" >&2
+fi
+
+# Activate the built-in autocomplete system in Zsh
+autoload -Uz compinit
+if [[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+24) ]]; then
+  compinit;
+else
+  compinit -C;
+fi;
+
+# Enhance autocomplete performance by utilizing cache
+zstyle ':completion::complete:*' use-cache 1
+
+# History 大小 / 檔案 / 去重在 env.sh;OMZ history.zsh 會開 share_history,這裡關掉(同 mac)
+unsetopt share_history
+
+# ---- 共用層:PATH(mise shims)+ 別名 + history + zoxide(cd=z) ---- #
+# 放在 fzf / direnv 之前:它們需要 mise shims 在 PATH 上。
+[ -f "$HOME/.config/shell/env.sh" ] && . "$HOME/.config/shell/env.sh"
+
+# ---- Fuzzy Finder (FZF) ---- #
+if command -v fzf >/dev/null 2>&1; then
+  # Set up fzf key bindings and fuzzy completion
+  source <(fzf --zsh)
+
+  # Use fd instead of fzf
+  export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
+  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+  export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
+
+  # Use fd (https://github.com/sharkdp/fd) for listing path candidates.
+  _fzf_compgen_path() {
+    fd --hidden --exclude .git . "$1"
+  }
+
+  # Use fd to generate the list for directory completion
+  _fzf_compgen_dir() {
+    fd --type=d --hidden --exclude .git . "$1"
+  }
+
+  # FZF Git
+  [[ -f ~/.config/fzf-git/fzf-git.sh ]] && source ~/.config/fzf-git/fzf-git.sh
+
+  show_file_or_dir_preview="if [ -d {} ]; then eza --tree --color=always {} | head -200; else bat -n --color=always --line-range :500 {}; fi"
+
+  export FZF_CTRL_T_OPTS="--preview '$show_file_or_dir_preview'"
+  export FZF_ALT_C_OPTS="--preview 'eza --tree --color=always {} | head -200'"
+
+  # Advanced customization of fzf options via _fzf_comprun function
+  _fzf_comprun() {
+    local command=$1
+    shift
+
+    case "$command" in
+      cd)           fzf --preview 'eza --tree --color=always {} | head -200' "$@" ;;
+      export|unset) fzf --preview "eval 'echo \${}'"         "$@" ;;
+      ssh)          fzf --preview 'dig {}'                   "$@" ;;
+      *)            fzf --preview "$show_file_or_dir_preview" "$@" ;;
+    esac
+  }
+
+  # Theme
+  export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
+    --color=fg:-1,fg+:#d0d0d0,bg:-1,bg+:#262626
+    --color=hl:#5f87af,hl+:#5fd7ff,info:#afaf87,marker:#87ff00
+    --color=prompt:#d7005f,spinner:#af5fff,pointer:#af5fff,header:#87afaf
+    --color=border:#394b50,label:#aeaeae,query:#d9d9d9
+    --border="rounded" --border-label="" --preview-window="border-rounded" --prompt="> "
+    --marker=">" --pointer="◆" --separator="─" --scrollbar="│"
+    --info="right"'
+fi
+
+# ---- Bat (better cat) ---- #
+# 主題檔由 chezmoi 部署到 ~/.config/bat/themes,70-build-bat-cache 重建 cache
+export BAT_THEME="Dracula"
+
+# ---- direnv ---- #
+command -v direnv >/dev/null 2>&1 && eval "$(direnv hook zsh)"
+
+# ---- Copy command with OSC 52 ---- #
+# 經終端機(Alacritty / WezTerm)回傳 Windows 剪貼簿,SSH / tmux 內亦可用
+copy() {
+    local content
+    if [ -t 0 ]; then
+        if [ $# -eq 0 ]; then
+            echo "Usage: copy <filename> or pipe content to copy"
+            return 1
+        fi
+        content=$(cat "$1")
+    else
+        content=$(cat)
+    fi
+
+    local encoded
+    encoded=$(echo -n "$content" | base64 | tr -d '\n')
+    echo -en "\e]52;c;$encoded\a"
+    echo "Content copied to clipboard!"
+}

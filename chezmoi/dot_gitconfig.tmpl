@@ -1,4 +1,9 @@
 # 由 chezmoi 管理 — profile: {{ .profile }}(可攜核心;機制/主題層留給 workstation stow)
+{{ if eq .profile "wsl" -}}
+[include]
+    path = ~/.config/delta/themes.gitconfig
+
+{{ end -}}
 {{ if or .git_name .git_email -}}
 [user]
 {{- if .git_name }}
@@ -17,11 +22,17 @@
 
 [core]
     pager = delta
+{{- if eq .profile "wsl" }}
+    editor = nvim
+{{- end }}
 
 [interactive]
     diffFilter = delta --color-only
 
 [delta]
+{{- if eq .profile "wsl" }}
+    features = chameleon
+{{- end }}
     navigate = true
     side-by-side = true
 
