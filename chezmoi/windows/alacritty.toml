@@ -1,0 +1,58 @@
+# Windows 版 Alacritty 設定 — 由 dotfiles chezmoi(wsl profile)的 80-sync-windows 複製到
+# %APPDATA%\alacritty\alacritty.toml(Alacritty 預設讀取位置,與 exe 放哪無關)。
+# 來源:alacritty/.config/alacritty/alacritty.toml(mac),去除 mac 專屬項
+# (blur 僅 macOS/KDE、Buttonless、option_as_alt、Command 鍵),shell 改為直接進 WSL 家目錄。
+# 字型:Alacritty 只能用 Windows 已安裝字型。80-sync-windows 會把 Maple Mono NF CN 下載到
+# %USERPROFILE%\.config\wezterm\fonts,對 .ttf 右鍵「安裝」(使用者層級,不需管理者權限)即可;
+# 未安裝時 Alacritty 退回預設等寬字型,只是沒有 Nerd Font 圖示。
+
+[env]
+TERM = "xterm-256color"
+
+# 開啟即進入 WSL(預設 distro)的家目錄
+[terminal.shell]
+program = "wsl.exe"
+args = ["--cd", "~"]
+
+[font]
+size = 13
+offset = { x = 0, y = 0 }
+normal.family = "Maple Mono Normal NF CN"
+
+[window]
+opacity = 0.7
+padding = { x = 10, y = 10 }
+decorations = "Full"
+
+[keyboard]
+bindings = [
+  { key = "Left",   mods = "Alt", chars = "\u001BB" },
+  { key = "Right",  mods = "Alt", chars = "\u001BF" },
+  { key = "Return", mods = "Alt", action = "ToggleMaximized" },
+]
+
+# Colors (Wombat) — 內嵌自 alacritty/.config/alacritty/themes/wombat.toml
+# (import 相對路徑在 Windows 上行為不確定,直接內嵌最穩)
+[colors.primary]
+background = '#1f1f1f'
+foreground = '#e5e1d8'
+
+[colors.normal]
+black   = '#000000'
+red     = '#f7786d'
+green   = '#bde97c'
+yellow  = '#efdfac'
+blue    = '#6ebaf8'
+magenta = '#ef88ff'
+cyan    = '#90fdf8'
+white   = '#e5e1d8'
+
+[colors.bright]
+black   = '#b4b4b4'
+red     = '#f99f92'
+green   = '#e3f7a1'
+yellow  = '#f2e9bf'
+blue    = '#b3d2ff'
+magenta = '#e5bdff'
+cyan    = '#c2fefa'
+white   = '#ffffff'

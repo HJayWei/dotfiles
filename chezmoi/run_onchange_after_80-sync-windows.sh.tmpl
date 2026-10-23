@@ -1,0 +1,77 @@
+{{ if eq .profile "wsl" -}}
+#!/bin/sh
+# wsl:把 Windows 側終端機設定複製到 Windows 家目錄,並備妥 WSL ↔ Windows 整合工具。
+#   - windows/alacritty.toml → %APPDATA%\alacritty\alacritty.toml
+#   - windows/wezterm.lua    → %USERPROFILE%\.config\wezterm\wezterm.lua(+ fonts/ 內的 Maple Mono NF CN)
+#   - win32yank.exe          → ~/.local/bin(dot-nvim options.lua 偵測到即啟用為系統剪貼簿)
+# 兩個目標位置都是程式的預設讀取位置,與 exe(portable 版)放哪無關,整包搬動不受影響。
+# 為什麼複製而非讓 Windows 程式直接讀 \\wsl.localhost:WSL 未啟動時要等開機、設定檔即時重載走 9P 不可靠。
+# run_onchange:下方 hash 隨來源設定檔內容改變,改了就重跑;字型 / win32yank 另有冪等 guard。
+# alacritty hash: {{ include "windows/alacritty.toml" | sha256sum }}
+# wezterm hash:   {{ include "windows/wezterm.lua" | sha256sum }}
+set -eu
+
+echo "==> [windows] 同步終端機設定與整合工具"
+
+SRC="{{ .chezmoi.sourceDir }}/windows"
+
+# Windows 家目錄:經 cmd.exe 取 %USERPROFILE%,再以 wslpath 轉成 /mnt/c/... 路徑
+CMD=$(command -v cmd.exe || echo /mnt/c/Windows/System32/cmd.exe)
+if [ ! -x "$CMD" ]; then
+    echo "==> [windows] 略過:找不到 cmd.exe(非 WSL,或 wsl.conf 關閉了 interop)。" >&2
+    exit 0
+fi
+WIN_HOME=$(wslpath -u "$("$CMD" /c 'echo %USERPROFILE%' 2>/dev/null | tr -d '\r')")
+if [ ! -d "$WIN_HOME" ]; then
+    echo "==> [windows] 略過:Windows 家目錄無法解析($WIN_HOME)。" >&2
+    exit 0
+fi
+
+# 複製設定;目標已存在且內容不同時,先備份一次為 .bak(只保留最初那份)
+sync_file() { # src dst
+    mkdir -p "$(dirname "$2")"
+    if [ -f "$2" ] && ! cmp -s "$1" "$2"; then
+        [ -f "$2.bak" ] || cp "$2" "$2.bak"
+    fi
+    cp "$1" "$2"
+    echo "    已同步: $2"
+}
+sync_file "$SRC/alacritty.toml" "$WIN_HOME/AppData/Roaming/alacritty/alacritty.toml"
+sync_file "$SRC/wezterm.lua"    "$WIN_HOME/.config/wezterm/wezterm.lua"
+
+# 字型:Maple Mono Normal NF CN → WezTerm 同目錄 fonts/(wezterm.lua 以 font_dirs 直接載入,免安裝)。
+# Alacritty 沒有這機制,要用同一字型需對 .ttf 右鍵「安裝」(使用者層級,不需管理者權限)。
+# 冪等:目錄內已有 .ttf 即跳過。
+FONT_DIR="$WIN_HOME/.config/wezterm/fonts"
+set -- "$FONT_DIR"/*.ttf
+if [ ! -f "$1" ]; then
+    if command -v unzip >/dev/null 2>&1; then
+        mkdir -p "$FONT_DIR"
+        TMP=$(mktemp -d)
+        curl -fsSL -o "$TMP/font.zip" \
+            https://github.com/subframe7536/maple-font/releases/latest/download/MapleMonoNormal-NF-CN.zip
+        unzip -qo "$TMP/font.zip" '*.ttf' -d "$FONT_DIR"
+        rm -rf "$TMP"
+        echo "    已下載字型至: $FONT_DIR"
+        echo "    Alacritty 要用同一字型:到該目錄全選 .ttf → 右鍵「安裝」(使用者層級)。"
+    else
+        echo "==> [windows] 字型略過:缺 unzip(apt 層未裝)。" >&2
+    fi
+fi
+
+# win32yank:WSL 內 nvim 的系統剪貼簿橋接(預編譯 exe,放 ~/.local/bin 即可;冪等)
+if ! command -v win32yank.exe >/dev/null 2>&1 && [ ! -x "$HOME/.local/bin/win32yank.exe" ]; then
+    if command -v unzip >/dev/null 2>&1; then
+        mkdir -p "$HOME/.local/bin"
+        TMP=$(mktemp -d)
+        curl -fsSL -o "$TMP/win32yank.zip" \
+            https://github.com/equalsraf/win32yank/releases/download/v0.1.1/win32yank-x64.zip
+        unzip -qo "$TMP/win32yank.zip" win32yank.exe -d "$HOME/.local/bin"
+        chmod +x "$HOME/.local/bin/win32yank.exe"
+        rm -rf "$TMP"
+        echo "    已安裝: ~/.local/bin/win32yank.exe"
+    else
+        echo "==> [windows] win32yank 略過:缺 unzip(apt 層未裝)。" >&2
+    fi
+fi
+{{ end -}}
