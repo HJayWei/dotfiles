@@ -1,0 +1,16 @@
+{{ if eq .profile "wsl" -}}
+#!/bin/sh
+# wsl:bat 自訂主題(Dracula)部署後需重建 cache 才會被 BAT_THEME 認得。
+# run_onchange:主題檔內容變動(下方 hash 跟著變)才重跑。
+# theme hash: {{ include "../bat/.config/bat/themes/Dracula.tmTheme" | sha256sum }}
+set -eu
+
+echo "==> [bat] 重建主題 cache"
+
+export PATH="$HOME/.local/share/mise/shims:$PATH"
+if command -v bat >/dev/null 2>&1; then
+    bat cache --build
+else
+    echo "==> [bat] 略過:bat 不在 PATH(mise 尚未裝好?)。" >&2
+fi
+{{ end -}}

@@ -10,6 +10,15 @@ packages:
     - { brew: git,  apt: git }
     - { brew: curl, apt: curl }
 
+  # 僅 wsl:需 root 的系統層開發依賴(WSL 預設使用者有 sudo;純 apt 名稱,無 brew 對應)。
+  # 10-install-system-packages 在 wsl 時附加安裝;bootstrap.sh 收尾摘要亦會檢查。
+  apt_wsl:
+    - zsh              # 預設 shell;zinit / chsh 由 60-setup-zsh 處理
+    - build-essential  # nvim treesitter grammar 編譯、rsync.nvim 的 make(命令名 gcc)
+    - unzip            # mason 解壓 LSP / formatter 套件
+    - wget
+    - rsync            # rsync.nvim
+
   # Debian 11 的 apt 沒有(或版本過舊)的現代 CLI / runtime,
   # 改用 mise 跨平台安裝預編譯 binary,確保各環境版本一致。
   # 分層:common 給所有非 container(vm + workstation);workstation 僅 mac 額外加裝。
@@ -46,3 +55,19 @@ packages:
       - btop
       - direnv
       - gh
+    # 僅 wsl(Windows 公司機的 WSL Debian 13,日常開發環境):開發向 CLI。
+    # 與 workstation 高度重疊但刻意獨立成列:workstation tier 尚未實機驗證,不在此次連帶重構;
+    # 待其真的啟用時再抽共用層。本列名稱皆已以 `mise registry` 查證(2026-10)。
+    wsl:
+      - neovim
+      - zellij
+      - tree-sitter
+      - ast-grep
+      - typos            # registry 名稱為 typos(aqua:crate-ci/typos);workstation 列的 typos-cli 是錯名,待其啟用時修
+      - lazygit
+      - btop
+      - direnv
+      - gh
+      - glab
+      - fastfetch
+      - jc               # aqua:kellyjonbrazil/jc 預編譯 binary,免 pipx

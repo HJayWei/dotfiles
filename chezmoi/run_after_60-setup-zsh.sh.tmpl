@@ -1,0 +1,29 @@
+{{ if eq .profile "wsl" -}}
+#!/bin/sh
+# wsl:備妥 zinit 並把登入 shell 切為 zsh。zsh 本體由 10-install-system-packages 以 apt 安裝。
+# run_after_(每次 apply 都跑、冪等 guard),與 50-setup-tmux 同理:
+# 無 sudo 時先手動裝 zsh → 重跑 chezmoi apply 即能接續完成。
+set -eu
+
+echo "==> [zsh] 設定 zinit 與預設 shell"
+
+if ! command -v zsh >/dev/null 2>&1; then
+    echo "==> [zsh] 略過:zsh 未安裝(10-install-system-packages 需 sudo)。" >&2
+    echo "    執行 sudo apt-get install -y zsh 後重跑 chezmoi apply。" >&2
+    exit 0
+fi
+
+# zinit:clone 到 XDG data 目錄(dot_zshrc.tmpl 從同一路徑載入)。冪等:目錄存在即跳過。
+ZINIT_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/zinit/zinit.git"
+if [ ! -d "$ZINIT_HOME" ]; then
+    mkdir -p "$(dirname "$ZINIT_HOME")"
+    git clone --depth 1 https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+fi
+
+# 登入 shell 切 zsh(冪等)。chsh 會要求輸入密碼;失敗不中斷 apply,改印手動指令。
+ZSH_BIN=$(command -v zsh)
+CURRENT_SHELL=$(getent passwd "$(id -un)" | cut -d: -f7)
+if [ "$CURRENT_SHELL" != "$ZSH_BIN" ]; then
+    chsh -s "$ZSH_BIN" || echo "==> [zsh] chsh 失敗,請手動執行:chsh -s $ZSH_BIN" >&2
+fi
+{{ end -}}

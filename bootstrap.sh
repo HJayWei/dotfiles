@@ -6,21 +6,26 @@ set -eu
 
 REPO_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)   # 腳本所在 = repo 根
 
-# 1. profile 選單(目前僅 vm 可選,其餘標示尚未開放)
+# 1. profile 選單(vm / wsl 可選,其餘標示尚未開放)。
+#    在 WSL 內(/proc/version 含 microsoft)預選 wsl,其餘預選 vm。
+DEFAULT_CHOICE=1
+if grep -qi microsoft /proc/version 2>/dev/null; then DEFAULT_CHOICE=2; fi
 echo "選擇環境 profile:"
-echo "  1) vm           — Debian 測試 VM"
-echo "  2) container    — (尚未開放)"
-echo "  3) workstation  — (尚未開放)"
-printf "輸入選項 [1]: "; read -r choice
-case "${choice:-1}" in
+echo "  1) vm           — Debian 測試 VM(基本 CLI)"
+echo "  2) wsl          — Windows WSL Debian(完整開發環境:nvim / zsh / zellij …,需 sudo)"
+echo "  3) container    — (尚未開放)"
+echo "  4) workstation  — (尚未開放)"
+printf "輸入選項 [%s]: " "$DEFAULT_CHOICE"; read -r choice
+case "${choice:-$DEFAULT_CHOICE}" in
   1) PROFILE="vm" ;;
-  2|3) echo "該 profile 尚未開放,結束。"; exit 0 ;;
+  2) PROFILE="wsl" ;;
+  3|4) echo "該 profile 尚未開放,結束。"; exit 0 ;;
   *) echo "無效選項,結束。"; exit 1 ;;
 esac
 
-# 2. profile 專屬細部選項(vm 目前無;未來其他 profile 在此各自擴充)
+# 2. profile 專屬細部選項(目前皆無;未來各 profile 在此各自擴充)
 case "$PROFILE" in
-  vm) : ;;
+  vm|wsl) : ;;
 esac
 
 # 3. 檢查 chezmoi,缺則詢問是否安裝
@@ -49,7 +54,7 @@ fi
 #    --promptString 依 prompt「文字」比對,須與 chezmoi/.chezmoi.toml.tmpl 內的字串一致;
 #    若該 prompt 文字改動,請同步更新下面這行。
 "$CHEZMOI" init --source "$REPO_DIR" \
-  --promptString "環境 profile (container/vm/workstation)=$PROFILE"
+  --promptString "環境 profile (container/vm/wsl/workstation)=$PROFILE"
 
 # 收尾摘要:apply 後統一列出「需 root 而本次未安裝」的項目。
 # 放這裡而非各 run_ 腳本內的理由:
@@ -58,15 +63,20 @@ fi
 #      唯有在此檢查「實際狀態」才能每次都如實反映仍缺什麼。
 report_missing_root_packages() {
     # 需 root 的項目 = packages.system(從 .chezmoidata.yaml 取,避免兩處各寫一份)
+    #                  + wsl 的 packages.apt_wsl
     #                  + tmux(50-setup-tmux 專屬,刻意不列入 .chezmoidata.yaml)
-    # 假設:這些 apt 套件名與命令名相同(git/zsh/curl/tmux 皆是)。
+    # apt 套件名多與命令名相同(git/zsh/curl/tmux…);例外在下方 case 對應(build-essential → gcc)。
     need=$("$CHEZMOI" execute-template --source "$REPO_DIR" \
-        '{{ range .packages.system }}{{ .apt }} {{ end }}' 2>/dev/null || true)
+        '{{ range .packages.system }}{{ .apt }} {{ end }}{{ if eq .profile "wsl" }}{{ range .packages.apt_wsl }}{{ . }} {{ end }}{{ end }}' 2>/dev/null || true)
     need="$need tmux"
 
     missing=""
     for pkg in $need; do
-        command -v "$pkg" >/dev/null 2>&1 || missing="$missing $pkg"
+        case "$pkg" in
+            build-essential) cmd=gcc ;;
+            *) cmd=$pkg ;;
+        esac
+        command -v "$cmd" >/dev/null 2>&1 || missing="$missing $pkg"
     done
     [ -n "$missing" ] || return 0
 
@@ -89,6 +99,7 @@ case "$go" in
   [Yy]*)
     "$CHEZMOI" apply --source "$REPO_DIR" --verbose
     echo "完成。開新 shell 即可使用(mise 工具 / 別名)。"
+    [ "$PROFILE" = "wsl" ] && echo "wsl:登入 shell 已切為 zsh(若 chsh 成功),請關閉終端機重開;首次進 zsh 會由 zinit 下載外掛。"
     report_missing_root_packages
     ;;
   *) echo "已取消 apply。可稍後手動執行:$CHEZMOI apply --source $REPO_DIR" ;;

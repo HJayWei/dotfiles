@@ -1,19 +1,31 @@
 # 本目錄自身的說明文件,不該被部署到 home。
 README.md
 
+# Windows 側(Alacritty / WezTerm)設定來源:不當 dotfile 部署到 ~/windows,
+# 由 wsl 的 80-sync-windows 腳本複製到 Windows 家目錄。
+windows
+
+{{- $linuxHome := or (eq .profile "vm") (eq .profile "wsl") }}
+
 # 依 profile 排除不需要的設定檔。
-# 非 workstation(測試用的 vm / container)不部署臃腫的編輯器設定。
-{{ if ne .profile "workstation" }}
-.config/nvim
-{{ end }}
+# nvim 不在此處理:整包由 .chezmoiexternal.toml.tmpl 從 dot-nvim clone,且只在 wsl 定義
+# (source 內不可同時有 dot_config/nvim 目錄,chezmoi 會報 inconsistent state)。
 
-# gitconfig 僅部署到 vm:container 無 delta(pager=delta 會報錯),
+# gitconfig 僅部署到 vm / wsl:container 無 delta(pager=delta 會報錯),
 # workstation 的 ~/.gitconfig 由 stow 符號連結擁有,chezmoi 不應覆寫。
-{{ if ne .profile "vm" }}
+# tmux 設定同理:workstation 的 ~/.config/tmux 由 stow 擁有,container 精簡不需要。
+{{ if not $linuxHome }}
 .gitconfig
+.config/tmux
 {{ end }}
 
-# tmux 設定僅部署到 vm:workstation 的 ~/.config/tmux 由 stow 擁有,container 精簡不需要。
-{{ if ne .profile "vm" }}
-.config/tmux
+# 下列僅 wsl:zsh 全套(zinit/p10k/fzf-git)、bat / delta 主題、nvim language-support 覆寫。
+# 內容多以 include 指回 stow 原檔(../zsh 等),單一真相來源。
+{{ if ne .profile "wsl" }}
+.zshrc
+.p10k.zsh
+.language-support
+.config/fzf-git
+.config/bat
+.config/delta
 {{ end }}

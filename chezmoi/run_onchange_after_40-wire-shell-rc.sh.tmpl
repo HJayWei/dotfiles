@@ -11,6 +11,10 @@ LINE='[ -f "$HOME/.config/shell/env.sh" ] && . "$HOME/.config/shell/env.sh"'
 
 # 只對已存在的 rc 追加,且用固定子字串判斷是否已串接(冪等)。
 for rc in "$HOME/.bashrc" "$HOME/.zshrc"; do
+{{- if eq .profile "wsl" }}
+    # wsl 的 ~/.zshrc 由 chezmoi 管理(dot_zshrc.tmpl 自行 source env.sh),往裡面 append 會讓 chezmoi diff 永遠髒
+    [ "$rc" = "$HOME/.zshrc" ] && continue
+{{- end }}
     if [ -f "$rc" ] && ! grep -qF '.config/shell/env.sh' "$rc"; then
         printf '\n# 由 chezmoi 串接 — 載入跨平台 env.sh\n%s\n' "$LINE" >> "$rc"
         echo "    已追加: $rc"

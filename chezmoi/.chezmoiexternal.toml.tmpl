@@ -1,0 +1,8 @@
+{{- /* wsl 的 nvim 設定整包從 dot-nvim repo clone(與 stow 的 submodule 同源),
+       之後每次 apply 超過 refreshPeriod 會 git pull。其餘 profile 本檔渲染為空。 */ -}}
+{{ if eq .profile "wsl" -}}
+[".config/nvim"]
+    type = "git-repo"
+    url = "https://github.com/HJayWei/dot-nvim.git"
+    refreshPeriod = "168h"
+{{ end -}}

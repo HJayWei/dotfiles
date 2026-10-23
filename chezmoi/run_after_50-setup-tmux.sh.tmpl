@@ -1,6 +1,6 @@
-{{ if eq .profile "vm" -}}
+{{ if or (eq .profile "vm") (eq .profile "wsl") -}}
 #!/bin/sh
-# 安裝 tmux 與 TPM 外掛(僅 vm)。非 vm 時整段渲染為空,chezmoi 自動略過。
+# 安裝 tmux 與 TPM 外掛(vm / wsl)。其餘 profile 整段渲染為空,chezmoi 自動略過。
 # 用 run_after_(每次 apply 都跑)而非 run_onchange:兩段工作都有冪等 guard,
 # 故無權限使用者「先手動裝 tmux → 再重跑 ./bootstrap.sh」時,能自然接續完成 TPM 設定。
 set -eu

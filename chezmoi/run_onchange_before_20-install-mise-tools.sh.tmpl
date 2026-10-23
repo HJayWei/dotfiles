@@ -15,10 +15,12 @@ if ! command -v mise >/dev/null 2>&1; then
 fi
 
 export PATH="$HOME/.local/bin:$PATH"
-{{- /* common 給所有非 container;workstation 再併入 mac 專屬的開發向 CLI。 */ -}}
+{{- /* common 給所有非 container;workstation / wsl 再各併入自己的開發向 CLI。 */ -}}
 {{- $selected := .packages.mise.common -}}
 {{- if eq .profile "workstation" -}}
 {{-   $selected = concat .packages.mise.common .packages.mise.workstation -}}
+{{- else if eq .profile "wsl" -}}
+{{-   $selected = concat .packages.mise.common .packages.mise.wsl -}}
 {{- end -}}
 {{- /* jless 無 linux/arm64 預編譯 binary,於該平台從清單剔除(jq 已能滿足 JSON 檢視)。 */ -}}
 {{- $tools := list -}}

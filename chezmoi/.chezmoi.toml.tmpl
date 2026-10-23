@@ -1,11 +1,17 @@
 {{- /* chezmoi init 時詢問一次,把結果存進 config,之後所有 template 都讀 .profile */ -}}
-{{- $profile := promptStringOnce . "profile" "環境 profile (container/vm/workstation)" "vm" -}}
+{{- /* WSL 的 kernel osrelease 含 "microsoft",以此預選 wsl;其餘預設 vm。
+       .chezmoi.kernel 在 mac 為空 map,先 index 再 default 以免 nil 進 lower。 */ -}}
+{{- $defaultProfile := "vm" -}}
+{{- if index .chezmoi.kernel "osrelease" | default "" | lower | contains "microsoft" -}}
+{{-   $defaultProfile = "wsl" -}}
+{{- end -}}
+{{- $profile := promptStringOnce . "profile" "環境 profile (container/vm/wsl/workstation)" $defaultProfile -}}
 
-{{- /* git 身分僅 vm 用得到(gitconfig vm-only)。留空則 dot_gitconfig 不寫該欄位;
-       非 vm 仍寫空字串進 data,避免 template 缺 key 報錯。 */ -}}
+{{- /* git 身分僅 vm / wsl 用得到(gitconfig 只部署到這兩者)。留空則 dot_gitconfig 不寫該欄位;
+       其餘 profile 仍寫空字串進 data,避免 template 缺 key 報錯。 */ -}}
 {{- $gitName := "" -}}
 {{- $gitEmail := "" -}}
-{{- if eq $profile "vm" -}}
+{{- if or (eq $profile "vm") (eq $profile "wsl") -}}
 {{-   $gitName = promptStringOnce . "git_name" "Git user.name(留空則不寫入)" "" -}}
 {{-   $gitEmail = promptStringOnce . "git_email" "Git user.email(留空則不寫入)" "" -}}
 {{- end -}}
