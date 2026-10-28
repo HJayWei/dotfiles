@@ -56,6 +56,15 @@ fi
 "$CHEZMOI" init --source "$REPO_DIR" \
   --promptString "環境 profile (container/vm/wsl/workstation)=$PROFILE"
 
+# 把關:init 後實際生效的 profile 必須等於選單所選(既有 config 曾讓舊值蓋過選單,靜默套錯 profile)。
+EFFECTIVE=$("$CHEZMOI" execute-template --source "$REPO_DIR" '{{ .profile }}' 2>/dev/null || true)
+if [ "$EFFECTIVE" != "$PROFILE" ]; then
+  echo "chezmoi 設定檔生效的 profile 為「$EFFECTIVE」,與選單所選「$PROFILE」不符。" >&2
+  echo "請檢查 ~/.config/chezmoi/chezmoi.toml(或刪除後重跑本腳本)。" >&2
+  exit 1
+fi
+echo "profile: $PROFILE"
+
 # 收尾摘要:apply 後統一列出「需 root 而本次未安裝」的項目。
 # 放這裡而非各 run_ 腳本內的理由:
 #   1. 腳本的略過訊息會被埋在 apply 中段,使用者容易錯過。

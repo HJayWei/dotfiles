@@ -5,7 +5,13 @@
 {{- if index .chezmoi.kernel "osrelease" | default "" | lower | contains "microsoft" -}}
 {{-   $defaultProfile = "wsl" -}}
 {{- end -}}
-{{- $profile := promptStringOnce . "profile" "環境 profile (container/vm/wsl/workstation)" $defaultProfile -}}
+{{- /* profile 刻意用 promptString 而非 promptStringOnce:Once 會無條件沿用既有 config 的值,
+       連 bootstrap 的 --promptString 都蓋不過(曾導致同一台機器 vm → wsl 切換失敗)。
+       改為「既有值當預設」:重跑 init 不會意外改掉 profile,但選單選了就一定生效。 */ -}}
+{{- if hasKey . "profile" -}}
+{{-   $defaultProfile = .profile -}}
+{{- end -}}
+{{- $profile := promptString "環境 profile (container/vm/wsl/workstation)" $defaultProfile -}}
 
 {{- /* git 身分僅 vm / wsl 用得到(gitconfig 只部署到這兩者)。留空則 dot_gitconfig 不寫該欄位;
        其餘 profile 仍寫空字串進 data,避免 template 缺 key 報錯。 */ -}}
