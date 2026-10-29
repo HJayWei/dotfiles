@@ -1,11 +1,13 @@
 # 由 chezmoi 管理(wsl)— 覆寫 dot-nvim 內建的 .language-support。
 # dot-nvim 的 language-support.lua 會優先讀 ~/.language-support(見該 repo),
 # 讓每台機器自行決定 mason 裝哪些語言工具,不必改 repo 內的預設。
-# WSL 公司機:不用 PHP / Rust,關掉以免 mason 嘗試安裝 intelephense / rust-analyzer / codelldb。
+# WSL 公司機:不用 PHP,關掉以免 mason 嘗試安裝 intelephense / pint / php-debug-adapter。
+# RUST / RSYNC 開:Rust 工具鏈由 mise.wsl 的 rust 提供(rsync.nvim 的 build 是 cargo build,
+# mason 另會裝 rust-analyzer / codelldb)。
 PYTHON=true
 NODEJS=true
 GO=true
-RUST=false
+RUST=true
 PHP=false
 LUA=true
 RSYNC=true

@@ -11,7 +11,7 @@
 |---|---|---|
 | `container` | docker / podman 用完即丟 | 僅 `system` 基礎套件 |
 | `vm` | Debian 測試 VM | `system` + `mise` 現代 CLI/runtime,把工具串進 shell rc,並部署可攜別名(含 git 縮寫)/history/zoxide、gitconfig 核心與 tmux(含 TPM 外掛) |
-| `wsl` | Windows 公司機的 WSL Debian 13(日常開發) | **`vm` 的全部**(獨立可跑,不需先套 vm)+ apt 開發依賴(zsh / build-essential / unzip / wget / rsync)+ `mise` 的 wsl tier 開發向 CLI(nvim / zellij / lazygit / gh / glab…)+ zsh 全套(zinit / p10k / OMZ / fzf 整合)+ nvim 設定(external clone dot-nvim,PHP / Rust 關閉)+ bat / delta 主題 + Windows 側 Alacritty / WezTerm 設定、字型、win32yank |
+| `wsl` | Windows 公司機的 WSL Debian 13(日常開發) | **`vm` 的全部**(獨立可跑,不需先套 vm)+ apt 開發依賴(zsh / build-essential / unzip / wget / rsync)+ `mise` 的 wsl tier 開發向 CLI(nvim / zellij / lazygit / gh / glab…)+ zsh 全套(zinit / p10k / OMZ / fzf 整合)+ nvim 設定(external clone dot-nvim,PHP 關閉)+ bat / delta 主題 + Windows 側 Alacritty / WezTerm 設定、字型、win32yank |
 | `workstation` | mac m4 工作機 | 全部,含應用層工具(leaf 等),以及 `mise` 的 workstation tier 開發向 CLI(尚未啟用) |
 
 profile 在 `chezmoi init` 時詢問一次(見 `.chezmoi.toml.tmpl`;在 WSL 內預選 `wsl`,其餘預選 `vm`),
@@ -126,10 +126,10 @@ chezmoi apply --verbose
     `tree-sitter` / `ast-grep` / `typos-cli` / `glab` / `fastfetch` / `lazygit` / `lazydocker` /
     `btop` / `direnv` / `gh`。
   - **`wsl`**(僅 wsl):neovim / zellij / tree-sitter / ast-grep / typos / lazygit / btop / direnv / gh / glab /
-    fastfetch / jc。名稱皆以 `mise registry` 查證(registry 名為 `typos`,非 `typos-cli`)。與 workstation 重疊
+    fastfetch / jc / rust。名稱皆以 `mise registry` 查證(registry 名為 `typos`,非 `typos-cli`)。與 workstation 重疊
     但刻意獨立成列,待 workstation 啟用時再抽共用層。
-  - **`apt_wsl`**(僅 wsl,走 `10-install-system-packages`,需 sudo):zsh / build-essential(treesitter 編譯、
-    rsync.nvim 的 make)/ unzip(mason 解壓)/ wget / rsync。
+  - **`apt_wsl`**(僅 wsl,走 `10-install-system-packages`,需 sudo):zsh / build-essential(treesitter 編譯)/ unzip(mason 解壓)/ wget / rsync。
+    (`rsync.nvim` 的 build 是 `cargo build`,故 wsl 的 mise tier 含 `rust`,`.language-support` 的 `RUST` / `RSYNC` 皆開。)
   改由 [mise](https://mise.jdx.dev) 安裝預編譯 binary,以在較舊的 Debian(如 bullseye,apt 缺
   或過舊)也能取得一致版本,並可 `mise outdated` / `upgrade` 追蹤版本。mise 工具透過
   **shims 目錄上 PATH** 暴露(見 `env.sh`),不用 `mise activate`。
@@ -158,7 +158,7 @@ chezmoi apply --verbose
   `sh -n`、`.zshrc` / `.p10k.zsh` `zsh -n`、`.gitconfig` `git config --list`、`alacritty.toml` TOML parse、`wezterm.lua` 與 dot-nvim
   兩支 Lua `loadfile` 皆通過;`include` 的 4 個檔與 stow 原檔 `cmp` 一致;`dot-nvim` 的 `~/.language-support` 優先序以假 HOME 實測
   (無覆寫 → php/rust=true;有覆寫 → false)。**待 WSL 實測**:apt / mise 實裝、zinit 首次載入與 p10k 字型、`chsh`、external clone、
-  mason 不再嘗試裝 PHP / Rust 工具、win32yank 剪貼簿、Alacritty / WezTerm 讀到複製過去的設定與 fonts/、zoxide `_ZO_DOCTOR` 是否警告。
+  mason 不再嘗試裝 PHP 工具、rust-analyzer 與 rsync.nvim 的 cargo build 成功、win32yank 剪貼簿、Alacritty / WezTerm 讀到複製過去的設定與 fonts/、zoxide `_ZO_DOCTOR` 是否警告。
 - `container` / `workstation` profile:目前僅到 render / dry-run 層級,**尚未在各自的真實目標實跑**。
 
 ## 已知限制 / 待辦
@@ -166,7 +166,7 @@ chezmoi apply --verbose
 - **wsl 依賴 dot-nvim 的三處修改,需先 push 到 GitHub `main` 才生效**:`.chezmoiexternal` 從 GitHub clone,不是用本 repo 的 submodule 工作樹。
   修改為:① `lua/utils/language-support.lua` 改為 `~/.language-support` 優先(mac 無該檔,行為不變);② `lua/config/options.lua`
   `vim.opt.shell` 改為「zsh 存在才設」;③ 同檔在 `has("wsl")` 且找到 `win32yank.exe` 時設 `vim.g.clipboard`。未 push 前 WSL 會拿到舊版,
-  PHP / Rust 的 mason 工具仍會嘗試安裝。
+  PHP 的 mason 工具仍會嘗試安裝。
 - **Windows 側字型需手動一步(僅 Alacritty)**:WezTerm 以 `font_dirs` 從 `%USERPROFILE%\.config\wezterm\fonts` 直接載入,免安裝;
   Alacritty 只能用 Windows 已安裝字型,需到該目錄對 .ttf 右鍵「安裝」(使用者層級,不需管理者權限)。
 - **workstation 的 nvim 佔位檔已移除**:`dot_config/nvim/init.lua`(3 行、從未實際部署)與 wsl 的 external 目標 `.config/nvim` 衝突

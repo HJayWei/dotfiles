@@ -71,3 +71,4 @@ packages:
       - glab
       - fastfetch
       - jc               # aqua:kellyjonbrazil/jc 預編譯 binary,免 pipx
+      - rust             # core:rust,委派 rustup;rsync.nvim 的 build 是 cargo build,且 mason 要裝 rust-analyzer / codelldb
