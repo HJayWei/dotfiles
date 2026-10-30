@@ -60,7 +60,9 @@ packages:
     # 待其真的啟用時再抽共用層。本列名稱皆已以 `mise registry` 查證(2026-10)。
     wsl:
       - neovim
-      - zellij
+      - zellij@0.43.1    # 鎖版:需與 zellij/.config/zellij/plugins/zjstatus.wasm 相容(該 wasm 建置於 zellij-tile 0.40.x,
+                         #       mac brew 亦為 0.43.1)。未鎖版會裝 0.45+,舊 wasm 在其上會讓 pane frame 持續閃爍;
+                         #       要升級請 zellij 與 zjstatus.wasm 一起升(zjstatus v0.25+ 需 zellij ≥ 0.45)。
       - tree-sitter
       - ast-grep
       - typos            # registry 名稱為 typos(aqua:crate-ci/typos);workstation 列的 typos-cli 是錯名,待其啟用時修
