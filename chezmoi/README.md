@@ -11,7 +11,7 @@
 |---|---|---|
 | `container` | docker / podman 用完即丟 | 僅 `system` 基礎套件 |
 | `vm` | Debian 測試 VM | `system` + `mise` 現代 CLI/runtime,把工具串進 shell rc,並部署可攜別名(含 git 縮寫)/history/zoxide、gitconfig 核心與 tmux(含 TPM 外掛) |
-| `wsl` | Windows 公司機的 WSL Debian 13(日常開發) | **`vm` 的全部**(獨立可跑,不需先套 vm)+ apt 開發依賴(zsh / build-essential / unzip / wget / rsync)+ `mise` 的 wsl tier 開發向 CLI(nvim / zellij / lazygit / gh / glab…)+ zsh 全套(zinit / p10k / OMZ / fzf 整合)+ nvim 設定(external clone dot-nvim,PHP 關閉)+ bat / delta 主題 + Windows 側 Alacritty / WezTerm 設定、字型、win32yank |
+| `wsl` | Windows 公司機的 WSL Debian 13(日常開發) | **`vm` 的全部**(獨立可跑,不需先套 vm)+ apt 開發依賴(zsh / build-essential / unzip / wget / rsync)+ `mise` 的 wsl tier 開發向 CLI(nvim / zellij / lazygit / gh / glab…)+ zsh 全套(zinit / p10k / OMZ / fzf 整合)+ nvim 設定(external clone dot-nvim,PHP 關閉)+ zellij 設定(含 zjstatus)+ bat / delta 主題 + Windows 側 Alacritty / WezTerm 設定、字型、win32yank |
 | `workstation` | mac m4 工作機 | 全部,含應用層工具(leaf 等),以及 `mise` 的 workstation tier 開發向 CLI(尚未啟用) |
 
 profile 在 `chezmoi init` 時詢問一次(見 `.chezmoi.toml.tmpl`;在 WSL 內預選 `wsl`,其餘預選 `vm`),
@@ -42,7 +42,8 @@ dotfiles/
     │   ├── tmux/tmux.conf.tmpl                # vm/wsl;Linux 可攜版(OSC52 剪貼簿,TPM 外掛)
     │   ├── fzf-git/fzf-git.sh.tmpl            # wsl-only;include 指回 zsh/.config/fzf-git
     │   ├── bat/themes/Dracula.tmTheme.tmpl    # wsl-only;include 指回 bat/.config
-    │   └── delta/themes.gitconfig.tmpl        # wsl-only;include 指回 git/.config/delta
+    │   ├── delta/themes.gitconfig.tmpl        # wsl-only;include 指回 git/.config/delta
+    │   └── zellij/                            # wsl-only;config.kdl(include + pbcopy→win32yank)、layouts(含 default.kdl symlink)、zjstatus.wasm
     ├── windows/                               # Windows 側設定來源(不部署到 ~;由 80-sync-windows 複製到 Windows 家目錄)
     │   ├── alacritty.toml                     # %APPDATA%\alacritty\alacritty.toml;自 mac 版移植,shell=wsl.exe,Wombat 內嵌
     │   └── wezterm.lua                        # %USERPROFILE%\.config\wezterm\wezterm.lua;暗色透明,Wombat,fonts/ 免安裝字型

@@ -1,0 +1,4 @@
+{{- /* wsl-only:以 stow 的 zellij/.config/zellij/config.kdl 為單一來源,只把 mac 專屬的 pbcopy 換成 win32yank
+       (80-sync-windows 裝到 ~/.local/bin)。若來源移除了 copy_command 行,regex 不會命中、照原樣輸出(即走 OSC52)。
+       注意 sprig 的 regexReplaceAll 參數順序為 regex / input / replacement,不能用 pipe(pipe 會接到 replacement)。 */ -}}
+{{ regexReplaceAll `(?m)^copy_command "pbcopy".*$` (include "../zellij/.config/zellij/config.kdl") `copy_command "win32yank.exe -i --crlf"  // wsl:經 win32yank 寫入 Windows 剪貼簿(chezmoi 80-sync-windows 安裝)` -}}

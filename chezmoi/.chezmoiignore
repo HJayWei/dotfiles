@@ -19,7 +19,7 @@ windows
 .config/tmux
 {{ end }}
 
-# 下列僅 wsl:zsh 全套(zinit/p10k/fzf-git)、bat / delta 主題、nvim language-support 覆寫。
+# 下列僅 wsl:zsh 全套(zinit/p10k/fzf-git)、bat / delta 主題、zellij 設定、nvim language-support 覆寫。
 # 內容多以 include 指回 stow 原檔(../zsh 等),單一真相來源。
 {{ if ne .profile "wsl" }}
 .zshrc
@@ -28,4 +28,5 @@ windows
 .config/fzf-git
 .config/bat
 .config/delta
+.config/zellij
 {{ end }}
