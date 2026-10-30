@@ -290,8 +290,8 @@ theme "catppuccin-macchiato"
 
 // Choose the mode that zellij uses when starting up.
 // Default: normal
-// 預設鎖定:在 Claude Code / nvim 內所有 Ctrl 鍵穿透;要操作 zellij 先按 Alt g 解鎖
-default_mode "locked"
+// 維持 normal;在 Claude Code / nvim 內要讓 Ctrl 鍵穿透時,手動 Alt g 鎖定
+// default_mode "locked"
 
 // Toggle enabling the mouse mode.
 // On certain configurations, or terminals this could
