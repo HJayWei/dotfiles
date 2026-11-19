@@ -71,6 +71,8 @@ alias clr='clear'
 alias grep='grep --color=auto'
 alias rg='rg --pretty'
 
+export EDITOR='nvim'
+
 # ---- Fuzzy Finder (FZF) ---- #
 # Set up fzf key bindings and fuzzy completion
 source <(fzf --zsh)
