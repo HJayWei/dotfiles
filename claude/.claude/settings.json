@@ -31,7 +31,7 @@
       "Bash(delta:*)"
     ]
   },
-  "model": "opus[1m]",
+  "model": "fable",
   "worktree": {
     "baseRef": "head"
   },
@@ -82,6 +82,12 @@
     ]
   },
   "effortLevel": "xhigh",
+  "modelSettings": {
+    "claude-fable-5-2": {
+      "effortLevel": "high"
+    }
+  },
   "tui": "fullscreen",
-  "theme": "dark"
+  "theme": "dark",
+  "hooks": {"SessionStart":[{"matcher":"^(startup|resume|clear|compact|fork)$","hooks":[{"type":"command","command":"bash ~/.claude/hooks/herdr-agent-state.sh session","timeout":10}]}]}
 }

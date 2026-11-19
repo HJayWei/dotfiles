@@ -66,6 +66,9 @@ format_ctx_size() {
 # ---------------------------------------------------------------------------
 input=$(cat)
 
+# 存下用量額度給 herdr 顯示（沒裝 herdr-usage 時略過）
+command -v herdr-usage >/dev/null 2>&1 && printf '%s' "$input" | herdr-usage save claude
+
 cwd=$(jq_field '.workspace.current_dir // .cwd // ""')
 model=$(jq_field '.model.display_name // ""')
 used_pct=$(jq_field '.context_window.used_percentage // empty')
