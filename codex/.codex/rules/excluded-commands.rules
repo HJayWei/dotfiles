@@ -1,0 +1,21 @@
+# 對應 ~/.claude/settings.json 的 sandbox.excludedCommands。
+#
+# allow：不詢問，直接在沙箱外執行。只給 Claude 設定中同時列在
+#        excludedCommands 與 permissions.allow 的指令。
+# prompt：每次執行前詢問。給列在 excludedCommands 但不在 permissions.allow 的指令。
+
+prefix_rule(
+    pattern = [["git", "gh", "docker", "docker-compose", "podman", "podman-compose", "agent-browser"]],
+    decision = "allow",
+    justification = "與 Claude 設定一致：這些指令在沙箱外執行且不需確認",
+    match = ["git status", "gh pr view 1", "docker ps", "podman compose up", "agent-browser open https://example.com"],
+    not_match = ["make build", "rm -rf /tmp/x"],
+)
+
+prefix_rule(
+    pattern = ["make"],
+    decision = "prompt",
+    justification = "與 Claude 設定一致：make 在沙箱外執行，但需要確認",
+    match = ["make build"],
+    not_match = ["git status"],
+)

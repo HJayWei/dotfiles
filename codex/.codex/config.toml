@@ -1,0 +1,20 @@
+# Codex 使用者層級設定。對應 ~/.claude/settings.json 中有對等項目的部分。
+# 專案的 .codex/config.toml 與指令列旗標優先序高於本檔。
+
+model = "gpt-6.1-sol"
+model_reasoning_effort = "high"
+
+# 對應 Claude 的 sandbox.enabled = true。
+# 可寫入工作目錄與暫存目錄；.git、.agents、.codex 維持唯讀。
+sandbox_mode = "workspace-write"
+
+# 沙箱允許的指令直接執行；要離開沙箱時先詢問。
+# 免詢問、直接在沙箱外執行的指令列在 rules/excluded-commands.rules。
+approval_policy = "on-request"
+
+[sandbox_workspace_write]
+# 對應 Claude 的 sandbox.network.allowedDomains = []。
+network_access = false
+
+[features]
+hooks = true
