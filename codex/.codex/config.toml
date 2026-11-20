@@ -16,5 +16,11 @@ approval_policy = "on-request"
 # 對應 Claude 的 sandbox.network.allowedDomains = []。
 network_access = false
 
+[tui]
+screen_reader_detection_done = true
+
+[tui.model_availability_nux]
+"gpt-6.1-sol" = 4
+
 [features]
 hooks = true
