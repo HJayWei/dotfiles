@@ -132,6 +132,10 @@ export BAT_THEME="Dracula"
 alias cat="bat --style plain"
 alias catn="bat"
 
+# ---- mise ---- #
+
+eval "$(mise activate zsh)"
+
 # ---- Zoxide (better cd) ---- #
 
 source <(zoxide init zsh)
