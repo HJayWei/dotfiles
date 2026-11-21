@@ -127,7 +127,7 @@ chezmoi apply --verbose
     `tree-sitter` / `ast-grep` / `typos-cli` / `glab` / `fastfetch` / `lazygit` / `lazydocker` /
     `btop` / `direnv` / `gh`。
   - **`wsl`**(僅 wsl):neovim / zellij / tree-sitter / ast-grep / typos / lazygit / btop / direnv / gh / glab /
-    fastfetch / jc / rust。名稱皆以 `mise registry` 查證(registry 名為 `typos`,非 `typos-cli`)。與 workstation 重疊
+    fastfetch / jc / herdr / rust。名稱皆以 `mise registry` 查證(registry 名為 `typos`,非 `typos-cli`)。與 workstation 重疊
     但刻意獨立成列,待 workstation 啟用時再抽共用層。
   - **`apt_wsl`**(僅 wsl,走 `10-install-system-packages`,需 sudo):zsh / build-essential(treesitter 編譯)/ unzip(mason 解壓)/ wget / rsync。
     (`rsync.nvim` 的 build 是 `cargo build`,故 wsl 的 mise tier 含 `rust`,`.language-support` 的 `RUST` / `RSYNC` 皆開。)

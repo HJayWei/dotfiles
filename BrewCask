@@ -3,6 +3,8 @@
 cask "alacritty"
 # Terminal emulator that uses platform-native UI and GPU acceleration
 cask "ghostty"
+# Desktop app for terminals and coding agents
+cask "herdr-app"
 
 # Browser
 cask "arc"

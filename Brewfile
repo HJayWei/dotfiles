@@ -45,6 +45,8 @@ brew "gnupg"
 brew "go"
 # Post-modern modal text editor
 brew "helix"
+# Agent multiplexer that lives in your terminal
+brew "herdr"
 # Serializes the output of command-line tools to structured JSON output
 brew "jc"
 # Command-line pager for JSON data
