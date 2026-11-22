@@ -140,6 +140,9 @@ source <(zoxide init zsh)
 
 alias cd="z"
 
+# ---- Keep PATH entries unique (.zprofile sources this file again) ---- #
+typeset -U path PATH
+
 # ---- User binaries (herdr-usage, hc) ---- #
 export PATH="$HOME/.local/bin:$PATH"
 
