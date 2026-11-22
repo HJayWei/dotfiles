@@ -1,0 +1,15 @@
+{{ if eq .profile "wsl" -}}
+#!/bin/sh
+# wsl:登出後保留背景程序(herdr-core 的終端機與 agent),herdr-app 的 wsl 警告也才會消失。
+# run_after_(每次 apply 都跑、冪等 guard),與 50 / 60 同理:無 sudo 時手動執行後即不再提示。
+set -eu
+
+# 沒有 systemd(wsl.conf 未啟用)就沒有 linger 可設;已啟用則跳過。
+[ -d /run/systemd/system ] || exit 0
+USER_NAME=$(id -un)
+[ -e "/var/lib/systemd/linger/$USER_NAME" ] && exit 0
+
+echo "==> [herdr] 啟用 linger"
+sudo loginctl enable-linger -- "$USER_NAME" \
+    || echo "==> [herdr] 失敗,請手動執行:sudo loginctl enable-linger -- $USER_NAME" >&2
+{{ end -}}

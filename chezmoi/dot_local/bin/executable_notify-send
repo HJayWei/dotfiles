@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# notify-send 替身：把 Linux 桌面通知轉成 Windows toast（給 WSL 用）。
+# herdr 的 [ui.toast] delivery = "system" 會呼叫：
+#   notify-send --app-name Herdr -- <title> [body]
+# 只支援這種用法：`--` 之前的選項一律忽略。
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --) shift; break ;;
+    --app-name|-a|--urgency|-u|--icon|-i|--expire-time|-t|--category|-c|--hint|-h) shift 2 ;;
+    -*) shift ;;
+    *) break ;;
+  esac
+done
+title="${1:-通知}"
+body="${2:-}"
+
+ps_exe="$(command -v powershell.exe || echo /mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/powershell.exe)"
+t64="$(printf '%s' "$title" | base64 -w0)"
+b64="$(printf '%s' "$body" | base64 -w0)"
+
+script=$(cat <<EOF
+\$ProgressPreference='SilentlyContinue'
+\$u=[Text.Encoding]::UTF8
+\$t=[Security.SecurityElement]::Escape(\$u.GetString([Convert]::FromBase64String('$t64')))
+\$b=[Security.SecurityElement]::Escape(\$u.GetString([Convert]::FromBase64String('$b64')))
+[Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType=WindowsRuntime] | Out-Null
+[Windows.Data.Xml.Dom.XmlDocument, Windows.Data.Xml.Dom.XmlDocument, ContentType=WindowsRuntime] | Out-Null
+\$x=New-Object Windows.Data.Xml.Dom.XmlDocument
+\$x.LoadXml("<toast><visual><binding template='ToastGeneric'><text>\$t</text><text>\$b</text></binding></visual></toast>")
+\$id='{1AC14E77-02E7-4E5D-B744-2EB1AE5198B7}\WindowsPowerShell\v1.0\powershell.exe'
+[Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier(\$id).Show([Windows.UI.Notifications.ToastNotification]::new(\$x))
+EOF
+)
+enc="$(printf '%s' "$script" | iconv -f UTF-8 -t UTF-16LE | base64 -w0)"
+
+# 背景執行：PowerShell 啟動約 1 秒，不能卡住呼叫端（herdr 會等這個指令結束）。
+cd /mnt/c 2>/dev/null || true
+setsid "$ps_exe" -NoProfile -NonInteractive -EncodedCommand "$enc" >/dev/null 2>&1 </dev/null &
+exit 0

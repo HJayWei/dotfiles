@@ -11,7 +11,7 @@
 |---|---|---|
 | `container` | docker / podman 用完即丟 | 僅 `system` 基礎套件 |
 | `vm` | Debian 測試 VM | `system` + `mise` 現代 CLI/runtime,把工具串進 shell rc,並部署可攜別名(含 git 縮寫)/history/zoxide、gitconfig 核心與 tmux(含 TPM 外掛) |
-| `wsl` | Windows 公司機的 WSL Debian 13(日常開發) | **`vm` 的全部**(獨立可跑,不需先套 vm)+ apt 開發依賴(zsh / build-essential / unzip / wget / rsync)+ `mise` 的 wsl tier 開發向 CLI(nvim / zellij / lazygit / gh / glab…)+ zsh 全套(zinit / p10k / OMZ / fzf 整合)+ nvim 設定(external clone dot-nvim,PHP 關閉)+ zellij 設定(含 zjstatus)+ bat / delta 主題 + Windows 側 Alacritty / WezTerm 設定、字型、win32yank |
+| `wsl` | Windows 公司機的 WSL Debian 13(日常開發) | **`vm` 的全部**(獨立可跑,不需先套 vm)+ apt 開發依賴(zsh / build-essential / unzip / wget / rsync)+ `mise` 的 wsl tier 開發向 CLI(nvim / zellij / lazygit / gh / glab…)+ zsh 全套(zinit / p10k / OMZ / fzf 整合)+ nvim 設定(external clone dot-nvim,PHP 關閉)+ zellij 設定(含 zjstatus)+ herdr(設定、用量顯示、通知)+ bat / delta 主題 + Windows 側 Alacritty / WezTerm / herdr-app 設定、字型、win32yank |
 | `workstation` | mac m4 工作機 | 全部,含應用層工具(leaf 等),以及 `mise` 的 workstation tier 開發向 CLI(尚未啟用) |
 
 profile 在 `chezmoi init` 時詢問一次(見 `.chezmoi.toml.tmpl`;在 WSL 內預選 `wsl`,其餘預選 `vm`),
@@ -43,9 +43,12 @@ dotfiles/
     │   ├── fzf-git/fzf-git.sh.tmpl            # wsl-only;include 指回 zsh/.config/fzf-git
     │   ├── bat/themes/Dracula.tmTheme.tmpl    # wsl-only;include 指回 bat/.config
     │   ├── delta/themes.gitconfig.tmpl        # wsl-only;include 指回 git/.config/delta
+    │   ├── herdr/config.toml.tmpl            # wsl-only;include 指回 herdr/.config/herdr
     │   └── zellij/                            # wsl-only;config.kdl(include + pbcopy→win32yank)、layouts(含 default.kdl symlink)、zjstatus.wasm
+    ├── dot_local/bin/                         # wsl-only;herdr-usage(include 指回 herdr/)、notify-send(轉 Windows 通知)
     ├── windows/                               # Windows 側設定來源(不部署到 ~;由 80-sync-windows 複製到 Windows 家目錄)
     │   ├── alacritty.toml                     # %APPDATA%\alacritty\alacritty.toml;自 mac 版移植,shell=wsl.exe,Wombat 內嵌
+    │   ├── setup-herdr.ps1                    # Windows 端裝 herdr-app 並加入 wsl 機器(bootstrap.sh 詢問後執行,見 herdr/README.md)
     │   └── wezterm.lua                        # %USERPROFILE%\.config\wezterm\wezterm.lua;暗色透明,Wombat,fonts/ 免安裝字型
     ├── run_onchange_before_10-install-system-packages.sh.tmpl   # 全 profile:apt/brew 基礎套件;wsl 附加 apt_wsl
     ├── run_onchange_before_20-install-mise-tools.sh.tmpl        # vm/wsl/workstation:mise + 現代 CLI(各 tier)
@@ -53,8 +56,9 @@ dotfiles/
     ├── run_onchange_after_40-wire-shell-rc.sh.tmpl              # 非 workstation:把 env.sh 串進 shell rc(wsl 只串 .bashrc)
     ├── run_after_50-setup-tmux.sh.tmpl                          # vm/wsl:apt 裝 tmux + clone TPM + 裝外掛(每次 apply,冪等 guard)
     ├── run_after_60-setup-zsh.sh.tmpl                           # wsl:clone zinit + chsh 切 zsh(每次 apply,冪等 guard)
+    ├── run_after_65-enable-linger.sh.tmpl                       # wsl:登出後保留背景程序(需 systemd + sudo,冪等 guard)
     ├── run_onchange_after_70-build-bat-cache.sh.tmpl            # wsl:bat cache --build(主題檔 hash 變才重跑)
-    └── run_onchange_after_80-sync-windows.sh.tmpl               # wsl:複製 Alacritty/WezTerm 設定到 Windows、下載字型、裝 win32yank
+    └── run_onchange_after_80-sync-windows.sh.tmpl               # wsl:複製 Alacritty/WezTerm/herdr-app 設定到 Windows、下載字型、裝 win32yank
 ```
 
 ## VM 快速開始(一支選單腳本)
@@ -127,9 +131,9 @@ chezmoi apply --verbose
     `tree-sitter` / `ast-grep` / `typos-cli` / `glab` / `fastfetch` / `lazygit` / `lazydocker` /
     `btop` / `direnv` / `gh`。
   - **`wsl`**(僅 wsl):neovim / zellij / tree-sitter / ast-grep / typos / lazygit / btop / direnv / gh / glab /
-    fastfetch / jc / rust。名稱皆以 `mise registry` 查證(registry 名為 `typos`,非 `typos-cli`)。與 workstation 重疊
+    fastfetch / herdr / jc / rust。名稱皆以 `mise registry` 查證(registry 名為 `typos`,非 `typos-cli`)。與 workstation 重疊
     但刻意獨立成列,待 workstation 啟用時再抽共用層。
-  - **`apt_wsl`**(僅 wsl,走 `10-install-system-packages`,需 sudo):zsh / build-essential(treesitter 編譯)/ unzip(mason 解壓)/ wget / rsync。
+  - **`apt_wsl`**(僅 wsl,走 `10-install-system-packages`,需 sudo):zsh / build-essential(treesitter 編譯)/ unzip(mason 解壓)/ wget / rsync / bubblewrap(codex 沙箱)。
     (`rsync.nvim` 的 build 是 `cargo build`,故 wsl 的 mise tier 含 `rust`,`.language-support` 的 `RUST` / `RSYNC` 皆開。)
   改由 [mise](https://mise.jdx.dev) 安裝預編譯 binary,以在較舊的 Debian(如 bullseye,apt 缺
   或過舊)也能取得一致版本,並可 `mise outdated` / `upgrade` 追蹤版本。mise 工具透過

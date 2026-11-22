@@ -74,7 +74,7 @@ report_missing_root_packages() {
     # 需 root 的項目 = packages.system(從 .chezmoidata.yaml 取,避免兩處各寫一份)
     #                  + wsl 的 packages.apt_wsl
     #                  + tmux(50-setup-tmux 專屬,刻意不列入 .chezmoidata.yaml)
-    # apt 套件名多與命令名相同(git/zsh/curl/tmux…);例外在下方 case 對應(build-essential → gcc)。
+    # apt 套件名多與命令名相同(git/zsh/curl/tmux…);例外在下方 case 對應(build-essential → gcc、bubblewrap → bwrap)。
     need=$("$CHEZMOI" execute-template --source "$REPO_DIR" \
         '{{ range .packages.system }}{{ .apt }} {{ end }}{{ if eq .profile "wsl" }}{{ range .packages.apt_wsl }}{{ . }} {{ end }}{{ end }}' 2>/dev/null || true)
     need="$need tmux"
@@ -83,6 +83,7 @@ report_missing_root_packages() {
     for pkg in $need; do
         case "$pkg" in
             build-essential) cmd=gcc ;;
+            bubblewrap) cmd=bwrap ;;
             *) cmd=$pkg ;;
         esac
         command -v "$cmd" >/dev/null 2>&1 || missing="$missing $pkg"
@@ -100,6 +101,16 @@ report_missing_root_packages() {
     echo "────────────────────────────────────────────────────────────"
 }
 
+# wsl:選擇性在 Windows 端裝 herdr-app 並把這個 distro 加成它的機器(冪等,可重跑)。
+offer_windows_herdr() {
+    printf "要在 Windows 以 scoop 安裝 herdr-app 並接上這個 WSL 嗎? [y/N]: "; read -r ans
+    case "$ans" in [Yy]*) ;; *) return 0 ;; esac
+    ps_exe=$(command -v powershell.exe || echo /mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe)
+    "$ps_exe" -NoProfile -ExecutionPolicy Bypass \
+        -File "$(wslpath -w "$REPO_DIR/chezmoi/windows/setup-herdr.ps1")" -Distro "$WSL_DISTRO_NAME" \
+        || echo "⚠ Windows 端 herdr-app 安裝失敗,排除後重跑 ./bootstrap.sh(見 herdr/README.md)。" >&2
+}
+
 # 5. dry-run 預覽 → 確認 → 實際 apply
 echo "== 預覽(dry-run,不會實際變更)=="
 "$CHEZMOI" apply --source "$REPO_DIR" --dry-run --verbose
@@ -109,6 +120,7 @@ case "$go" in
     "$CHEZMOI" apply --source "$REPO_DIR" --verbose
     echo "完成。開新 shell 即可使用(mise 工具 / 別名)。"
     [ "$PROFILE" = "wsl" ] && echo "wsl:登入 shell 已切為 zsh(若 chsh 成功),請關閉終端機重開;首次進 zsh 會由 zinit 下載外掛。"
+    if [ "$PROFILE" = "wsl" ]; then offer_windows_herdr; fi
     report_missing_root_packages
     ;;
   *) echo "已取消 apply。可稍後手動執行:$CHEZMOI apply --source $REPO_DIR" ;;

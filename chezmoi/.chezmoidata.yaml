@@ -18,6 +18,7 @@ packages:
     - unzip            # mason 解壓 LSP / formatter 套件
     - wget
     - rsync            # rsync.nvim
+    - bubblewrap       # codex 沙箱(命令名 bwrap)
 
   # Debian 11 的 apt 沒有(或版本過舊)的現代 CLI / runtime,
   # 改用 mise 跨平台安裝預編譯 binary,確保各環境版本一致。
@@ -72,5 +73,6 @@ packages:
       - gh
       - glab
       - fastfetch
+      - herdr            # aqua:herdrdev/herdr;設定見 herdr/README.md
       - jc               # aqua:kellyjonbrazil/jc 預編譯 binary,免 pipx
       - rust             # core:rust,委派 rustup;rsync.nvim 的 build 是 cargo build,且 mason 要裝 rust-analyzer / codelldb
