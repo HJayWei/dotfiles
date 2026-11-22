@@ -3,14 +3,14 @@
 # wsl:把 Windows 側終端機 / herdr-app 設定複製到 Windows 家目錄,並備妥 WSL ↔ Windows 整合工具。
 #   - windows/alacritty.toml → %APPDATA%\alacritty\alacritty.toml
 #   - windows/wezterm.lua    → %USERPROFILE%\.config\wezterm\wezterm.lua(+ fonts/ 內的 Maple Mono NF CN)
-#   - ../herdr-app/          → %USERPROFILE%\scoop\persist\herdr-app\data(scoop 的保留目錄,app 未安裝也可先放)
+#   - ../herdr/.config/herdr-app/ → %USERPROFILE%\scoop\persist\herdr-app\data(由 windows/herdr-app-sync.sh)
 #   - win32yank.exe          → ~/.local/bin(dot-nvim options.lua 偵測到即啟用為系統剪貼簿)
 # 兩個目標位置都是程式的預設讀取位置,與 exe(portable 版)放哪無關,整包搬動不受影響。
 # 為什麼複製而非讓 Windows 程式直接讀 \\wsl.localhost:WSL 未啟動時要等開機、設定檔即時重載走 9P 不可靠。
 # run_onchange:下方 hash 隨來源設定檔內容改變,改了就重跑;字型 / win32yank 另有冪等 guard。
 # alacritty hash: {{ include "windows/alacritty.toml" | sha256sum }}
 # wezterm hash:   {{ include "windows/wezterm.lua" | sha256sum }}
-{{- range glob (joinPath .chezmoi.sourceDir "../herdr-app/**/*.*") }}
+{{- range glob (joinPath .chezmoi.sourceDir "../herdr/.config/herdr-app/**/*.*") }}
 # herdr-app hash: {{ include . | sha256sum }}
 {{- end }}
 set -eu
@@ -43,11 +43,7 @@ sync_file() { # src dst
 sync_file "$SRC/alacritty.toml" "$WIN_HOME/AppData/Roaming/alacritty/alacritty.toml"
 sync_file "$SRC/wezterm.lua"    "$WIN_HOME/.config/wezterm/wezterm.lua"
 
-# herdr-app:只放自己的檔案,其餘(內建版面 / mods、執行狀態)由 app 管理。
-HERDR_APP="$SRC/../../herdr-app"
-(cd "$HERDR_APP" && find . -type f) | while read -r f; do
-    sync_file "$HERDR_APP/$f" "$WIN_HOME/scoop/persist/herdr-app/data/${f#./}"
-done
+sh "$SRC/herdr-app-sync.sh" push
 
 # 字型:Maple Mono Normal NF CN → WezTerm 同目錄 fonts/(wezterm.lua 以 font_dirs 直接載入,免安裝)。
 # Alacritty 沒有這機制,要用同一字型需對 .ttf 右鍵「安裝」(使用者層級,不需管理者權限)。

@@ -43,11 +43,12 @@ dotfiles/
     │   ├── fzf-git/fzf-git.sh.tmpl            # wsl-only;include 指回 zsh/.config/fzf-git
     │   ├── bat/themes/Dracula.tmTheme.tmpl    # wsl-only;include 指回 bat/.config
     │   ├── delta/themes.gitconfig.tmpl        # wsl-only;include 指回 git/.config/delta
-    │   ├── herdr/config.toml.tmpl            # wsl-only;include 指回 herdr/.config/herdr
+    │   ├── herdr/symlink_config.toml.tmpl     # wsl-only;連結到 herdr/.config/herdr
     │   └── zellij/                            # wsl-only;config.kdl(include + pbcopy→win32yank)、layouts(含 default.kdl symlink)、zjstatus.wasm
-    ├── dot_local/bin/                         # wsl-only;herdr-usage(include 指回 herdr/)、notify-send(轉 Windows 通知)
+    ├── dot_local/bin/                         # wsl-only;herdr-usage(連結到 herdr/)、notify-send(轉 Windows 通知)
     ├── windows/                               # Windows 側設定來源(不部署到 ~;由 80-sync-windows 複製到 Windows 家目錄)
     │   ├── alacritty.toml                     # %APPDATA%\alacritty\alacritty.toml;自 mac 版移植,shell=wsl.exe,Wombat 內嵌
+    │   ├── herdr-app-sync.sh                  # herdr-app 設定在 repo 與 Windows 之間 push / pull(80-sync-windows 呼叫 push)
     │   ├── setup-herdr.ps1                    # Windows 端裝 herdr-app 並加入 wsl 機器(bootstrap.sh 詢問後執行,見 herdr/README.md)
     │   └── wezterm.lua                        # %USERPROFILE%\.config\wezterm\wezterm.lua;暗色透明,Wombat,fonts/ 免安裝字型
     ├── run_onchange_before_10-install-system-packages.sh.tmpl   # 全 profile:apt/brew 基礎套件;wsl 附加 apt_wsl

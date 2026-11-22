@@ -6,7 +6,7 @@
 |---|---|---|---|
 | herdr（TUI / CLI） | Homebrew | WSL，mise | 終端機裡的工作區管理 |
 | herdr-app | Homebrew cask（限 Apple Silicon） | Windows，scoop | 桌面版視窗 |
-| herdr-core（`hc`） | 官方安裝腳本 | Windows 與 WSL 各一份 | app 背後實際執行終端機的程式 |
+| herdr-core（`hc`） | 由 herdr-app 補裝 | Windows 與 WSL 各一份 | app 背後實際執行終端機的程式 |
 
 ## 新機器安裝
 
@@ -17,13 +17,14 @@
 ```bash
 cd ~/dotfiles
 brew install herdr && brew install --cask herdr-app
-stow --no-folding herdr                      # config.toml、herdr-usage
-mkdir -p ~/.config/herdr-app && cp -R herdr-app/. ~/.config/herdr-app/
-curl -fsSL https://releases.herdr.dev/core/install.sh | sh   # hc
+mkdir -p ~/.local/bin ~/.config/herdr ~/.config/herdr-app/{layouts,mods,themes}
+stow herdr
 ```
 
-- `stow` 回報衝突，代表先前開過 herdr、已有 `~/.config/herdr/config.toml`，移走後重跑。
-- 必須加 `--no-folding`：herdr 的記錄與 socket 和設定檔同一個目錄，整個目錄連過去會寫進 repo。
+- `stow` 回報衝突，代表先前開過 herdr / herdr-app、已有同名設定檔，移走後重跑。
+- 先 `mkdir` 是為了讓 stow 只連 repo 裡有的東西；整個目錄連過去，記錄與 socket 會寫進 repo。
+  不用 `--no-folding`，因為 mod 要連整個資料夾，app 才偵測得到修改並即時重載。
+- Homebrew 沒有 herdr-core，第一次開 app 時依提示補裝。
 
 ### Windows + WSL
 
@@ -54,26 +55,35 @@ cd ~/dotfiles && ./bootstrap.sh              # 選 wsl
 ## 結構
 
 ```
-herdr/                              ← stow 套件（mac）；WSL 由 chezmoi 的 include 指回這裡
+herdr/                              ← stow 套件（mac）；WSL 由 chezmoi 連結到這裡
   .config/herdr/config.toml         ← TUI 主設定
   .local/bin/herdr-usage            ← 存下並顯示各 agent 的用量額度
-herdr-app/                          ← app 設定，mac 與 Windows 都是複製過去
-  settings.json                     ← 個人設定
-  themes/nord.json                  ← nord 主題
-  layouts/glass.json                ← 半透明版面（複製自內建的 main）
-  mods/agent-usage/                 ← 底部狀態列右側的用量額度顯示
-  mods/status-bar/                  ← 底部狀態列（複製自內建，拿掉快捷鍵提示）
+  .config/herdr-app/                ← app 設定
+    settings.json                   ← 個人設定
+    themes/nord.json                ← nord 主題
+    layouts/glass.json              ← 半透明版面（複製自內建的 main）
+    mods/agent-usage/               ← 底部狀態列右側的用量額度顯示
+    mods/status-bar/                ← 底部狀態列（複製自內建，拿掉快捷鍵提示）
 chezmoi/dot_local/bin/executable_notify-send   ← 只給 WSL：把 TUI 通知轉成 Windows 通知
 chezmoi/run_after_65-enable-linger.sh.tmpl     ← 只給 WSL
-chezmoi/run_onchange_after_80-sync-windows.sh.tmpl  ← 把 herdr-app/ 複製到 Windows
+chezmoi/windows/herdr-app-sync.sh              ← app 設定在 repo 與 Windows 之間同步
 chezmoi/windows/setup-herdr.ps1                ← Windows 端安裝
 ```
 
 app 的設定目錄：mac 是 `~/.config/herdr-app`，Windows（scoop）是
 `%USERPROFILE%\scoop\persist\herdr-app\data`。
 
-app 設定用複製而不用連結，因為 app 會自己重寫 `settings.json`。所以**在 app 裡改過的設定要自己
-抄回 `herdr-app/`**，否則下次同步會被蓋掉。Windows 端被蓋掉的檔案會留一份 `.bak`（只留最初那份）。
+## 在本機改了設定之後
+
+| 環境 | 怎麼進 repo |
+|---|---|
+| mac（TUI 與 app）、WSL（TUI） | 是連結，改了就在 repo 裡，`git diff` 看得到，直接 commit |
+| Windows 的 app | 是複製，在 WSL 執行 `~/dotfiles/chezmoi/windows/herdr-app-sync.sh pull` 再 commit |
+
+- 忘了 `pull` 也不會被蓋掉：`chezmoi apply` 發現 Windows 上有 repo 沒出現過的內容，會略過並提示。
+- `pull` 只取回 repo 已有的檔案。在 app 裡**新增**的版面、主題、mod 要先手動放進
+  `herdr/.config/herdr-app/`。
+- repo 的位置不能搬（連結是絕對路徑），搬了要重跑 `chezmoi apply` 或 `stow -R herdr`。
 
 ## herdr-core：把 WSL 加成機器
 

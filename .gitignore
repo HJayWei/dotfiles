@@ -36,3 +36,5 @@ claude/.claude/session-env/
 claude/.claude/ssh/
 claude/.claude/skills/synced/
 claude/.claude/plugins/*
+herdr/.config/herdr-app/mods/*/gpui-kit.d.ts
+herdr/.config/herdr-app/mods/*/jsconfig.json
