@@ -128,6 +128,16 @@ stow helix
 echo 'Stow Leaf configuration'
 stow leaf
 
+echo 'Stow Herdr configuration'
+# --no-folding: herdr writes logs/sockets next to its config, keep them out of the repo
+stow --no-folding herdr
+# herdr-app rewrites its own settings.json, so copy instead of linking
+mkdir -p $HOME/.config/herdr-app
+cp -R herdr-app/. $HOME/.config/herdr-app/
+
+echo "Install herdr-core"
+curl -fsSL https://releases.herdr.dev/core/install.sh | sh
+
 echo "Install Rust"
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
