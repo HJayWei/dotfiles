@@ -70,6 +70,12 @@ echo "Synchronize git submodule"
 git submodule init
 git submodule update --init --recursive
 
+# These programs keep keys, caches or logs next to their config. Create the
+# directories first so stow links only what is in the repo, not the whole directory.
+mkdir -p $HOME/.docker $HOME/.cursor $HOME/.local/bin
+mkdir -p $HOME/.config/herdr $HOME/.config/herdr-app/layouts $HOME/.config/herdr-app/mods $HOME/.config/herdr-app/themes
+mkdir -p -m 700 $HOME/.ssh
+
 echo "Stow alacritty configuration"
 stow alacritty
 
@@ -129,14 +135,7 @@ echo 'Stow Leaf configuration'
 stow leaf
 
 echo 'Stow Herdr configuration'
-# --no-folding: herdr writes logs/sockets next to its config, keep them out of the repo
-stow --no-folding herdr
-# herdr-app rewrites its own settings.json, so copy instead of linking
-mkdir -p $HOME/.config/herdr-app
-cp -R herdr-app/. $HOME/.config/herdr-app/
-
-echo "Install herdr-core"
-curl -fsSL https://releases.herdr.dev/core/install.sh | sh
+stow herdr
 
 echo "Install Rust"
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
