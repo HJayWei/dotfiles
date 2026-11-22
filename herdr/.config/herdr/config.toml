@@ -1,0 +1,53 @@
+onboarding = false
+
+[ui]
+status_indicators = "symbols"
+show_agent_labels_on_pane_borders = true
+tab_bar_right = [
+  { type = "zoom" },
+  # 各 agent 的用量額度，資料由 herdr-usage save 存下（見 README）
+  { type = "command", command = "herdr-usage show", interval_seconds = 30, timeout_seconds = 2 },
+  { type = "datetime", format = "%m/%d %H:%M" },
+]
+tab_bar_right_separator = " · "
+
+# Claude 的 agent 列多顯示一行終端機標題（它正在做什麼）
+[ui.sidebar.agents.rows_by_agent]
+claude = [["state_icon", "machine", "workspace", "tab"], ["terminal_title_stripped"], ["agent"]]
+
+# 系統通知：mac 用系統通知；WSL 呼叫 notify-send，由 ~/.local/bin/notify-send 轉成 Windows toast
+[ui.toast]
+delivery = "system"
+
+[theme]
+name = "nord"
+auto_switch = false
+
+[theme.custom]
+sidebar_bg    = "#2e3440"
+# 側邊欄的 spaces / new / menu / agents / priority / « 都用 overlay0
+overlay0      = "#8c97b0"
+
+[[keys.command]]
+key = "prefix+alt+g"
+type = "popup"
+command = "lazygit"
+description = "lazygit"
+width = "85%"
+height = "85%"
+
+[[keys.command]]
+key = "prefix+alt+b"
+type = "popup"
+command = "btop"
+description = "btop"
+width = "85%"
+height = "85%"
+
+[[keys.command]]
+key = "prefix+t"
+type = "popup"
+command = "exec \"${SHELL:-sh}\""
+description = "scratch terminal"
+width = "80%"
+height = "80%"

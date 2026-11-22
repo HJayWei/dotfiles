@@ -1,0 +1,128 @@
+#!/bin/sh
+# herdr-usage：把各 agent 的用量額度存成共用檔案，並印成一行給 herdr 顯示。
+#
+#   herdr-usage save claude   從 stdin 讀 Claude Code 狀態列的 JSON，存下額度
+#   herdr-usage refresh       更新不需要掛接的來源（目前：Codex 的 session 紀錄）
+#   herdr-usage show          先 refresh，再印出所有已存 agent 的一行摘要
+#   herdr-usage dump          先 refresh，再原樣印出每個存檔（一行一個 JSON），給 herdr-app 的 mod 讀
+#
+# 每個 agent 一個檔案：${XDG_CACHE_HOME:-~/.cache}/herdr-usage/<agent>.json
+#   { "name": "Claude", "at": <存檔時間 epoch 秒>,
+#     "limits": [ { "label": "5h", "used": <0-100>, "resets_at": <epoch 秒或 null> } ] }
+# 顯示端只認這個格式，之後加別的 agent 只要多寫一個 save 分支。
+
+dir="${XDG_CACHE_HOME:-$HOME/.cache}/herdr-usage"
+
+# herdr-app 透過非互動的 sh 執行本腳本時 PATH 沒有 mise / Homebrew，找不到 jq 就補上。
+command -v jq >/dev/null 2>&1 || PATH="$HOME/.local/share/mise/shims:/opt/homebrew/bin:$PATH"
+
+# 寫檔先寫暫存檔再改名。Claude Code 會中途取消狀態列腳本，所以被中斷時要把暫存檔收掉；
+# 來不及收的（被強制終止）由 sweep 清除。
+tmp=""
+trap '[ -n "$tmp" ] && rm -f "$tmp"' EXIT
+trap 'exit 1' INT TERM HUP PIPE
+sweep() { find "$dir" -maxdepth 1 -name '.*.json.*' -mmin +1 -delete 2>/dev/null; }
+
+# 同時開著好幾個 Claude 時，每個 session 的狀態列都會來存檔，而閒置 session 手上的數字
+# 是它上次回應時的舊值。所以不能後寫的蓋掉先寫的，要逐個額度和既有存檔比較：
+#   重置時間較晚 → 新的週期，採用；較早 → 舊週期的殘留，丟掉；
+#   同一週期 → 用量只會增加，取較大者。
+# 進來的資料沒有的額度保留既有值；「at」只在這次真的帶來新資料時更新。
+save_claude() {
+  mkdir -p "$dir" || return 0
+  old="$dir/claude.json"
+  jq -e . "$old" >/dev/null 2>&1 || old=/dev/null
+  tmp="$dir/.claude.json.$$"
+  # 沒有額度資料時（例如以 API 金鑰計費）jq 以非零結束，不覆寫既有檔案。
+  if jq -ce --argjson now "$(date +%s)" --slurpfile old "$old" '
+      ($old[0] // {}) as $o
+      | .rate_limits as $r
+      | [ ($r.five_hour // empty | {label: "5h", used: .used_percentage, resets_at: (.resets_at // null)}),
+          ($r.seven_day // empty | {label: "7d", used: .used_percentage, resets_at: (.resets_at // null)}) ]
+      | map(select(.used != null)) as $new
+      | if ($new | length) == 0 then empty else
+          ($new | map(. as $n
+            | ([$o.limits[]? | select(.label == $n.label)][0]) as $e
+            | if $e == null or $e.resets_at == null or $n.resets_at == null then $n + {fresh: true}
+              elif $n.resets_at > $e.resets_at + 60 then $n + {fresh: true}
+              elif $n.resets_at < $e.resets_at - 60 then $e + {fresh: false}
+              elif $n.used >= $e.used then $n + {fresh: true}
+              else $e + {fresh: false} end)) as $m
+          | ($m | map(.label)) as $seen
+          | { name: "Claude",
+              at: (if any($m[]; .fresh) then $now else ($o.at // $now) end),
+              limits: (($m | map(del(.fresh))) + [$o.limits[]? | select(.label as $l | $seen | index($l) | not)]
+                       | sort_by(.label)) }
+        end
+    ' > "$tmp" 2>/dev/null; then
+    mv "$tmp" "$dir/claude.json"
+  else
+    rm -f "$tmp"
+  fi
+}
+
+# Codex 沒有可掛接的地方，但每次回應都會把額度寫進 session 紀錄：
+# 取最新一個 session 檔裡最後一筆 rate_limits（只看檔尾 1MB）。
+save_codex() {
+  f=$(command ls -t "${CODEX_HOME:-$HOME/.codex}"/sessions/*/*/*/*.jsonl 2>/dev/null | head -n 1)
+  [ -n "$f" ] || return 0
+  mkdir -p "$dir" || return 0
+  tmp="$dir/.codex.json.$$"
+  sweep
+  if tail -c 1048576 "$f" | grep '"rate_limits"' | tail -n 1 | jq -ce '
+      def window: if . == null then "limit" elif . % 1440 == 0 then "\(. / 1440)d" elif . % 60 == 0 then "\(. / 60)h" else "\(.)m" end;
+      (.timestamp | sub("\\.[0-9]+Z$"; "Z") | fromdateiso8601) as $at
+      | .payload.rate_limits
+      | [ .primary, .secondary ] | map(select(. != null and .used_percent != null)
+          | {label: (.window_minutes | window), used: .used_percent, resets_at: (.resets_at // null)})
+      | if length == 0 then empty else {name: "Codex", at: $at, limits: .} end
+    ' > "$tmp" 2>/dev/null; then
+    mv "$tmp" "$dir/codex.json"
+  else
+    rm -f "$tmp"
+  fi
+}
+
+show() {
+  save_codex
+  set -- "$dir"/*.json
+  [ -e "$1" ] || exit 0
+  # 每個額度：用量%，括號內是距離重置還有多久，例如「5h 46%(1h13m) 7d 31%(5d6h)」。
+  # 重置時間已過的額度視為 0%、不顯示倒數；資料超過 60 分鐘就標出有多舊。
+  jq -rs --argjson now "$(date +%s)" '
+    def age: (($now - .at) / 60 | floor) as $m
+      | if $m < 60 then "" elif $m < 1440 then " (\($m / 60 | floor)h前)" else " (\($m / 1440 | floor)d前)" end;
+    def pad: tostring | if length < 2 then "0" + . else . end;
+    def left: (. - $now | floor) as $s
+      | if $s < 3600 then "\([($s / 60 | floor), 1] | max)m"
+        elif $s < 86400 then "\($s / 3600 | floor)h\(($s % 3600) / 60 | floor | pad)m"
+        else "\($s / 86400 | floor)d\(($s % 86400) / 3600 | floor)h" end;
+    map(select(.limits | length > 0)
+        | .name + " " + (.limits | map(
+            if .resets_at != null and .resets_at <= $now then .label + " 0%"
+            else .label + " " + (.used | round | tostring) + "%"
+                 + (if .resets_at != null then "(" + (.resets_at | left) + ")" else "" end)
+            end
+          ) | join(" ")) + age)
+    | join(" │ ")
+  ' "$@" 2>/dev/null
+}
+
+dump() {
+  save_codex
+  for f in "$dir"/*.json; do
+    [ -s "$f" ] && { tr -d '\n' < "$f"; echo; }
+  done
+}
+
+case "$1" in
+  save)
+    case "$2" in
+      claude) save_claude ;;
+      *) echo "usage: herdr-usage save claude" >&2; exit 2 ;;
+    esac ;;
+  refresh) save_codex ;;
+  show) show ;;
+  dump) dump ;;
+  *) echo "usage: herdr-usage {save claude|refresh|show|dump}" >&2; exit 2 ;;
+esac
