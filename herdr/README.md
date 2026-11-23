@@ -46,11 +46,13 @@ cd ~/dotfiles && ./bootstrap.sh              # 選 wsl
 
 - 開 app 後按 `ctrl+shift+l` 切到 `glass` 版面（主題 nord 由版面指定，不用另外選）。
 - Windows 要用 `Maple Mono Normal NF CN`，需到 `%USERPROFILE%\.config\wezterm\fonts` 對 .ttf 右鍵「安裝」。
-- 要在 herdr 看到 Codex 的狀態：`herdr integration install codex`。
-- Claude 的整合（hook、statusline、skill）都在 `claude/.claude`，不要再跑
-  `herdr integration install claude`：它會把 `settings.json` 的路徑改成絕對路徑。
-  mac 由 `stow claude` 連結，WSL 由 chezmoi 的 `67-link-agents` 連結。已經有實體 `~/.claude` 時
-  會略過並提示，要先移走再重跑，否則沒有 Claude 的用量與狀態。
+- Claude 與 Codex 的整合都在 repo（`claude/.claude/hooks/`、`codex/.codex/hooks.json` 與
+  `herdr-agent-state.sh`），不要再跑 `herdr integration install claude` / `codex`：它會把路徑改成絕對路徑。
+  mac 由 `stow claude` / `stow codex` 連結，WSL 由 chezmoi 的 `67-link-agents` 連結。已經有實體檔案時
+  會略過並提示，要先移走再重跑，否則 herdr 看不到 agent 的狀態。
+- Codex 第一次啟動時要在 `/hooks` 信任這個 hook 一次（每台機器各一次，Codex 的安全機制）。
+- herdr 升級整合腳本版本後，`herdr integration status` 會顯示過期；更新 repo 裡的兩支
+  `herdr-agent-state.sh` 即可（內容就是 `herdr integration install` 產生的檔案）。
 
 ## 結構
 

@@ -22,7 +22,7 @@ link() { # repo 內路徑  家目錄路徑
 link "$REPO/claude/.claude" "$HOME/.claude"
 link "$REPO/agents/.agents" "$HOME/.agents"
 # ~/.codex 另有登入與執行狀態,只連 repo 裡有的項目。
-for item in config.toml AGENTS.md rules; do
+for item in config.toml AGENTS.md rules hooks.json herdr-agent-state.sh; do
     link "$REPO/codex/.codex/$item" "$HOME/.codex/$item"
 done
 {{ end -}}
