@@ -63,9 +63,6 @@ brew install --cask font-blex-mono-nerd-font
 echo "Install bundle from BrewCask"
 brew bundle install --file BrewCask
 
-echo "Install claude code"
-curl -fsSL https://claude.ai/install.sh | bash
-
 echo "Synchronize git submodule"
 git submodule init
 git submodule update --init --recursive
@@ -113,7 +110,12 @@ echo "Stow Ghostty configuration"
 stow ghostty
 
 echo 'Stow Claude configuration'
+# Before installing Claude Code: its installer creates ~/.claude, and stow would then
+# link item by item instead of the whole directory.
 stow claude
+
+echo "Install claude code"
+curl -fsSL https://claude.ai/install.sh | bash
 
 echo 'Stow TMUX configuration'
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
@@ -124,6 +126,9 @@ stow agents
 
 echo 'Stow Codex configuration'
 stow codex
+
+echo "Install codex"
+curl -fsSL https://chatgpt.com/codex/install.sh | sh
 
 echo 'Stow Cursor configuration'
 stow cursor
