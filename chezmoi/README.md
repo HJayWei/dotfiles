@@ -11,7 +11,7 @@
 |---|---|---|
 | `container` | docker / podman 用完即丟 | 僅 `system` 基礎套件 |
 | `vm` | Debian 測試 VM | `system` + `mise` 現代 CLI/runtime,把工具串進 shell rc,並部署可攜別名(含 git 縮寫)/history/zoxide、gitconfig 核心與 tmux(含 TPM 外掛) |
-| `wsl` | Windows 公司機的 WSL Debian 13(日常開發) | **`vm` 的全部**(獨立可跑,不需先套 vm)+ apt 開發依賴(zsh / build-essential / unzip / wget / rsync)+ `mise` 的 wsl tier 開發向 CLI(nvim / zellij / lazygit / gh / glab…)+ zsh 全套(zinit / p10k / OMZ / fzf 整合)+ nvim 設定(external clone dot-nvim,PHP 關閉)+ zellij 設定(含 zjstatus)+ herdr(設定、用量顯示、通知)+ bat / delta 主題 + Windows 側 Alacritty / WezTerm / herdr-app 設定、字型、win32yank |
+| `wsl` | Windows 公司機的 WSL Debian 13(日常開發) | **`vm` 的全部**(獨立可跑,不需先套 vm)+ apt 開發依賴(zsh / build-essential / unzip / wget / rsync)+ `mise` 的 wsl tier 開發向 CLI(nvim / zellij / lazygit / gh / glab…)+ zsh 全套(zinit / p10k / OMZ / fzf 整合)+ nvim 設定(external clone dot-nvim,PHP 關閉)+ zellij 設定(含 zjstatus)+ herdr(設定、用量顯示、通知)+ Claude / Codex 設定連結+ bat / delta 主題 + Windows 側 Alacritty / WezTerm / herdr-app 設定、字型、win32yank |
 | `workstation` | mac m4 工作機 | 全部,含應用層工具(leaf 等),以及 `mise` 的 workstation tier 開發向 CLI(尚未啟用) |
 
 profile 在 `chezmoi init` 時詢問一次(見 `.chezmoi.toml.tmpl`;在 WSL 內預選 `wsl`,其餘預選 `vm`),
@@ -58,6 +58,7 @@ dotfiles/
     ├── run_after_50-setup-tmux.sh.tmpl                          # vm/wsl:apt 裝 tmux + clone TPM + 裝外掛(每次 apply,冪等 guard)
     ├── run_after_60-setup-zsh.sh.tmpl                           # wsl:clone zinit + chsh 切 zsh(每次 apply,冪等 guard)
     ├── run_after_65-enable-linger.sh.tmpl                       # wsl:登出後保留背景程序(需 systemd + sudo,冪等 guard)
+    ├── run_after_67-link-agents.sh.tmpl                         # wsl:連結 ~/.claude、~/.agents、~/.codex 設定(既有檔案不覆蓋)
     ├── run_onchange_after_70-build-bat-cache.sh.tmpl            # wsl:bat cache --build(主題檔 hash 變才重跑)
     └── run_onchange_after_80-sync-windows.sh.tmpl               # wsl:複製 Alacritty/WezTerm/herdr-app 設定到 Windows、下載字型、裝 win32yank
 ```

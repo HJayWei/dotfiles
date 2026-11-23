@@ -72,7 +72,7 @@ git submodule update --init --recursive
 
 # These programs keep keys, caches or logs next to their config. Create the
 # directories first so stow links only what is in the repo, not the whole directory.
-mkdir -p $HOME/.docker $HOME/.cursor $HOME/.local/bin
+mkdir -p $HOME/.docker $HOME/.cursor $HOME/.codex $HOME/.local/bin
 mkdir -p $HOME/.config/herdr $HOME/.config/herdr-app/layouts $HOME/.config/herdr-app/mods $HOME/.config/herdr-app/themes
 mkdir -p -m 700 $HOME/.ssh
 
@@ -124,6 +124,9 @@ stow tmux
 
 echo 'Stow Agents configuration'
 stow agents
+
+echo 'Stow Codex configuration'
+stow codex
 
 echo 'Stow Cursor configuration'
 stow cursor

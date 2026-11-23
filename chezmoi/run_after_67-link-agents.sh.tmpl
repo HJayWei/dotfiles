@@ -1,0 +1,28 @@
+{{ if eq .profile "wsl" -}}
+#!/bin/sh
+# wsl:把 Claude / Codex / 共用 skill 的設定連到 repo(mac 由 stow claude / agents / codex 處理)。
+# 不用 chezmoi 的 symlink_:目標若是既有目錄,chezmoi 會不詢問就刪掉(~/.claude 內有 session 與登入資料)。
+# run_after_(每次 apply 都跑、冪等 guard):既有檔案排除後重跑即能接續完成。
+set -eu
+
+REPO="{{ joinPath .chezmoi.sourceDir ".." }}"
+
+link() { # repo 內路徑  家目錄路徑
+    if [ -L "$2" ] && [ "$(readlink -f "$2")" = "$(readlink -f "$1")" ]; then
+        return 0
+    elif [ -e "$2" ] || [ -L "$2" ]; then
+        echo "==> [agents] 略過 $2:已存在且不是指向 repo 的連結。移走後重跑 chezmoi apply。" >&2
+    else
+        mkdir -p "$(dirname "$2")"
+        ln -s "$1" "$2"
+        echo "==> [agents] 已連結: $2"
+    fi
+}
+
+link "$REPO/claude/.claude" "$HOME/.claude"
+link "$REPO/agents/.agents" "$HOME/.agents"
+# ~/.codex 另有登入與執行狀態,只連 repo 裡有的項目。
+for item in config.toml AGENTS.md rules; do
+    link "$REPO/codex/.codex/$item" "$HOME/.codex/$item"
+done
+{{ end -}}

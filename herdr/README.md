@@ -49,8 +49,8 @@ cd ~/dotfiles && ./bootstrap.sh              # 選 wsl
 - 要在 herdr 看到 Codex 的狀態：`herdr integration install codex`。
 - Claude 的整合（hook、statusline、skill）都在 `claude/.claude`，不要再跑
   `herdr integration install claude`：它會把 `settings.json` 的路徑改成絕對路徑。
-  mac 由 `stow claude` 連結；**WSL 的 chezmoi 目前不處理 `~/.claude`**，新機器要自己連
-  （`ln -s ~/dotfiles/claude/.claude ~/.claude`），否則沒有 Claude 的用量與狀態。
+  mac 由 `stow claude` 連結，WSL 由 chezmoi 的 `67-link-agents` 連結。已經有實體 `~/.claude` 時
+  會略過並提示，要先移走再重跑，否則沒有 Claude 的用量與狀態。
 
 ## 結構
 
