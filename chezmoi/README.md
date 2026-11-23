@@ -219,8 +219,7 @@ chezmoi apply --verbose
 - **Brewfile / `.zshrc` 去重屬後續(尚未執行)**:`mise` 的 `workstation` tier 已宣告 neovim/helix/
   zellij/lazygit… 等(原本由 `Brewfile` 安裝),但 mac 目前仍以 `install.sh` + `Brewfile` 為實際安裝
   路徑,故**尚未從 Brewfile 移除**,以免重複/破壞現行流程。待 chezmoi 接手 mac 編排時,再一併:
-  ① 從 `Brewfile` 移除已遷入 mise 的工具;② 移除 `asdf`(mise 取代,並清掉 `zsh/.zshrc` L149 的 asdf
-  shims PATH);③ 評估 rust 由 rustup(`.zshrc` L151-152)改 mise。「需查證」CLI(tldr→tealdeer、
+  ① 從 `Brewfile` 移除已遷入 mise 的工具;② ~~移除 `asdf`~~(已完成:`Brewfile`、`.zshrc` 的 shims PATH 與 p10k 的 asdf 區段皆已移除,由 mise 取代);③ 評估 rust 由 rustup(`.zshrc` L151-152)改 mise。「需查證」CLI(tldr→tealdeer、
   jc/speedtest 走 pipx、kanata 需驅動、agent-browser)先留 brew,逐個確認 backend 後再搬。
 - **`mise` workstation tier 的 backend 尚未實機查證**:`neovim` / `helix` / `zellij` / `tree-sitter` /
   `ast-grep` / `typos-cli` / `glab` / `fastfetch` / `lazygit` / `lazydocker` / `btop` / `direnv` / `gh`
