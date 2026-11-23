@@ -112,9 +112,6 @@ stow ssh
 echo "Stow Ghostty configuration"
 stow ghostty
 
-echo 'Stow Codeium configuration'
-stow codeium
-
 echo 'Stow Claude configuration'
 stow claude
 
